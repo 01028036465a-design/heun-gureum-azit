@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEUN & GUREUM 하늘 아지트</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #ebf4fa; /* 맑은 파스텔 하늘빛 배경 */
+            --side-bg: #b0d4de;  /* 구름 낀 하늘색 사이드바 */
+            --card-bg: #ffffff;  /* 새하얀 구름 같은 카드 */
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --accent-color: #3498db; /* 청량한 하늘빛 포인트 */
+            --admin-color: #e74c3c;
+            --border-color: #d2e6ed;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+
+        /* 사이드바 */
+        aside {
+            width: 260px;
+            background-color: var(--side-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0; top: 0; z-index: 10;
+        }
+        .logo-area {
+            padding: 25px; font-size: 20px; font-weight: 700; text-align: center;
+            color: #ffffff; text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        .nav-menu { padding: 20px 10px; flex-grow: 1; }
+        .menu-category { font-size: 11px; color: #5d6d7e; font-weight: 700; padding-left: 15px; margin-top: 15px; margin-bottom: 5px; }
+        .nav-item {
+            display: flex; align-items: center; padding: 12px 15px; color: #4a5f70;
+            border-radius: 8px; margin-bottom: 4px; font-size: 14px; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-item i { margin-right: 12px; width: 18px; text-align: center; }
+        .nav-item:hover, .nav-item.active { background-color: rgba(255, 255, 255, 0.5); color: var(--text-main); font-weight: 500; }
+        .nav-item.active { border-left: 4px solid var(--accent-color); background-color: var(--card-bg); }
+
+        /* 메인 영역 */
+        main { margin-left: 260px; flex-grow: 1; padding: 30px; max-width: 1200px; width: calc(100% - 260px); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        .spoon-live-btn {
+            background-color: var(--accent-color); color: white; padding: 10px 20px;
+            border-radius: 20px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+        }
+        .user-info-bar { display: flex; align-items: center; gap: 15px; }
+        .login-btn, .logout-btn {
+            background-color: var(--card-bg); border: 1px solid var(--accent-color);
+            color: var(--accent-color); padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500;
+        }
+        .login-btn:hover { background-color: var(--accent-color); color: white; }
+        
+        .admin-badge { background-color: var(--admin-color); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+
+        /* 대시보드 및 카드 캐스트 */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        .card { background-color: var(--card-bg); border-radius: 12px; padding: 22px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(160, 190, 210, 0.15); border: 1px solid rgba(255,255,255,0.7); }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; color: var(--accent-color); display: flex; justify-content: space-between; align-items: center; }
+        
+        .notice-feed-item { border-left: 3px solid var(--accent-color); padding-left: 15px; }
+        .feed-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+        .feed-content { font-size: 14px; line-height: 1.6; }
+
+        /* 테이블 */
+        .post-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .post-table th, .post-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-color); }
+        .post-table th { color: var(--text-muted); font-weight: 500; }
+        .delete-btn { color: var(--admin-color); cursor: pointer; border: none; background: none; font-size: 12px; margin-left: 10px; }
+
+        /* 모달 및 폼 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; }
+        .btn-block { width: 100%; padding: 10px; background: var(--accent-color); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
+
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- 사이드바 메뉴 -->
+    <aside>
+        <div class="logo-area">☁️ HEUN & GUREUM</div>
+        <div class="nav-menu">
+            <div class="menu-category">Home</div>
+            <div class="nav-item active" onclick="switchPage('home')"><i class="fa-solid fa-house"></i> 아지트 홈</div>
+            <div class="menu-category">Notice</div>
+            <div id="nav-notice-btn" class="nav-item" onclick="switchPage('notice')"><i class="fa-solid fa-bullhorn"></i> 흔 공지사항</div>
+            <div id="nav-calendar-btn" class="nav-item" onclick="switchPage('calendar')"><i class="fa-solid fa-calendar-days"></i> 방송 달력/일정</div>
+            <div class="menu-category">Community</div>
+            <div class="nav-item" onclick="switchPage('free')"><i class="fa-solid fa-comments"></i> 구름 자유게시판</div>
+            <div class="nav-item" onclick="switchPage('request')"><i class="fa-solid fa-music"></i> 사연 & 신청곡</div>
+            <div class="nav-item" onclick="switchPage('secret')"><i class="fa-solid fa-envelope-open-text"></i> 비밀 상소문</div>
+        </div>
+    </aside>
+
+    <!-- 메인 대시보드 -->
+    <main>
+        <div class="top-bar">
+            <<a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="spoon-live-btn"><i class="fa-solid fa-radio"></i> 흔 방송국 바로가기</a>
+            <div class="user-info-bar" id="auth-area">
+                <button class="login-btn" onclick="openModal('login-modal')">스푼 아이디로 간편로그인</button>
+            </div>
+        </div>
+
+        <!-- [페이지: 홈] -->
+        <div id="page-home" class="page-content active">
+            <div class="dashboard-grid">
+                <div>
+                    <div class="card">
+                        <div class="card-title">📢 최근 방송 메인 공지</div>
+                        <div id="main-notice-box" class="notice-feed-item">
+                            <div class="feed-content">등록된 공지가 없습니다. 공지방 메뉴에서 페이지장이 글을 등록해 주세요!</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">✨ 실시간 구름이들 활성글</div>
+                        <table class="post-table"><tbody id="home-free-list"></tbody></table>
+                    </div>
+                </div>
+                <div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 50px; color: var(--accent-color);">☁️</div>
+                        <h3 style="margin: 10px 0;">BJ 흔 (Heun)</h3>
+                        <p class="admin-badge" id="bj-status" style="display:inline-block; background-color:var(--accent-color)">GUREUM LEADER</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [기타 동적 게시판 공통 프레임들] -->
+        <div id="page-notice" class="page-content">
+            <div class="card">
+                <div class="card-title">📢 BJ 흔 공식 공지방 <button id="write-btn-NOTICE" class="login-btn" style="display:none;" onclick="openWriteForm('NOTICE')">공지 작성</button></div>
+                <table class="post-table"><thead><tr><th>제목</th><th>날짜</th><th>관리</th></tr></thead><tbody id="list-NOTICE"></tbody></table>
+            </div>
+        </div>
+
+        <div id="page-calendar" class="page-content">
+            <div class="card">
+                <div class="card-title">📅 이번 달 방송 일정 스케줄러 <button id="write-btn-CALENDAR" class="login-btn" style="display:none;" onclick="openWriteForm('CALENDAR')">일정 추가</button></div>
+                <table class="post-table"><thead><tr><th>일정 내용</th><th>날짜</th><th>관리</th></tr></thead><tbody id="list-CALENDAR"></tbody></table>
+            </div>
+        </div>
+
+        <div id="page-free" class="page-content">
+            <div class="card">
+                <div class="card-title">☁️ 구름 자유게시판 <button class="login-btn" onclick="openWriteForm('FREE')">글쓰기</button></div>
+                <table class="post-table"><thead><tr><th>제목</th><th>작성 구름</th><th>날짜</th><th>관리</th></tr></thead><tbody id="list-FREE"></tbody></table>
+            </div>
+        </div>
+
+        <div id="page-request" class="page-content">
+            <div class="card">
+                <div class="card-title">🎵 방송 사연 & 신청곡 방 <button class="login-btn" onclick="openWriteForm('REQUEST')">사연 접수</button></div>
+                <table class="post-table"><thead><tr><th>신청 사연 및 곡명</th><th>작성자</th><th>날짜</th><th>관리</th></tr></thead><tbody id="list-REQUEST"></tbody></table>
+            </div>
+        </div>
+
+        <div id="page-secret" class="page-content">
+            <div class="card">
+                <div class="card-title">🔒 비밀 상소문 건의함 <button class="login-btn" onclick="openWriteForm('SECRET')">비밀글 작성</button></div>
+                <table class="post-table"><thead><tr><th>제목 (비밀글 보장)</th><th>작성자</th><th>날짜</th><th>관리</th></tr></thead><tbody id="list-SECRET"></tbody></table>
+            </div>
+        </div>
+    </main>
+
+    <!-- [모달: 로그인] -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">스푼 계정 연동 로그인</h3>
+            <div class="form-group"><label>스푼 고유 ID (※ 'heun' 입력시 자동 페이지장 강림)</label><input type="text" id="spoon-id-input" class="form-control" placeholder="예: heun 또는 gureum1"></div>
+            <div class="form-group"><label>방송국 활동 닉네임</label><input type="text" id="spoon-nick-input" class="form-control" placeholder="구름이 닉네임"></div>
+            <button class="btn-block" onclick="submitLogin()">아지트 입장</button>
+            <button class="btn-block" style="background:#bdc3c7; margin-top:5px;" onclick="closeModal('login-modal')">취소</button>
+        </div>
+    </div>
+
+    <!-- [모달: 글쓰기 서식] -->
+    <div id="write-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="write-modal-title" style="margin-bottom: 15px;">글쓰기</h3>
+            <input type="hidden" id="write-type">
+            <div class="form-group"><label>제목 / 일정 내용</label><input type="text" id="write-title" class="form-control"></div>
+            <div class="form-group"><label>상세 내용</label><textarea id="write-content" class="form-control" rows="5"></textarea></div>
+            <button class="btn-block" onclick="submitPost()">등록하기</button>
+            <button class="btn-block" style="background:#bdc3c7; margin-top:5px;" onclick="closeModal('write-modal')">닫기</button>
+        </div>
+    </div>
+
+    <!-- 비동기 클라이언트 스크립트 로직 -->
+    <script>
+        let currentUser = null;
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if(pageId !== 'home') loadPosts(pageId.toUpperCase());
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function checkSession() {
+            fetch('/api/session').then(res => res.json()).then(user => {
+                currentUser = user;
+                const authArea = document.getElementById('auth-area');
+                if (user) {
+                    authArea.innerHTML = `<span><strong>${user.nickname}</strong>(${user.spoon_id})님 ☁️ ${user.role === 'ADMIN' ? '<span class="admin-badge">PAGE LEADER (흔)</span>' : ''}</span>
+                        <button class="logout-btn" onclick="submitLogout()">로그아웃</button>`;
+                    
+                    if(user.role === 'ADMIN') {
+                        if(document.getElementById('write-btn-NOTICE')) document.getElementById('write-btn-NOTICE').style.display = 'block';
+                        if(document.getElementById('write-btn-CALENDAR')) document.getElementById('write-btn-CALENDAR').style.display = 'block';
+                    }
+                } else {
+                    authArea.innerHTML = `<button class="login-btn" onclick="openModal('login-modal')">스푼 아이디로 간편로그인</button>`;
+                    if(document.getElementById('write-btn-NOTICE')) document.getElementById('write-btn-NOTICE').style.display = 'none';
+                    if(document.getElementById('write-btn-CALENDAR')) document.getElementById('write-btn-CALENDAR').style.display = 'none';
+                }
+                loadHomeData();
+            });
+        }
+
+        function submitLogin() {
+            const spoon_id = document.getElementById('spoon-id-input').value;
+            const nickname = document.getElementById('spoon-nick-input').value;
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ spoon_id, nickname })
+            }).then(res => res.json()).then(() => { closeModal('login-modal'); checkSession(); });
+        }
+
+        function submitLogout() {
+            fetch('/api/logout', {method: 'POST'}).then(() => { checkSession(); });
+        }
+
+        function openWriteForm(type) {
+            if(!currentUser) return alert('로그인 후 이용할 수 있습니다!');
+            document.getElementById('write-type').value = type;
+            document.getElementById('write-title').value = '';
+            document.getElementById('write-content').value = '';
+            openModal('write-modal');
+        }
+
+        function submitPost() {
+            const type = document.getElementById('write-type').value;
+            const title = document.getElementById('write-title').value;
+            const content = document.getElementById('write-content').value;
+
+            fetch(`/api/posts/${type}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ title, content })
+            }).then(res => {
+                if(res.ok) { closeModal('write-modal'); loadPosts(type); loadHomeData(); }
+                else alert('등록 권한이 없거나 오류가 발생했습니다.');
+            });
+        }
+
+        function deletePost(id, type) {
+            if(confirm('이 글을 삭제하시겠습니까?')) {
+                fetch(`/api/posts/${id}`, { method: 'DELETE' }).then(res => {
+                    if(res.ok) { loadPosts(type); loadHomeData(); }
+                    else alert('삭제 권한이 없습니다.');
+                });
+            }
+        }
+
+        function loadPosts(type) {
+            fetch(`/api/posts/${type}`).then(res => res.json()).then(data => {
+                const tbody = document.getElementById(`list-${type}`);
+                if(!tbody) return;
+                tbody.innerHTML = '';
+                data.forEach(p => {
+                    let deleteBtn = '';
+                    if(currentUser && (currentUser.role === 'ADMIN' || currentUser.nickname === p.writer)) {
+                        deleteBtn = `<button class="delete-btn" onclick="deletePost(${p.id}, '${type}')">지우기</button>`;
+                    }
+                    
+                    if(type === 'NOTICE' || type === 'CALENDAR') {
+                        tbody.innerHTML += `<tr><td><strong>${p.title}</strong><br><small style="color:var(--text-muted)">${p.content}</small></td><td>${p.date}</td><td>${deleteBtn}</td></tr>`;
+                    } else if(type === 'SECRET') {
+                        const isVisible = currentUser && (currentUser.role === 'ADMIN' || currentUser.nickname === p.writer);
+                        tbody.innerHTML += `<tr><td><i class="fa-solid fa-lock"></i> ${isVisible ? p.title + ' <br><small>' + p.content + '</small>' : '비밀글입니다 페이지장과 작성자만 볼 수 있습니다.'}</td><td>${p.writer}</td><td>${p.date}</td><td>${deleteBtn}</td></tr>`;
+                    } else {
+                        tbody.innerHTML += `<tr><td><strong>${p.title}</strong><br><small style="color:var(--text-muted)">${p.content}</small></td><td>${p.writer}</td><td>${p.date}</td><td>${deleteBtn}</td></tr>`;
+                    }
+                });
+            });
+        }
+
+        function loadHomeData() {
+            fetch('/api/posts/NOTICE').then(res => res.json()).then(data => {
+                if(data.length > 0) {
+                    document.getElementById('main-notice-box').innerHTML = `<div class="feed-meta">${data[0].writer} | ${data[0].date}</div><div class="feed-content"><strong>${data[0].title}</strong><br>${data[0].content}</div>`;
+                }
+            });
+            fetch('/api/posts/FREE').then(res => res.json()).then(data => {
+                const hList = document.getElementById('home-free-list');
+                hList.innerHTML = '';
+                data.slice(0, 5).forEach(p => {
+                    hList.innerHTML += `<tr><td>${p.title}</td><td>${p.writer}</td><td>${p.date}</td></tr>`;
+                });
+            });
+        }
+
+        window.onload = checkSession;
+    </script>
+</body>
+</html>
