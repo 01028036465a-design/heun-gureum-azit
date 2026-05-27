@@ -23,21 +23,23 @@
         
         /* Layout */
         .header { background: var(--card-bg); border-bottom: 1px solid #e1e5e8; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 10px;}
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; }
         .logo span { color: #333; }
-        .menu-links { display: flex; gap: 25px; font-weight: 600; font-size: 15px; }
+        .menu-links { display: flex; gap: 20px; font-weight: 600; font-size: 15px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px;}
         .menu-links li { cursor: pointer; padding: 5px 0; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .menu-links li:hover, .menu-links li.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
         
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 8fr 4fr; gap: 30px; }
+        @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
+        
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Cards */
         .card { background: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
         .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         
         /* Buttons & Inputs */
@@ -56,7 +58,7 @@
         .progress-bar { height: 100%; background: linear-gradient(90deg, #ffab00, #ff8c00); transition: width 0.5s; }
         
         /* Spoons Area */
-        .grad-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .grad-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
         .grad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
         .grad-item { text-align: center; background:#f9f9f9; padding:15px 10px; border-radius:12px; border:1px solid #eee;}
         .grad-img-wrap { width: 60px; height: 60px; background: #fff8e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; overflow: hidden; border: 1px solid #ffe082;}
@@ -65,10 +67,10 @@
         .grad-label { font-size: 11px; color: #888; margin-bottom: 5px; }
 
         /* Board & Lists */
-        .board-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .board-tabs { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px;}
         .tab-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; background: white; font-size: 14px; cursor: pointer; }
         .tab-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
-        .list-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .list-item:hover { background: #fdfdfd; }
         .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px; }
         .badge.popular { background: #ff4757; color: white; }
@@ -84,7 +86,8 @@
         .modal-content textarea { width: 100%; height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: none; font-family: inherit;}
         
         /* Data Table */
-        .data-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .data-table-wrap { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: center; min-width: 500px; }
         .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid #eee; }
         .data-table th { background: #f8f9fa; font-weight: bold; color: #555; }
 
@@ -95,10 +98,15 @@
         .reaction-btn.active-like { background: #ffeaa7; border-color: #fdcb6e; color: #d63031; }
         .reaction-btn.active-dislike { background: #dfe6e9; border-color: #b2bec3; color: #2d3436; }
         
-        .reaction-list-text { font-size: 12px; color: #888; margin-top: 10px; line-height: 1.4; }
+        .reaction-list-text { font-size: 12px; color: #888; margin-top: 10px; line-height: 1.4; background: #f9f9f9; padding: 10px; border-radius: 8px;}
+        
+        /* Loading Overlay */
+        #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--primary); font-size: 20px; }
     </style>
 </head>
 <body>
+
+<div id="loadingOverlay">서버 데이터 동기화 중...</div>
 
 <header class="header">
     <div class="nav-container">
@@ -117,12 +125,27 @@
 
 <div class="container">
     <!-- LEFT CONTENT AREA -->
-    <div style="width: 100%;">
+    <div style="width: 100%; overflow: hidden;">
         
         <!-- ================= HOME VIEW ================= -->
         <div id="view-home" class="view-section active">
             
-            <!-- 1. 흔과 흔둥이의 이야기 (위치 변경됨) -->
+            <!-- 1. 이 스푼을 후원한 사람 (요청하신 대로 위로 배치) -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎓 이 스푼을 후원한 사람</div>
+                    <button class="btn btn-outline admin-only" onclick="resetSpoons()" style="font-size:12px;">전체 리셋</button>
+                </div>
+                <div class="grad-controls admin-only">
+                    <input type="text" id="spoonName" class="input-text" placeholder="후원자 닉네임" style="margin:0; width:auto; flex:1;">
+                    <input type="file" id="spoonImage" accept="image/*" style="width:180px;">
+                    <input type="text" id="spoonEmoji" class="input-text" placeholder="또는 이모지" style="width:100px; margin:0;">
+                    <button class="btn btn-admin" onclick="addSpoon()">추가</button>
+                </div>
+                <div class="grad-grid" id="spoonGrid"></div>
+            </div>
+
+            <!-- 2. 흔과 흔둥이의 이야기 (위치 아래로 변경, 탭 이름 변경) -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">💬 흔과 흔둥이의 이야기</div>
@@ -134,21 +157,6 @@
                     <button class="tab-btn" onclick="renderHomeBoard('popular')">🔥 인기글</button>
                 </div>
                 <div id="homeBoardList"></div>
-            </div>
-
-            <!-- 2. 이 스푼을 후원한 사람 (위치 변경됨) -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">🎓 이 스푼을 후원한 사람</div>
-                    <button class="btn btn-outline admin-only" onclick="resetSpoons()" style="font-size:12px;">전체 리셋</button>
-                </div>
-                <div class="grad-controls admin-only">
-                    <input type="text" id="spoonName" class="input-text" placeholder="후원자 닉네임" style="margin:0;">
-                    <input type="file" id="spoonImage" accept="image/*" style="width:180px;">
-                    <input type="text" id="spoonEmoji" class="input-text" placeholder="또는 이모지" style="width:100px; margin:0;">
-                    <button class="btn btn-admin" onclick="addSpoon()">추가</button>
-                </div>
-                <div class="grad-grid" id="spoonGrid"></div>
             </div>
         </div>
 
@@ -172,10 +180,10 @@
                 </div>
                 
                 <div class="admin-only" style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px;">
-                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:10px;">
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:10px;">
                         <input type="date" id="dDate" class="input-text" style="margin:0;">
-                        <input type="number" id="dCount" class="input-text" placeholder="방송횟수 (예: 2)" style="margin:0;">
-                        <input type="text" id="dTime" class="input-text" placeholder="방송시간 (예: 4.5시간)" style="margin:0;">
+                        <input type="number" id="dCount" class="input-text" placeholder="방송횟수(예:2)" style="margin:0;">
+                        <input type="text" id="dTime" class="input-text" placeholder="시간(예:4.5)" style="margin:0;">
                         <input type="number" id="dSpoon" class="input-text" placeholder="받은스푼" style="margin:0;">
                         <input type="number" id="dLike" class="input-text" placeholder="좋아요" style="margin:0;">
                         <input type="number" id="dListen" class="input-text" placeholder="누적 청취자" style="margin:0;">
@@ -183,21 +191,23 @@
                     <button class="btn btn-admin" style="width:100%;" onclick="addBroadcastData()">데이터 기록하기</button>
                 </div>
 
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>날짜</th>
-                            <th>방송횟수</th>
-                            <th>방송시간</th>
-                            <th>받은스푼</th>
-                            <th>좋아요</th>
-                            <th>누적 청취자</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTableBody">
-                        <!-- Data injected here -->
-                    </tbody>
-                </table>
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>방송횟수</th>
+                                <th>방송시간</th>
+                                <th>받은스푼</th>
+                                <th>좋아요</th>
+                                <th>누적 청취자</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- Data injected here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -276,93 +286,182 @@
     </div>
 </div>
 
-<script>
+<!-- FIREBASE SDK (Modular) -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue, push, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    // ======================================================================================
+    // ⚠️ [매우 중요] 여기에 직접 만든 파이어베이스 설정 코드를 덮어쓰기 하세요!
+    // ======================================================================================
+    const firebaseConfig = {
+  apiKey: "AIzaSyBgW_037A_jGXpGTwfGTP-XAo0Y6aXOyAk",
+  authDomain: "heun-ddf64.firebaseapp.com",
+  projectId: "heun-ddf64",
+  storageBucket: "heun-ddf64.firebasestorage.app",
+  messagingSenderId: "588024073214",
+  appId: "1:588024073214:web:4d5f44a48a199032130eaf",
+  measurementId: "G-VVB3D25SD0"
+};
+
+    let app, db;
+    // 파이어베이스가 연결되지 않았을 때 로컬 모드로 작동하게 하는 안전장치
+    let isLocalMode = false;
+
+    try {
+        if(firebaseConfig.apiKey === "YOUR_API_KEY") throw new Error("Firebase Config Empty");
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+    } catch(e) {
+        console.warn("⚠️ 파이어베이스가 아직 연결되지 않아 개인 브라우저(Local) 모드로 작동합니다. 진짜 실시간 공유를 하려면 코드를 수정해 주세요!");
+        isLocalMode = true;
+    }
+
     // --- State Management ---
-    let appState = {
-        users: JSON.parse(localStorage.getItem('heun_users')) || {},
-        spoons: JSON.parse(localStorage.getItem('heun_spoons')) || [],
-        posts: JSON.parse(localStorage.getItem('heun_posts')) || [],
-        bData: JSON.parse(localStorage.getItem('heun_bData')) || [],
+    window.appState = {
+        users: {},
+        spoons: [],
+        posts: [],
+        bData: [],
         currentUser: localStorage.getItem('heun_currentUser') || null
     };
 
-    function saveState() {
-        localStorage.setItem('heun_users', JSON.stringify(appState.users));
-        localStorage.setItem('heun_spoons', JSON.stringify(appState.spoons));
-        localStorage.setItem('heun_posts', JSON.stringify(appState.posts));
-        localStorage.setItem('heun_bData', JSON.stringify(appState.bData));
+    // UI에서 사용하기 위해 함수들을 window 전역 객체에 등록
+    window.switchView = switchView;
+    window.login = login;
+    window.logout = logout;
+    window.checkAttendance = checkAttendance;
+    window.grantAdmin = grantAdmin;
+    window.addSpoon = addSpoon;
+    window.resetSpoons = resetSpoons;
+    window.openWriteModal = openWriteModal;
+    window.closeModal = closeModal;
+    window.submitPost = submitPost;
+    window.renderHomeBoard = renderHomeBoard;
+    window.renderBoard = renderBoard;
+    window.viewPost = viewPost;
+    window.toggleReaction = toggleReaction;
+    window.addBroadcastData = addBroadcastData;
+
+    function setupFirebaseListeners() {
+        if(isLocalMode) {
+            // Local Mode Fallback
+            appState.users = JSON.parse(localStorage.getItem('h_users')) || {};
+            appState.spoons = JSON.parse(localStorage.getItem('h_spoons')) || [];
+            appState.posts = JSON.parse(localStorage.getItem('h_posts')) || [];
+            appState.bData = JSON.parse(localStorage.getItem('h_bdata')) || [];
+            document.getElementById('loadingOverlay').style.display = 'none';
+            initUI();
+            return;
+        }
+
+        // Real DB Listener
+        const dbRef = ref(db, '/');
+        onValue(dbRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            appState.users = data.users || {};
+            
+            // 객체 형태의 데이터를 배열로 변환하고 최신순(timestamp 기준) 정렬
+            appState.posts = data.posts ? Object.values(data.posts).sort((a,b) => b.timestamp - a.timestamp) : [];
+            appState.spoons = data.spoons ? Object.values(data.spoons).sort((a,b) => b.timestamp - a.timestamp) : [];
+            appState.bData = data.bData ? Object.values(data.bData).sort((a,b) => b.timestamp - a.timestamp) : [];
+            
+            document.getElementById('loadingOverlay').style.display = 'none';
+            initUI();
+        }, (error) => {
+            console.error("Firebase read error:", error);
+            alert("데이터베이스 권한 오류! 파이어베이스 규칙을 확인하세요.");
+        });
+
+        // Online Presence Logic
+        const connectedRef = ref(db, '.info/connected');
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true && appState.currentUser) {
+                const userOnlineRef = ref(db, `users/${appState.currentUser}/isOnline`);
+                onDisconnect(userOnlineRef).set(false).then(() => {
+                    set(userOnlineRef, true);
+                });
+            }
+        });
     }
 
-    // --- Level & Tier Logic ---
-    function getLevelInfo(user) {
-        if (!user) return null;
-        if (user.role === 'admin') return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
+    // 데이터 쓰기 헬퍼
+    function dbUpdate(path, data) {
+        if(isLocalMode) {
+            if(path === 'users') appState.users = {...appState.users, ...data};
+            localStorage.setItem('h_users', JSON.stringify(appState.users));
+            localStorage.setItem('h_spoons', JSON.stringify(appState.spoons));
+            localStorage.setItem('h_posts', JSON.stringify(appState.posts));
+            localStorage.setItem('h_bdata', JSON.stringify(appState.bData));
+            initUI();
+        } else {
+            update(ref(db, path), data);
+        }
+    }
+
+    function dbPush(path, data) {
+        if(isLocalMode) {
+            if(path === 'posts') appState.posts.unshift(data);
+            if(path === 'spoons') appState.spoons.unshift(data);
+            if(path === 'bData') appState.bData.unshift(data);
+            dbUpdate('dummy', {}); // trigger save
+        } else {
+            const newRef = push(ref(db, path));
+            data.id = newRef.key;
+            set(newRef, data);
+        }
+    }
+
+    function dbSet(path, data) {
+        if(isLocalMode) dbUpdate('dummy', {});
+        else set(ref(db, path), data);
+    }
+
+    function login() {
+        const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
+        if(!nick || nick.trim() === '') return;
         
-        let lvl = Math.floor(user.points / 10) + 1;
-        if(lvl > 100) lvl = 100;
+        // Check if DB is empty to assign first admin
+        const isFirst = Object.keys(appState.users).length === 0;
         
-        const tiers = [
-            { icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff' },     // 1~10
-            { icon: '☁️', name: '옅은 구름', color: '#bdc3c7', textCol: '#000' },   // 11~20
-            { icon: '⛅', name: '맑은 구름', color: '#3498db', textCol: '#fff' },   // 21~30
-            { icon: '🌥️', name: '뭉게구름', color: '#2980b9', textCol: '#fff' },   // 31~40
-            { icon: '🌦️', name: '여우비 구름', color: '#1abc9c', textCol: '#fff' }, // 41~50
-            { icon: '🌈', name: '무지개 구름', color: '#f1c40f', textCol: '#000' }, // 51~60
-            { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' }, // 61~70
-            { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },   // 71~80
-            { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },   // 81~90
-            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }    // 91~100
-        ];
-        const tierIdx = Math.min(Math.floor((lvl - 1) / 10), 9);
-        return { level: lvl, ...tiers[tierIdx], isAdmin: false };
+        if (!appState.users[nick]) {
+            const newUser = { 
+                role: isFirst ? 'admin' : 'user', 
+                points: 0, 
+                lastAttend: null,
+                isOnline: true
+            };
+            dbUpdate(`users/${nick}`, newUser);
+        } else {
+            dbUpdate(`users/${nick}`, { isOnline: true });
+        }
+        
+        appState.currentUser = nick;
+        localStorage.setItem('heun_currentUser', nick);
+        
+        // Re-trigger presence manually on login
+        if(!isLocalMode) {
+            const userOnlineRef = ref(db, `users/${nick}/isOnline`);
+            onDisconnect(userOnlineRef).set(false);
+            set(userOnlineRef, true);
+        }
+        initUI();
+    }
+
+    function logout() {
+        if(appState.currentUser) {
+            dbUpdate(`users/${appState.currentUser}`, { isOnline: false });
+        }
+        appState.currentUser = null;
+        localStorage.removeItem('heun_currentUser');
+        initUI();
     }
 
     function addPoints(amount) {
         if(!appState.currentUser) return;
         const user = appState.users[appState.currentUser];
         if (user.role === 'admin') return; // Admin gets no points
-        
-        user.points += amount;
-        saveState();
-        renderProfile();
-        renderRanking();
-    }
-
-    // --- Auth System ---
-    function login() {
-        const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
-        if(!nick || nick.trim() === '') return;
-        
-        // First user becomes admin automatically
-        const isFirst = Object.keys(appState.users).length === 0;
-        
-        if (!appState.users[nick]) {
-            appState.users[nick] = { 
-                role: isFirst ? 'admin' : 'user', 
-                points: 0, 
-                lastAttend: null,
-                isOnline: false
-            };
-        }
-        
-        // Set online status
-        Object.keys(appState.users).forEach(k => appState.users[k].isOnline = false); // clear others for local demo
-        appState.users[nick].isOnline = true;
-
-        appState.currentUser = nick;
-        localStorage.setItem('heun_currentUser', nick);
-        saveState();
-        init();
-    }
-
-    function logout() {
-        if(appState.currentUser && appState.users[appState.currentUser]) {
-            appState.users[appState.currentUser].isOnline = false;
-        }
-        appState.currentUser = null;
-        localStorage.removeItem('heun_currentUser');
-        saveState();
-        init();
+        dbUpdate(`users/${appState.currentUser}`, { points: user.points + amount });
     }
 
     function checkAttendance() {
@@ -375,7 +474,7 @@
         if(user.lastAttend === today) {
             alert('오늘은 이미 출석체크 하셨습니다!');
         } else {
-            user.lastAttend = today;
+            dbUpdate(`users/${appState.currentUser}`, { lastAttend: today });
             alert('출석체크 완료! +1점 적립');
             addPoints(1);
         }
@@ -384,17 +483,37 @@
     function grantAdmin() {
         const target = prompt("관리자 권한을 줄 유저 닉네임을 입력하세요:");
         if(target && appState.users[target]) {
-            appState.users[target].role = 'admin';
-            saveState();
+            dbUpdate(`users/${target}`, { role: 'admin' });
             alert(target + '님에게 관리자 권한을 부여했습니다.');
-            renderRanking();
         } else {
-            alert('존재하지 않는 유저입니다. (먼저 로그인을 통해 가입해야 합니다)');
+            alert('존재하지 않는 유저입니다.');
         }
     }
 
-    // --- UI Rendering ---
-    function init() {
+    function getLevelInfo(user) {
+        if (!user) return null;
+        if (user.role === 'admin') return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
+        
+        let lvl = Math.floor(user.points / 10) + 1;
+        if(lvl > 100) lvl = 100;
+        
+        const tiers = [
+            { icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff' },
+            { icon: '☁️', name: '옅은 구름', color: '#bdc3c7', textCol: '#000' },
+            { icon: '⛅', name: '맑은 구름', color: '#3498db', textCol: '#fff' },
+            { icon: '🌥️', name: '뭉게구름', color: '#2980b9', textCol: '#fff' },
+            { icon: '🌦️', name: '여우비 구름', color: '#1abc9c', textCol: '#fff' },
+            { icon: '🌈', name: '무지개 구름', color: '#f1c40f', textCol: '#000' },
+            { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' },
+            { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },
+            { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },
+            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }
+        ];
+        const tierIdx = Math.min(Math.floor((lvl - 1) / 10), 9);
+        return { level: lvl, ...tiers[tierIdx], isAdmin: false };
+    }
+
+    function initUI() {
         renderProfile();
         applyAdminUI();
         renderSpoons();
@@ -423,14 +542,13 @@
         document.querySelectorAll('.admin-only').forEach(el => {
             el.style.display = isAdmin ? 'inline-block' : 'none';
         });
-        // Block non-admins from writing schedule/notice manually if UI fails
     }
 
     function renderProfile() {
         const profileCard = document.getElementById('profileCard');
         const authArea = document.getElementById('authArea');
         
-        if (!appState.currentUser) {
+        if (!appState.currentUser || !appState.users[appState.currentUser]) {
             profileCard.innerHTML = `
                 <h3 style="margin-top:0;">구름 커뮤니티</h3>
                 <p style="font-size: 14px; color: #666;">로그인하고 흔과 소통하세요!</p>
@@ -471,7 +589,6 @@
         }
     }
 
-    // --- Broadcast Data ---
     function addBroadcastData() {
         const date = document.getElementById('dDate').value;
         const count = document.getElementById('dCount').value;
@@ -482,11 +599,11 @@
 
         if(!date) return alert('날짜를 입력하세요.');
 
-        appState.bData.unshift({ id: Date.now(), date, count, time, spoon, like, listen });
-        saveState();
-        renderDataTable();
+        dbPush('bData', {
+            timestamp: Date.now(),
+            date, count, time, spoon, like, listen
+        });
         
-        // Clear
         document.querySelectorAll('#view-data input').forEach(el => el.value = '');
     }
 
@@ -504,7 +621,6 @@
         `).join('') || '<tr><td colspan="6" style="color:#999; padding:20px;">기록된 데이터가 없습니다.</td></tr>';
     }
 
-    // --- Spoons ---
     function addSpoon() {
         const name = document.getElementById('spoonName').value;
         const emoji = document.getElementById('spoonEmoji').value;
@@ -512,19 +628,17 @@
         
         if(!name) return alert('후원자 닉네임을 입력해주세요.');
         
-        const newItem = { id: Date.now(), name, image: null, emoji: emoji || '🥄' };
+        const newItem = { timestamp: Date.now(), name, image: null, emoji: emoji || '🥄' };
         
         if(fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                newItem.image = e.target.result;
-                appState.spoons.unshift(newItem);
-                saveState(); renderSpoons();
+                newItem.image = e.target.result; // Base64 saving (fine for prototyping)
+                dbPush('spoons', newItem);
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            appState.spoons.unshift(newItem);
-            saveState(); renderSpoons();
+            dbPush('spoons', newItem);
         }
         
         document.getElementById('spoonName').value = '';
@@ -533,9 +647,8 @@
     }
 
     function resetSpoons() {
-        if(confirm('모든 스푼 졸업 현황을 초기화하시겠습니까?')) {
-            appState.spoons = [];
-            saveState(); renderSpoons();
+        if(confirm('모든 스푼 후원 현황을 초기화하시겠습니까?')) {
+            dbSet('spoons', {}); // clear all
         }
     }
 
@@ -552,9 +665,9 @@
         `).join('') || '<div style="grid-column:1/-1; text-align:center; color:#999; font-size:14px; padding:20px;">등록된 후원자가 없습니다.</div>';
     }
 
-    // --- Board & Posting System ---
     function isPopular(post) {
-        return post.views >= 30 && (post.likes ? post.likes.length : 0) >= 5;
+        const likesCount = post.likes ? Object.keys(post.likes).length : 0;
+        return (post.views >= 30) && (likesCount >= 5);
     }
 
     function openWriteModal(type) {
@@ -594,15 +707,10 @@
 
         if(type === 'board') {
             const catSel = document.getElementById('postCat');
-            // Trigger check initially
-            if(catSel.value === 'photo' || catSel.value === 'letter') {
-                document.getElementById('photoInputWrap').style.display = 'block';
-            }
             catSel.addEventListener('change', (e) => {
                 document.getElementById('photoInputWrap').style.display = (e.target.value === 'photo' || e.target.value === 'letter') ? 'block' : 'none';
             });
         }
-        
         modal.style.display = 'flex';
     }
 
@@ -619,14 +727,14 @@
         if(formType === 'board') cat = document.getElementById('postCat').value;
 
         const newPost = {
-            id: Date.now(),
+            timestamp: Date.now(),
             category: cat,
             title, content,
             author: appState.currentUser,
             date: new Date().toLocaleString(),
             views: 0,
-            likes: [],
-            dislikes: [],
+            likes: {}, // Object for Firebase compatibility
+            dislikes: {},
             image: null
         };
 
@@ -635,31 +743,22 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 newPost.image = e.target.result;
-                finalizePost(newPost, cat);
+                dbPush('posts', newPost);
+                closeModal();
+                addPoints(1);
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            finalizePost(newPost, cat);
+            dbPush('posts', newPost);
+            closeModal();
+            addPoints(1);
         }
     }
 
-    function finalizePost(post, cat) {
-        appState.posts.unshift(post);
-        saveState();
-        closeModal();
-        
-        // Add Points
-        addPoints(1);
-
-        init();
-        alert('등록 완료! (+1점 적립)');
-    }
-
     function renderHomeBoard(filterStr) {
-        // Tab UI styling
         const tabs = document.querySelectorAll('#view-home .tab-btn');
         tabs.forEach(t => t.classList.remove('active'));
-        event?.currentTarget?.classList?.add('active');
+        if(event && event.currentTarget) event.currentTarget.classList.add('active');
 
         const list = document.getElementById('homeBoardList');
         let boardPosts = appState.posts.filter(p => ['review', 'photo', 'letter'].includes(p.category));
@@ -671,12 +770,13 @@
             filtered = boardPosts.filter(p => !isPopular(p));
         }
 
-        list.innerHTML = filtered.slice(0, 6).map(p => {
+        list.innerHTML = filtered.slice(0, 5).map(p => {
             let badge = isPopular(p) ? '<span class="badge popular">인기</span>' : '<span class="badge normal">일반</span>';
+            const likesCount = p.likes ? Object.keys(p.likes).length : 0;
             return `
-            <div class="list-item" onclick="viewPost(${p.id})">
+            <div class="list-item" onclick="viewPost('${p.id}')">
                 <div style="flex:1;">${badge} ${p.title}</div>
-                <div style="color:#999; font-size:12px;">👁️ ${p.views} | ❤️ ${p.likes ? p.likes.length : 0}</div>
+                <div style="color:#999; font-size:12px;">👁️ ${p.views || 0} | ❤️ ${likesCount}</div>
             </div>`;
         }).join('') || '<p style="text-align:center; color:#999; padding:20px;">게시글이 없습니다.</p>';
     }
@@ -697,74 +797,76 @@
         list.innerHTML = filtered.map(p => {
             let catName = { review:'후기', photo:'사진', letter:'박제편지' }[p.category];
             let popBadge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '';
+            const likesCount = p.likes ? Object.keys(p.likes).length : 0;
             return `
-                <div class="list-item" onclick="viewPost(${p.id})">
-                    <div><span class="badge normal">${catName}</span> ${popBadge} ${p.title}</div>
+                <div class="list-item" onclick="viewPost('${p.id}')">
+                    <div style="flex:1;"><span class="badge normal">${catName}</span> ${popBadge} ${p.title}</div>
                     <div style="color:#999; font-size:12px; display:flex; gap:12px;">
                         <span>👤 ${p.author}</span>
-                        <span>👁️ ${p.views}</span>
-                        <span>❤️ ${p.likes ? p.likes.length : 0}</span>
+                        <span>👁️ ${p.views || 0}</span>
+                        <span>❤️ ${likesCount}</span>
                     </div>
                 </div>
             `;
         }).join('') || '<p style="text-align:center; color:#999; padding:40px 0;">게시글이 없습니다.</p>';
     }
 
-    // View Post and Analytics (Views/Likes)
     function viewPost(id) {
-        const post = appState.posts.find(p => p.id === id);
+        const post = appState.posts.find(p => p.id === id || p.id == id);
         if(!post) return;
         
-        // Increase view count
-        post.views = (post.views || 0) + 1;
-        saveState();
+        // Increase view count in Firebase directly
+        const newViews = (post.views || 0) + 1;
+        if(!isLocalMode) {
+            update(ref(db, `posts/${post.id}`), { views: newViews });
+        } else {
+            post.views = newViews; // Local fallback
+            dbUpdate('dummy',{});
+        }
         
-        // Refresh underlying lists so view count updates visually behind modal
-        renderHomeBoard('all'); 
-        renderBoard('all', null);
-
-        updatePostModalContent(post);
+        updatePostModalContent(post, newViews);
         document.getElementById('mainModal').style.display = 'flex';
     }
 
-    function updatePostModalContent(post) {
+    function updatePostModalContent(post, overrideViews) {
         const mBody = document.getElementById('modalBody');
         document.getElementById('modalTitle').innerText = '게시글 보기';
         
-        if(!post.likes) post.likes = [];
-        if(!post.dislikes) post.dislikes = [];
+        const likesArr = post.likes ? Object.keys(post.likes) : [];
+        const dislikesArr = post.dislikes ? Object.keys(post.dislikes) : [];
 
         const currUser = appState.currentUser;
-        const hasLiked = currUser && post.likes.includes(currUser);
-        const hasDisliked = currUser && post.dislikes.includes(currUser);
+        const hasLiked = currUser && likesArr.includes(currUser);
+        const hasDisliked = currUser && dislikesArr.includes(currUser);
+        const viewCount = overrideViews !== undefined ? overrideViews : (post.views || 0);
 
         mBody.innerHTML = `
             <h4 style="margin:0 0 10px 0; font-size:20px;">${post.title}</h4>
-            <div style="font-size:13px; color:#888; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #eee; display:flex; gap:15px;">
+            <div style="font-size:13px; color:#888; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #eee; display:flex; gap:15px; flex-wrap:wrap;">
                 <span>작성자: ${post.author}</span>
                 <span>작성일: ${post.date}</span>
-                <span>조회수: ${post.views}</span>
+                <span>조회수: ${viewCount}</span>
             </div>
             
-            <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px;">${post.content}</div>
+            <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px; word-break: break-all;">${post.content}</div>
             ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : ''}
             
             <div style="text-align:center; padding: 20px 0; border-top:1px dashed #ddd; margin-top:20px;">
-                <button class="reaction-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction(${post.id}, 'like')">
-                    👍 좋아요 ${post.likes.length}
+                <button class="reaction-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction('${post.id}', 'like')">
+                    👍 좋아요 ${likesArr.length}
                 </button>
-                <button class="reaction-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction(${post.id}, 'dislike')">
-                    👎 싫어요 ${post.dislikes.length}
+                <button class="reaction-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction('${post.id}', 'dislike')">
+                    👎 싫어요 ${dislikesArr.length}
                 </button>
                 
-                <div style="display:flex; justify-content:center; gap:30px;">
-                    <div class="reaction-list-text">
+                <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:15px;">
+                    <div class="reaction-list-text" style="flex:1; min-width:120px;">
                         <strong>좋아요 누른 사람:</strong><br>
-                        ${post.likes.length > 0 ? post.likes.join(', ') : '없음'}
+                        ${likesArr.length > 0 ? likesArr.join(', ') : '없음'}
                     </div>
-                    <div class="reaction-list-text">
+                    <div class="reaction-list-text" style="flex:1; min-width:120px;">
                         <strong>싫어요 누른 사람:</strong><br>
-                        ${post.dislikes.length > 0 ? post.dislikes.join(', ') : '없음'}
+                        ${dislikesArr.length > 0 ? dislikesArr.join(', ') : '없음'}
                     </div>
                 </div>
             </div>
@@ -775,41 +877,34 @@
 
     function toggleReaction(postId, type) {
         if(!appState.currentUser) return alert('로그인이 필요합니다.');
-        const post = appState.posts.find(p => p.id === postId);
+        const post = appState.posts.find(p => p.id === postId || p.id == postId);
         const user = appState.currentUser;
         
-        if(!post.likes) post.likes = [];
-        if(!post.dislikes) post.dislikes = [];
+        let likes = post.likes ? {...post.likes} : {};
+        let dislikes = post.dislikes ? {...post.dislikes} : {};
 
         if(type === 'like') {
-            if(post.likes.includes(user)) {
-                post.likes = post.likes.filter(u => u !== user); // Cancel like
-            } else {
-                post.likes.push(user); // Add like
-                post.dislikes = post.dislikes.filter(u => u !== user); // Remove dislike if exists
-            }
+            if(likes[user]) { delete likes[user]; } 
+            else { likes[user] = true; delete dislikes[user]; }
         } else {
-            if(post.dislikes.includes(user)) {
-                post.dislikes = post.dislikes.filter(u => u !== user); // Cancel dislike
-            } else {
-                post.dislikes.push(user); // Add dislike
-                post.likes = post.likes.filter(u => u !== user); // Remove like if exists
-            }
+            if(dislikes[user]) { delete dislikes[user]; } 
+            else { dislikes[user] = true; delete likes[user]; }
         }
         
-        saveState();
-        updatePostModalContent(post); // Refresh modal content directly
-        
-        // Refresh background lists in case popularity changed
-        renderHomeBoard('all'); 
-        renderBoard('all', null);
+        if(!isLocalMode) {
+            update(ref(db, `posts/${post.id}`), { likes, dislikes });
+        } else {
+            post.likes = likes; post.dislikes = dislikes;
+            dbUpdate('dummy',{});
+            updatePostModalContent(post);
+        }
     }
 
     function renderSchedule() {
         const sch = appState.posts.filter(p => p.category === 'schedule');
         const cont = document.getElementById('scheduleList');
         cont.innerHTML = sch.map(p => `
-            <div class="list-item" onclick="viewPost(${p.id})">
+            <div class="list-item" onclick="viewPost('${p.id}')">
                 <div style="font-weight:bold;">🕒 ${p.title}</div>
                 <div style="color:#888; font-size:13px;">${p.date.split(' ')[0]}</div>
             </div>
@@ -817,11 +912,11 @@
     }
 
     function renderNotice() {
-        const noti = appState.posts.filter(p => p.category === 'notice')[0]; // Show latest
+        const noti = appState.posts.filter(p => p.category === 'notice')[0]; 
         const cont = document.getElementById('noticeList');
         if(noti) {
             cont.innerHTML = `
-                <div style="font-weight:bold; margin-bottom:8px; cursor:pointer; color:#d63031;" onclick="viewPost(${noti.id})">🚨 ${noti.title}</div>
+                <div style="font-weight:bold; margin-bottom:8px; cursor:pointer; color:#d63031;" onclick="viewPost('${noti.id}')">🚨 ${noti.title}</div>
                 <div style="color:#555; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${noti.content}</div>
                 <div style="font-size:11px; color:#aaa; margin-top:8px;">${noti.date}</div>
             `;
@@ -830,14 +925,13 @@
         }
     }
 
-    // --- Ranking & Online ---
     function renderRanking() {
-        // Exclude admin from ranking array completely
+        // Admin gets filtered entirely out of the ranking calculation
         const arr = Object.entries(appState.users)
             .filter(([nick, data]) => data.role !== 'admin')
             .map(([nick, data]) => ({ nick, ...data }));
             
-        arr.sort((a, b) => b.points - a.points); // Sort by points desc
+        arr.sort((a, b) => b.points - a.points); 
         
         const cont = document.getElementById('rankingList');
         cont.innerHTML = arr.map((u, i) => {
@@ -863,7 +957,6 @@
         const cont = document.getElementById('onlineUsers');
         let onlineHtml = '';
         
-        // Get users marked as online
         const onlineUsers = Object.keys(appState.users).filter(k => appState.users[k].isOnline);
         
         onlineUsers.forEach(nick => {
@@ -880,8 +973,8 @@
         cont.innerHTML = onlineHtml || '<div style="color:#999;">현재 접속 중인 구름이가 없습니다.</div>';
     }
 
-    // Init App
-    init();
+    // Start DB Connection
+    setupFirebaseListeners();
 </script>
 
 </body>
