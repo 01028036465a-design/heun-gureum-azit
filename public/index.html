@@ -295,15 +295,15 @@
     // ⚠️ [매우 중요] 여기에 직접 만든 파이어베이스 설정 코드를 덮어쓰기 하세요!
     // ======================================================================================
     const firebaseConfig = {
-  apiKey: "AIzaSyBgW_037A_jGXpGTwfGTP-XAo0Y6aXOyAk",
-  authDomain: "heun-ddf64.firebaseapp.com",
-  databaseURL: "https://heun-ddf64-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "heun-ddf64",
-  storageBucket: "heun-ddf64.firebasestorage.app",
-  messagingSenderId: "588024073214",
-  appId: "1:588024073214:web:4d5f44a48a199032130eaf",
-  measurementId: "G-VVB3D25SD0"
-};
+        apiKey: "AIzaSyBgW_037A_jGXpGTwfGTP-XAo0Y6aXOyAk",
+        authDomain: "heun-ddf64.firebaseapp.com",
+        databaseURL: "https://heun-ddf64-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "heun-ddf64",
+        storageBucket: "heun-ddf64.firebasestorage.app",
+        messagingSenderId: "588024073214",
+        appId: "1:588024073214:web:4d5f44a48a199032130eaf",
+        measurementId: "G-VVB3D25SD0"
+    };
 
     let app, db;
     // 파이어베이스가 연결되지 않았을 때 로컬 모드로 작동하게 하는 안전장치
@@ -424,17 +424,33 @@
         
         // Check if DB is empty to assign first admin
         const isFirst = Object.keys(appState.users).length === 0;
+        const isMaster = (nick === '흔'); // '흔' 닉네임은 무조건 관리자 보장
         
         if (!appState.users[nick]) {
             const newUser = { 
-                role: isFirst ? 'admin' : 'user', 
+                role: (isFirst || isMaster) ? 'admin' : 'user', 
                 points: 0, 
                 lastAttend: null,
                 isOnline: true
             };
+            appState.users[nick] = newUser; // undefined 방지를 위해 화면에 즉시 임시 반영
             dbUpdate(`users/${nick}`, newUser);
         } else {
-            dbUpdate(`users/${nick}`, { isOnline: true });
+            // 기존 유저의 데이터가 누락되었을 경우를 대비한 안전장치
+            appState.users[nick].isOnline = true;
+            if(appState.users[nick].points === undefined) appState.users[nick].points = 0;
+            
+            // 만약 '흔'으로 접속했는데 권한이 꼬였다면 강제 복구
+            if(isMaster && appState.users[nick].role !== 'admin') {
+                appState.users[nick].role = 'admin';
+            } else if(!appState.users[nick].role) {
+                appState.users[nick].role = 'user';
+            }
+            
+            dbUpdate(`users/${nick}`, { 
+                isOnline: true,
+                role: appState.users[nick].role
+            });
         }
         
         appState.currentUser = nick;
@@ -462,7 +478,9 @@
         if(!appState.currentUser) return;
         const user = appState.users[appState.currentUser];
         if (user.role === 'admin') return; // Admin gets no points
-        dbUpdate(`users/${appState.currentUser}`, { points: user.points + amount });
+        
+        const currentPoints = user.points || 0; // 안전장치
+        dbUpdate(`users/${appState.currentUser}`, { points: currentPoints + amount });
     }
 
     function checkAttendance() {
@@ -493,9 +511,13 @@
 
     function getLevelInfo(user) {
         if (!user) return null;
-        if (user.role === 'admin') return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
         
-        let lvl = Math.floor(user.points / 10) + 1;
+        const role = user.role || 'user';
+        const points = user.points || 0; // 안전장치
+        
+        if (role === 'admin') return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
+        
+        let lvl = Math.floor(points / 10) + 1;
         if(lvl > 100) lvl = 100;
         
         const tiers = [
@@ -508,8 +530,8 @@
             { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' },
             { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },
             { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },
-            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }
-        ];
+    function getLevelInfo(user) {
+// ... existing code ... //
         const tierIdx = Math.min(Math.floor((lvl - 1) / 10), 9);
         return { level: lvl, ...tiers[tierIdx], isAdmin: false };
     }
@@ -560,6 +582,7 @@
 
         const user = appState.users[appState.currentUser];
         const info = getLevelInfo(user);
+        const points = user.points || 0; // 안전장치
         
         authArea.innerHTML = `<span style="font-weight:bold; margin-right:15px;">${info.icon} ${appState.currentUser}님</span> <button class="btn btn-outline" onclick="logout()">로그아웃</button>`;
         
@@ -573,15 +596,15 @@
                 <button class="btn btn-admin" style="width:100%; margin-top:10px;" onclick="grantAdmin()">+ 관리자 권한 부여</button>
             `;
         } else {
-            const progressPercent = (user.points % 10) * 10;
+            const progressPercent = (points % 10) * 10;
             profileCard.innerHTML = `
                 <div class="level-badge" style="background:${info.color}; color:${info.textCol};">
                     ${info.icon} ${info.name} (Lv.${info.level})
                 </div>
                 <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
-                <p style="font-size:12px; color:#888; margin:0;">총 누적 포인트: ${user.points} P</p>
+                <p style="font-size:12px; color:#888; margin:0;">총 누적 포인트: ${points} P</p>
                 
-                <div class="progress-container" title="다음 레벨까지 ${10 - (user.points%10)}점 남음">
+                <div class="progress-container" title="다음 레벨까지 ${10 - (points%10)}점 남음">
                     <div class="progress-bar" style="width: ${progressPercent}%;"></div>
                 </div>
                 
@@ -930,7 +953,7 @@
         // Admin gets filtered entirely out of the ranking calculation
         const arr = Object.entries(appState.users)
             .filter(([nick, data]) => data.role !== 'admin')
-            .map(([nick, data]) => ({ nick, ...data }));
+            .map(([nick, data]) => ({ nick, points: data.points || 0, ...data })); // undefined 방지
             
         arr.sort((a, b) => b.points - a.points); 
         
