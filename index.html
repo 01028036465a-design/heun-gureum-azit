@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEUN & GUREUM 하늘 아지트</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #ebf4fa; --side-bg: #b0d4de; --card-bg: #ffffff;
+            --text-main: #2c3e50; --text-muted: #7f8c8d; --accent-color: #3498db;
+            --admin-color: #e74c3c; --border-color: #d2e6ed;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+        aside { width: 260px; background-color: var(--side-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 10; }
+        .logo-area { padding: 25px; font-size: 20px; font-weight: 700; text-align: center; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.3); }
+        .nav-menu { padding: 20px 10px; flex-grow: 1; overflow-y: auto; }
+        .menu-category { font-size: 11px; color: #5d6d7e; font-weight: 700; padding-left: 15px; margin-top: 15px; margin-bottom: 5px; }
+        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: #4a5f70; border-radius: 8px; margin-bottom: 4px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .nav-item i { margin-right: 12px; width: 18px; text-align: center; }
+        .nav-item:hover, .nav-item.active { background-color: rgba(255, 255, 255, 0.5); color: var(--text-main); font-weight: 500; }
+        .nav-item.active { border-left: 4px solid var(--accent-color); background-color: var(--card-bg); }
+        main { margin-left: 260px; flex-grow: 1; padding: 30px; max-width: 1200px; width: calc(100% - 260px); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .spoon-live-btn { background-color: var(--accent-color); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .user-info-bar { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .login-btn, .logout-btn { background-color: var(--card-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; }
+        .login-btn:hover { background-color: var(--accent-color); color: white; }
+        .admin-badge { background-color: var(--admin-color); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        .card { background-color: var(--card-bg); border-radius: 12px; padding: 22px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(160, 190, 210, 0.15); border: 1px solid rgba(255,255,255,0.7); }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; color: var(--accent-color); display: flex; justify-content: space-between; align-items: center; }
+        .post-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .post-table th, .post-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-color); }
+        .delete-btn { color: var(--admin-color); cursor: pointer; border: none; background: none; font-size: 12px; margin-left: 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; }
+        .btn-block { width: 100%; padding: 10px; background: var(--accent-color); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .online-dot { width: 8px; height: 8px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo-area">☁️ HEUN & GUREUM</div>
+        <div class="nav-menu">
+            <div class="menu-category">Home</div>
+            <div class="nav-item active" onclick="switchPage('home')"><i class="fa-solid fa-house"></i> 아지트 홈</div>
+            <div class="menu-category">Notice</div>
+            <div class="nav-item" onclick="switchPage('notice')"><i class="fa-solid fa-bullhorn"></i> 흔 공지사항</div>
+            <div class="nav-item" onclick="switchPage('calendar')"><i class="fa-solid fa-calendar-days"></i> 방송 달력/일정</div>
+            <div class="menu-category">Community</div>
+            <div class="nav-item" onclick="switchPage('free')"><i class="fa-solid fa-comments"></i> 구름 자유게시판</div>
+            <div class="nav-item" onclick="switchPage('request')"><i class="fa-solid fa-music"></i> 사연 & 신청곡</div>
+            <div class="nav-item" onclick="switchPage('secret')"><i class="fa-solid fa-envelope-open-text"></i> 비밀 상소문</div>
+            <div class="menu-category">Playground</div>
+            <div class="nav-item" onclick="switchPage('game')"><i class="fa-solid fa-gamepad"></i> 🕹️ 미니게임 놀이터</div>
+            <div class="nav-item" onclick="switchPage('stock')"><i class="fa-solid fa-chart-line"></i> 📈 가상 주식 거래소</div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="top-bar">
+            <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="spoon-live-btn"><i class="fa-solid fa-radio"></i> 흔 방송국 바로가기</a>
+            <div class="user-info-bar" id="auth-area">
+                <button class="login-btn" onclick="openModal('login-modal')">스푼 로그인</button>
+            </div>
+        </div>
+
+        <div id="page-home" class="page-content active">
+            <div class="dashboard-grid">
+                <div>
+                    <div class="card">
+                        <div class="card-title">📢 방송 메인 공지</div>
+                        <div id="main-notice-box" style="font-size:14px;">등록된 공지가 없습니다.</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🟢 실시간 아지트 접속 유저</div>
+                        <div id="online-users-box" style="font-size:14px; color:var(--text-main); line-height:1.8;">로그인하면 목록에 표시됩니다.</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 50px; color: var(--accent-color);">☁️</div>
+                        <h3 style="margin: 10px 0;">BJ 흔 (Heun)</h3>
+                        <button class="btn-block" id="checkin-btn" onclick="submitAttendance()">📆 출석체크 하고 500P 받기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-notice" class="page-content">
+            <div class="card"><div class="card-title">공지방 <button id="w-NOTICE" class="login-btn" style="display:none;" onclick="openWriteForm('NOTICE')">글쓰기</button></div><table class="post-table"><tbody id="list-NOTICE"></tbody></table></div>
+        </div>
+        <div id="page-calendar" class="page-content">
+            <div class="card"><div class="card-title">방송 일정표 <button id="w-CALENDAR" class="login-btn" style="display:none;" onclick="openWriteForm('CALENDAR')">추가</button></div><table class="post-table"><tbody id="list-CALENDAR"></tbody></table></div>
+        </div>
+        <div id="page-free" class="page-content">
+            <div class="card"><div class="card-title">자유게시판 <button class="login-btn" onclick="openWriteForm('FREE')">글쓰기</button></div><table class="post-table"><tbody id="list-FREE"></tbody></table></div>
+        </div>
+        <div id="page-request" class="page-content">
+            <div class="card"><div class="card-title">사연 & 신청곡 <button class="login-btn" onclick="openWriteForm('REQUEST')">작성</button></div><table class="post-table"><tbody id="list-REQUEST"></tbody></table></div>
+        </div>
+        <div id="page-secret" class="page-content">
+            <div class="card"><div class="card-title">비밀 상소문 건의함 <button class="login-btn" onclick="openWriteForm('SECRET')">작성</button></div><table class="post-table"><tbody id="list-SECRET"></tbody></table></div>
+        </div>
+
+        <div id="page-game" class="page-content">
+            <div class="card">
+                <div class="card-title">🕹️ 포인트 가위바위보 (판당 100P 지급/차감)</div>
+                <p style="margin-bottom:15px; font-size:14px; color:var(--text-muted);">흔님과 가위바위보 한판 승부! 이기면 100P를 얻고 지면 차감됩니다.</p>
+                <div style="display:flex; gap:10px;">
+                    <button class="login-btn" onclick="playRPS('rock')">✊ 바위 내기</button>
+                    <button class="login-btn" onclick="playRPS('paper')">🖐️ 보 내기</button>
+                    <button class="login-btn" onclick="playRPS('scissors')">✌️ 가위 내기</button>
+                </div>
+                <h4 id="game-result" style="margin-top:20px; color:var(--accent-color);"></h4>
+            </div>
+        </div>
+
+        <div id="page-stock" class="page-content">
+            <div class="card">
+                <div class="card-title">📈 구름 가상 주식 거래소 (10분마다 주가 변동)</div>
+                <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px;">
+                    <h3 style="color:var(--accent-color);" id="stock-market-price">종목: 구름반도체(GURM) | 현재가: 조회 중...</h3>
+                </div>
+                <div style="font-size:14px; line-height:2; margin-bottom:15px;">
+                    <p id="my-stock-shares">내 보유 주식: 0 주</p>
+                    <p id="my-stock-avg">내 평단가: 0 포인트</p>
+                </div>
+                <div class="form-group">
+                    <label>거래 수량 지정 (주)</label>
+                    <input type="number" id="stock-amount" class="form-control" value="1" min="1" style="width:120px;">
+                </div>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button class="login-btn" style="background:#e74c3c; color:white;" onclick="tradeStock('BUY')">시장가 매수</button>
+                    <button class="login-btn" style="background:#2ecc71; color:white;" onclick="tradeStock('SELL')">시장가 매도</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="login-modal" class="modal"><div class="modal-content"><h3>스푼 계정 로그인</h3><div class="form-group"><label>스푼 고유 ID ('heun' 입력 시 관리자)</label><input type="text" id="s-id" class="form-control"></div><div class="form-group"><label>닉네임</label><input type="text" id="s-nick" class="form-control"></div><button class="btn-block" onclick="submitLogin()">입장</button></div></div>
+    <div id="write-modal" class="modal"><div class="modal-content"><h3>글 작성</h3><input type="hidden" id="w-type"><div class="form-group"><label>제목</label><input type="text" id="w-title" class="form-control"></div><div class="form-group"><label>내용</label><textarea id="w-content" class="form-control" rows="5"></textarea></div><button class="btn-block" onclick="submitPost()">등록</button><button class="btn-block" style="background:#ccc;margin-top:5px;" onclick="closeModal('write-modal')">취소</button></div></div>
+
+    <script>
+        let currentUser = null;
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if(pageId !== 'home' && pageId !== 'game' && pageId !== 'stock') loadPosts(pageId.toUpperCase());
+            if(pageId === 'stock') loadStockStatus();
+        }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function checkSession() {
+            fetch('/api/session').then(res => res.json()).then(user => {
+                currentUser = user; const area = document.getElementById('auth-area');
+                if (user) {
+                    area.innerHTML = `<span><strong>${user.nickname}</strong>님 (보유: <span style="color:var(--accent-color);font-weight:700;">${user.points}P</span>)</span> <button class="logout-btn" onclick="submitLogout()">로그아웃</button>`;
+                    if(user.role === 'ADMIN') { document.getElementById('w-NOTICE').style.display='block'; document.getElementById('w-CALENDAR').style.display='block'; }
+                } else {
+                    area.innerHTML = `<button class="login-btn" onclick="openModal('login-modal')">스푼 로그인</button>`;
+                }
+                loadOnlineMembers();
+            });
+        }
+        function submitLogin() {
+            const spoon_id = document.getElementById('s-id').value; const nickname = document.getElementById('s-nick').value;
+            fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ spoon_id, nickname }) }).then(res => res.json()).then(() => { closeModal('login-modal'); checkSession(); });
+        }
+        function submitLogout() { fetch('/api/logout', {method: 'POST'}).then(() => checkSession()); }
+        
+        function submitAttendance() {
+            fetch('/api/attendance', {method: 'POST'}).then(res => {
+                if(res.ok) { res.json().then(d => alert(d.message)); checkSession(); }
+                else res.text().then(t => alert(t));
+            });
+        }
+        function playRPS(choice) {
+            fetch('/api/game/rps', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ userChoice: choice }) }).then(res => {
+                if(!res.ok) return res.text().then(t => alert(t));
+                res.json().then(d => {
+                    const map = {rock:'✊ 바위', paper:'🖐️ 보', scissors:'✌️ 가위'};
+                    document.getElementById('game-result').innerText = `결과: ${d.result === 'win' ? '🎉 이겼습니다! (+100P)' : d.result === 'lose' ? '😭 졌습니다... (-100P)' : '🤝 비겼습니다.'} (상대: ${map[d.botChoice]})`;
+                    checkSession();
+                });
+            });
+        }
+        function loadStockStatus() {
+            fetch('/api/stock/status').then(res => res.json()).then(d => {
+                document.getElementById('stock-market-price').innerText = `종목: 구름반도체(GURM) | 현재가: ${d.market.current_price} 포인트`;
+                document.getElementById('my-stock-shares').innerText = `내 보유 주식: ${d.wallet.shares} 주`;
+                document.getElementById('my-stock-avg').innerText = `내 평단가: ${d.wallet.avg_price} 포인트`;
+            });
+        }
+        function tradeStock(action) {
+            const amount = parseInt(document.getElementById('stock-amount').value);
+            fetch('/api/stock/trade', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action, amount }) }).then(res => {
+                if(res.ok) { loadStockStatus(); checkSession(); alert('거래 완료!'); }
+                else res.text().then(t => alert(t));
+            });
+        }
+        function loadOnlineMembers() {
+            fetch('/api/online-members').then(res => res.json()).then(list => {
+                const box = document.getElementById('online-users-box');
+                if(list.length === 0) { box.innerHTML = "현재 접속 중인 멤버가 없습니다."; return; }
+                box.innerHTML = list.map(m => `<span style="margin-right:15px;"><span class="online-dot"></span>${m}</span>`).join('');
+            });
+        }
+        function openWriteForm(t) { if(!currentUser) return alert('로그인 필요'); document.getElementById('w-type').value=t; openModal('write-modal'); }
+        function submitPost() {
+            const type = document.getElementById('w-type').value;
+            fetch(`/api/posts/${type}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ title: document.getElementById('w-title').value, content: document.getElementById('w-content').value }) }).then(() => { closeModal('write-modal'); loadPosts(type); });
+        }
+        function loadPosts(type) {
+            fetch(`/api/posts/${type}`).then(res => res.json()).then(data => {
+                const tbody = document.getElementById(`list-${type}`); tbody.innerHTML = '';
+                data.forEach(p => {
+                    let del = currentUser && (currentUser.role === 'ADMIN' || currentUser.nickname === p.writer) ? `<button class="delete-btn" onclick="deletePost(${p.id},'${type}')">❌</button>` : '';
+                    tbody.innerHTML += `<tr><td><strong>${p.title}</strong><br><small style="color:var(--text-muted)">${p.content} (${p.writer})</small></td><td>${p.date}</td><td>${del}</td></tr>`;
+                });
+            });
+        }
+        function deletePost(id, type) { if(confirm('삭제하시겠습니까?')) fetch(`/api/posts/${id}`, {method:'DELETE'}).then(() => loadPosts(type)); }
+        setInterval(loadOnlineMembers, 10000); // 10초마다 접속자 리스트 갱신
+        window.onload = checkSession;
+    </script>
+</body>
+</html>
