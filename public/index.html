@@ -3,239 +3,886 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEUN & GUREUM 하늘 아지트</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Spoon Radio x 흔과 흔둥이 커뮤니티</title>
     <style>
+        /* Base & Reset */
         :root {
-            --bg-color: #ebf4fa; --side-bg: #b0d4de; --card-bg: #ffffff;
-            --text-main: #2c3e50; --text-muted: #7f8c8d; --accent-color: #3498db;
-            --admin-color: #e74c3c; --border-color: #d2e6ed;
+            --primary: #ffab00;
+            --primary-dark: #e69a00;
+            --bg-color: #f4f6f8;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --card-bg: #ffffff;
+            --admin-color: #9b59b6;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
-        a { color: inherit; text-decoration: none; }
-        aside { width: 260px; background-color: var(--side-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 10; }
-        .logo-area { padding: 25px; font-size: 20px; font-weight: 700; text-align: center; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.3); }
-        .nav-menu { padding: 20px 10px; flex-grow: 1; overflow-y: auto; }
-        .menu-category { font-size: 11px; color: #5d6d7e; font-weight: 700; padding-left: 15px; margin-top: 15px; margin-bottom: 5px; }
-        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: #4a5f70; border-radius: 8px; margin-bottom: 4px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
-        .nav-item i { margin-right: 12px; width: 18px; text-align: center; }
-        .nav-item:hover, .nav-item.active { background-color: rgba(255, 255, 255, 0.5); color: var(--text-main); font-weight: 500; }
-        .nav-item.active { border-left: 4px solid var(--accent-color); background-color: var(--card-bg); }
-        main { margin-left: 260px; flex-grow: 1; padding: 30px; max-width: 1200px; width: calc(100% - 260px); }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .spoon-live-btn { background-color: var(--accent-color); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .user-info-bar { display: flex; align-items: center; gap: 15px; font-size: 14px; }
-        .login-btn, .logout-btn { background-color: var(--card-bg); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; }
-        .login-btn:hover { background-color: var(--accent-color); color: white; }
-        .admin-badge { background-color: var(--admin-color); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
-        .card { background-color: var(--card-bg); border-radius: 12px; padding: 22px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(160, 190, 210, 0.15); border: 1px solid rgba(255,255,255,0.7); }
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; color: var(--accent-color); display: flex; justify-content: space-between; align-items: center; }
-        .post-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        .post-table th, .post-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-color); }
-        .delete-btn { color: var(--admin-color); cursor: pointer; border: none; background: none; font-size: 12px; margin-left: 10px; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 400px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; }
-        .btn-block { width: 100%; padding: 10px; background: var(--accent-color); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
-        .page-content { display: none; }
-        .page-content.active { display: block; }
-        .online-dot { width: 8px; height: 8px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: var(--bg-color); color: var(--text-main); }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        button { cursor: pointer; font-family: inherit; }
+        
+        /* Layout */
+        .header { background: var(--card-bg); border-bottom: 1px solid #e1e5e8; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; }
+        .logo span { color: #333; }
+        .menu-links { display: flex; gap: 25px; font-weight: 600; font-size: 15px; }
+        .menu-links li { cursor: pointer; padding: 5px 0; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .menu-links li:hover, .menu-links li.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 8fr 4fr; gap: 30px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        
+        /* Buttons & Inputs */
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { border: 1px solid #ddd; background: white; color: #333; }
+        .btn-outline:hover { background: #f5f5f5; }
+        .btn-admin { background: var(--admin-color); color: white; }
+        .input-text { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
+        
+        /* Profile & Level Bar */
+        .profile-area { text-align: center; }
+        .level-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+        .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; position: relative; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #ffab00, #ff8c00); transition: width 0.5s; }
+        
+        /* Spoons Area */
+        .grad-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .grad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
+        .grad-item { text-align: center; background:#f9f9f9; padding:15px 10px; border-radius:12px; border:1px solid #eee;}
+        .grad-img-wrap { width: 60px; height: 60px; background: #fff8e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; overflow: hidden; border: 1px solid #ffe082;}
+        .grad-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .grad-name { font-size: 13px; font-weight: 600; color: #333; }
+        .grad-label { font-size: 11px; color: #888; margin-bottom: 5px; }
+
+        /* Board & Lists */
+        .board-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; background: white; font-size: 14px; cursor: pointer; }
+        .tab-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
+        .list-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .list-item:hover { background: #fdfdfd; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px; }
+        .badge.popular { background: #ff4757; color: white; }
+        .badge.normal { background: #f1f2f6; color: #57606f; }
+
+        /* Links & Banner */
+        .channel-link { display: block; background: linear-gradient(135deg, #1e90ff, #70a1ff); color: white; text-align: center; padding: 20px; border-radius: 16px; font-weight: bold; font-size: 18px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(30,144,255,0.3); }
+        .channel-link:hover { transform: translateY(-3px); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+        .modal-content textarea { width: 100%; height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: none; font-family: inherit;}
+        
+        /* Data Table */
+        .data-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid #eee; }
+        .data-table th { background: #f8f9fa; font-weight: bold; color: #555; }
+
+        .admin-only { display: none; }
+        
+        /* Reaction Buttons */
+        .reaction-btn { padding: 8px 15px; border-radius: 20px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;}
+        .reaction-btn.active-like { background: #ffeaa7; border-color: #fdcb6e; color: #d63031; }
+        .reaction-btn.active-dislike { background: #dfe6e9; border-color: #b2bec3; color: #2d3436; }
+        
+        .reaction-list-text { font-size: 12px; color: #888; margin-top: 10px; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-    <aside>
-        <div class="logo-area">☁️ HEUN & GUREUM</div>
-        <div class="nav-menu">
-            <div class="menu-category">Home</div>
-            <div class="nav-item active" onclick="switchPage('home')"><i class="fa-solid fa-house"></i> 아지트 홈</div>
-            <div class="menu-category">Notice</div>
-            <div class="nav-item" onclick="switchPage('notice')"><i class="fa-solid fa-bullhorn"></i> 흔 공지사항</div>
-            <div class="nav-item" onclick="switchPage('calendar')"><i class="fa-solid fa-calendar-days"></i> 방송 달력/일정</div>
-            <div class="menu-category">Community</div>
-            <div class="nav-item" onclick="switchPage('free')"><i class="fa-solid fa-comments"></i> 구름 자유게시판</div>
-            <div class="nav-item" onclick="switchPage('request')"><i class="fa-solid fa-music"></i> 사연 & 신청곡</div>
-            <div class="nav-item" onclick="switchPage('secret')"><i class="fa-solid fa-envelope-open-text"></i> 비밀 상소문</div>
-            <div class="menu-category">Playground</div>
-            <div class="nav-item" onclick="switchPage('game')"><i class="fa-solid fa-gamepad"></i> 🕹️ 미니게임 놀이터</div>
-            <div class="nav-item" onclick="switchPage('stock')"><i class="fa-solid fa-chart-line"></i> 📈 가상 주식 거래소</div>
+<header class="header">
+    <div class="nav-container">
+        <div class="logo" onclick="switchView('home')">Spoon <span>x 흔과 흔둥이</span></div>
+        <ul class="menu-links">
+            <li onclick="switchView('schedule')">📻 방송 일정</li>
+            <li onclick="switchView('data')">📊 흔 방송 데이터</li>
+            <li onclick="switchView('ranking')">🏆 명예의 전당</li>
+            <li onclick="switchView('board')">📰 소통 게시판</li>
+        </ul>
+        <div id="authArea">
+            <button class="btn btn-primary" onclick="login()">로그인</button>
         </div>
-    </aside>
+    </div>
+</header>
 
-    <main>
-        <div class="top-bar">
-            <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="spoon-live-btn"><i class="fa-solid fa-radio"></i> 흔 방송국 바로가기</a>
-            <div class="user-info-bar" id="auth-area">
-                <button class="login-btn" onclick="openModal('login-modal')">스푼 로그인</button>
-            </div>
-        </div>
-
-        <div id="page-home" class="page-content active">
-            <div class="dashboard-grid">
-                <div>
-                    <div class="card">
-                        <div class="card-title">📢 방송 메인 공지</div>
-                        <div id="main-notice-box" style="font-size:14px;">등록된 공지가 없습니다.</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">🟢 실시간 아지트 접속 유저</div>
-                        <div id="online-users-box" style="font-size:14px; color:var(--text-main); line-height:1.8;">로그인하면 목록에 표시됩니다.</div>
-                    </div>
-                </div>
-                <div>
-                    <div class="card" style="text-align: center;">
-                        <div style="font-size: 50px; color: var(--accent-color);">☁️</div>
-                        <h3 style="margin: 10px 0;">BJ 흔 (Heun)</h3>
-                        <button class="btn-block" id="checkin-btn" onclick="submitAttendance()">📆 출석체크 하고 500P 받기</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-notice" class="page-content">
-            <div class="card"><div class="card-title">공지방 <button id="w-NOTICE" class="login-btn" style="display:none;" onclick="openWriteForm('NOTICE')">글쓰기</button></div><table class="post-table"><tbody id="list-NOTICE"></tbody></table></div>
-        </div>
-        <div id="page-calendar" class="page-content">
-            <div class="card"><div class="card-title">방송 일정표 <button id="w-CALENDAR" class="login-btn" style="display:none;" onclick="openWriteForm('CALENDAR')">추가</button></div><table class="post-table"><tbody id="list-CALENDAR"></tbody></table></div>
-        </div>
-        <div id="page-free" class="page-content">
-            <div class="card"><div class="card-title">자유게시판 <button class="login-btn" onclick="openWriteForm('FREE')">글쓰기</button></div><table class="post-table"><tbody id="list-FREE"></tbody></table></div>
-        </div>
-        <div id="page-request" class="page-content">
-            <div class="card"><div class="card-title">사연 & 신청곡 <button class="login-btn" onclick="openWriteForm('REQUEST')">작성</button></div><table class="post-table"><tbody id="list-REQUEST"></tbody></table></div>
-        </div>
-        <div id="page-secret" class="page-content">
-            <div class="card"><div class="card-title">비밀 상소문 건의함 <button class="login-btn" onclick="openWriteForm('SECRET')">작성</button></div><table class="post-table"><tbody id="list-SECRET"></tbody></table></div>
-        </div>
-
-        <div id="page-game" class="page-content">
+<div class="container">
+    <!-- LEFT CONTENT AREA -->
+    <div style="width: 100%;">
+        
+        <!-- ================= HOME VIEW ================= -->
+        <div id="view-home" class="view-section active">
+            
+            <!-- 1. 흔과 흔둥이의 이야기 (위치 변경됨) -->
             <div class="card">
-                <div class="card-title">🕹️ 포인트 가위바위보 (판당 100P 지급/차감)</div>
-                <p style="margin-bottom:15px; font-size:14px; color:var(--text-muted);">흔님과 가위바위보 한판 승부! 이기면 100P를 얻고 지면 차감됩니다.</p>
-                <div style="display:flex; gap:10px;">
-                    <button class="login-btn" onclick="playRPS('rock')">✊ 바위 내기</button>
-                    <button class="login-btn" onclick="playRPS('paper')">🖐️ 보 내기</button>
-                    <button class="login-btn" onclick="playRPS('scissors')">✌️ 가위 내기</button>
+                <div class="card-header">
+                    <div class="card-title">💬 흔과 흔둥이의 이야기</div>
+                    <span style="font-size: 13px; color: #888; cursor: pointer;" onclick="switchView('board')">더보기 +</span>
                 </div>
-                <h4 id="game-result" style="margin-top:20px; color:var(--accent-color);"></h4>
+                <div class="board-tabs">
+                    <button class="tab-btn active" onclick="renderHomeBoard('all')">전체</button>
+                    <button class="tab-btn" onclick="renderHomeBoard('general')">일반글</button>
+                    <button class="tab-btn" onclick="renderHomeBoard('popular')">🔥 인기글</button>
+                </div>
+                <div id="homeBoardList"></div>
             </div>
-        </div>
 
-        <div id="page-stock" class="page-content">
+            <!-- 2. 이 스푼을 후원한 사람 (위치 변경됨) -->
             <div class="card">
-                <div class="card-title">📈 구름 가상 주식 거래소 (10분마다 주가 변동)</div>
-                <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px;">
-                    <h3 style="color:var(--accent-color);" id="stock-market-price">종목: 구름반도체(GURM) | 현재가: 조회 중...</h3>
+                <div class="card-header">
+                    <div class="card-title">🎓 이 스푼을 후원한 사람</div>
+                    <button class="btn btn-outline admin-only" onclick="resetSpoons()" style="font-size:12px;">전체 리셋</button>
                 </div>
-                <div style="font-size:14px; line-height:2; margin-bottom:15px;">
-                    <p id="my-stock-shares">내 보유 주식: 0 주</p>
-                    <p id="my-stock-avg">내 평단가: 0 포인트</p>
+                <div class="grad-controls admin-only">
+                    <input type="text" id="spoonName" class="input-text" placeholder="후원자 닉네임" style="margin:0;">
+                    <input type="file" id="spoonImage" accept="image/*" style="width:180px;">
+                    <input type="text" id="spoonEmoji" class="input-text" placeholder="또는 이모지" style="width:100px; margin:0;">
+                    <button class="btn btn-admin" onclick="addSpoon()">추가</button>
                 </div>
-                <div class="form-group">
-                    <label>거래 수량 지정 (주)</label>
-                    <input type="number" id="stock-amount" class="form-control" value="1" min="1" style="width:120px;">
-                </div>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button class="login-btn" style="background:#e74c3c; color:white;" onclick="tradeStock('BUY')">시장가 매수</button>
-                    <button class="login-btn" style="background:#2ecc71; color:white;" onclick="tradeStock('SELL')">시장가 매도</button>
-                </div>
+                <div class="grad-grid" id="spoonGrid"></div>
             </div>
         </div>
-    </main>
 
-    <div id="login-modal" class="modal"><div class="modal-content"><h3>스푼 계정 로그인</h3><div class="form-group"><label>스푼 고유 ID ('heun' 입력 시 관리자)</label><input type="text" id="s-id" class="form-control"></div><div class="form-group"><label>닉네임</label><input type="text" id="s-nick" class="form-control"></div><button class="btn-block" onclick="submitLogin()">입장</button></div></div>
-    <div id="write-modal" class="modal"><div class="modal-content"><h3>글 작성</h3><input type="hidden" id="w-type"><div class="form-group"><label>제목</label><input type="text" id="w-title" class="form-control"></div><div class="form-group"><label>내용</label><textarea id="w-content" class="form-control" rows="5"></textarea></div><button class="btn-block" onclick="submitPost()">등록</button><button class="btn-block" style="background:#ccc;margin-top:5px;" onclick="closeModal('write-modal')">취소</button></div></div>
+        <!-- ================= SCHEDULE VIEW ================= -->
+        <div id="view-schedule" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📻 방송 일정</div>
+                    <button class="btn btn-admin admin-only" onclick="openWriteModal('schedule')">일정 쓰기</button>
+                </div>
+                <div id="scheduleList"></div>
+            </div>
+        </div>
 
-    <script>
-        let currentUser = null;
-        function switchPage(pageId) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
+        <!-- ================= DATA VIEW (흔 방송 데이터) ================= -->
+        <div id="view-data" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📊 흔 방송 데이터</div>
+                    <span style="font-size: 12px; color: #888;">매일의 방송 기록을 확인하세요.</span>
+                </div>
+                
+                <div class="admin-only" style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px;">
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:10px;">
+                        <input type="date" id="dDate" class="input-text" style="margin:0;">
+                        <input type="number" id="dCount" class="input-text" placeholder="방송횟수 (예: 2)" style="margin:0;">
+                        <input type="text" id="dTime" class="input-text" placeholder="방송시간 (예: 4.5시간)" style="margin:0;">
+                        <input type="number" id="dSpoon" class="input-text" placeholder="받은스푼" style="margin:0;">
+                        <input type="number" id="dLike" class="input-text" placeholder="좋아요" style="margin:0;">
+                        <input type="number" id="dListen" class="input-text" placeholder="누적 청취자" style="margin:0;">
+                    </div>
+                    <button class="btn btn-admin" style="width:100%;" onclick="addBroadcastData()">데이터 기록하기</button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>방송횟수</th>
+                            <th>방송시간</th>
+                            <th>받은스푼</th>
+                            <th>좋아요</th>
+                            <th>누적 청취자</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <!-- Data injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= RANKING VIEW ================= -->
+        <div id="view-ranking" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🏆 구름 랭킹 & 명예의 전당</div>
+                    <div style="font-size: 13px; color: #888;">활동(글, 사진, 출석) 시 1점! (10점당 1레벨업, 만렙 100)</div>
+                </div>
+                <div id="rankingList"></div>
+            </div>
+        </div>
+
+        <!-- ================= BOARD VIEW ================= -->
+        <div id="view-board" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📰 소통 게시판</div>
+                    <button class="btn btn-primary" onclick="openWriteModal('board')">글쓰기</button>
+                </div>
+                <div class="board-tabs">
+                    <button class="tab-btn active" onclick="renderBoard('all', this)">전체</button>
+                    <button class="tab-btn" onclick="renderBoard('review', this)">오늘 방송 후기</button>
+                    <button class="tab-btn" onclick="renderBoard('photo', this)">사진</button>
+                    <button class="tab-btn" onclick="renderBoard('letter', this)">흔이 쓰는 박제편지</button>
+                </div>
+                <div id="fullBoardList"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="sidebar">
+        <!-- Profile / Login -->
+        <div class="card profile-area" id="profileCard">
+            <!-- Injected by JS -->
+        </div>
+
+        <!-- Channel Link (Updated URL) -->
+        <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="margin-bottom: 25px;">
+            🎧 스푼 | DJ 🏮 흔 💭 🍶 ☾⋆⁺<br>
+            <span style="font-size: 14px; font-weight: normal; opacity: 0.9;">방송국 바로가기</span>
+        </a>
+
+        <!-- Notice -->
+        <div class="card">
+            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                <div class="card-title">📌 흔이 쓰는 공지</div>
+                <button class="btn btn-admin admin-only" style="padding: 4px 8px; font-size:11px;" onclick="openWriteModal('notice')">작성</button>
+            </div>
+            <div id="noticeList" style="font-size: 14px; line-height: 1.5;">등록된 공지가 없습니다.</div>
+        </div>
+
+        <!-- Online Clouds (Real-time Simulation) -->
+        <div class="card">
+            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                <div class="card-title">🟢 현재 이용중인 구름이들</div>
+            </div>
+            <div id="onlineUsers" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Write / Read Modal -->
+<div class="modal-overlay" id="mainModal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+            <h3 id="modalTitle" style="margin:0;">글쓰기</h3>
+            <button onclick="closeModal()" style="border:none; background:none; font-size:24px; color:#555;">&times;</button>
+        </div>
+        <div id="modalBody">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- State Management ---
+    let appState = {
+        users: JSON.parse(localStorage.getItem('heun_users')) || {},
+        spoons: JSON.parse(localStorage.getItem('heun_spoons')) || [],
+        posts: JSON.parse(localStorage.getItem('heun_posts')) || [],
+        bData: JSON.parse(localStorage.getItem('heun_bData')) || [],
+        currentUser: localStorage.getItem('heun_currentUser') || null
+    };
+
+    function saveState() {
+        localStorage.setItem('heun_users', JSON.stringify(appState.users));
+        localStorage.setItem('heun_spoons', JSON.stringify(appState.spoons));
+        localStorage.setItem('heun_posts', JSON.stringify(appState.posts));
+        localStorage.setItem('heun_bData', JSON.stringify(appState.bData));
+    }
+
+    // --- Level & Tier Logic ---
+    function getLevelInfo(user) {
+        if (!user) return null;
+        if (user.role === 'admin') return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
+        
+        let lvl = Math.floor(user.points / 10) + 1;
+        if(lvl > 100) lvl = 100;
+        
+        const tiers = [
+            { icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff' },     // 1~10
+            { icon: '☁️', name: '옅은 구름', color: '#bdc3c7', textCol: '#000' },   // 11~20
+            { icon: '⛅', name: '맑은 구름', color: '#3498db', textCol: '#fff' },   // 21~30
+            { icon: '🌥️', name: '뭉게구름', color: '#2980b9', textCol: '#fff' },   // 31~40
+            { icon: '🌦️', name: '여우비 구름', color: '#1abc9c', textCol: '#fff' }, // 41~50
+            { icon: '🌈', name: '무지개 구름', color: '#f1c40f', textCol: '#000' }, // 51~60
+            { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' }, // 61~70
+            { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },   // 71~80
+            { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },   // 81~90
+            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }    // 91~100
+        ];
+        const tierIdx = Math.min(Math.floor((lvl - 1) / 10), 9);
+        return { level: lvl, ...tiers[tierIdx], isAdmin: false };
+    }
+
+    function addPoints(amount) {
+        if(!appState.currentUser) return;
+        const user = appState.users[appState.currentUser];
+        if (user.role === 'admin') return; // Admin gets no points
+        
+        user.points += amount;
+        saveState();
+        renderProfile();
+        renderRanking();
+    }
+
+    // --- Auth System ---
+    function login() {
+        const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
+        if(!nick || nick.trim() === '') return;
+        
+        // First user becomes admin automatically
+        const isFirst = Object.keys(appState.users).length === 0;
+        
+        if (!appState.users[nick]) {
+            appState.users[nick] = { 
+                role: isFirst ? 'admin' : 'user', 
+                points: 0, 
+                lastAttend: null,
+                isOnline: false
+            };
+        }
+        
+        // Set online status
+        Object.keys(appState.users).forEach(k => appState.users[k].isOnline = false); // clear others for local demo
+        appState.users[nick].isOnline = true;
+
+        appState.currentUser = nick;
+        localStorage.setItem('heun_currentUser', nick);
+        saveState();
+        init();
+    }
+
+    function logout() {
+        if(appState.currentUser && appState.users[appState.currentUser]) {
+            appState.users[appState.currentUser].isOnline = false;
+        }
+        appState.currentUser = null;
+        localStorage.removeItem('heun_currentUser');
+        saveState();
+        init();
+    }
+
+    function checkAttendance() {
+        if(!appState.currentUser) return;
+        const user = appState.users[appState.currentUser];
+        if(user.role === 'admin') return alert('관리자는 출석체크가 필요하지 않습니다.');
+
+        const today = new Date().toISOString().split('T')[0];
+        
+        if(user.lastAttend === today) {
+            alert('오늘은 이미 출석체크 하셨습니다!');
+        } else {
+            user.lastAttend = today;
+            alert('출석체크 완료! +1점 적립');
+            addPoints(1);
+        }
+    }
+
+    function grantAdmin() {
+        const target = prompt("관리자 권한을 줄 유저 닉네임을 입력하세요:");
+        if(target && appState.users[target]) {
+            appState.users[target].role = 'admin';
+            saveState();
+            alert(target + '님에게 관리자 권한을 부여했습니다.');
+            renderRanking();
+        } else {
+            alert('존재하지 않는 유저입니다. (먼저 로그인을 통해 가입해야 합니다)');
+        }
+    }
+
+    // --- UI Rendering ---
+    function init() {
+        renderProfile();
+        applyAdminUI();
+        renderSpoons();
+        renderHomeBoard('all');
+        renderBoard('all', null);
+        renderSchedule();
+        renderNotice();
+        renderOnlineUsers();
+        renderRanking();
+        renderDataTable();
+    }
+
+    function switchView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+        
+        document.querySelectorAll('.menu-links li').forEach(el => el.classList.remove('active'));
+        if(event && event.currentTarget.tagName === 'LI') {
             event.currentTarget.classList.add('active');
-            if(pageId !== 'home' && pageId !== 'game' && pageId !== 'stock') loadPosts(pageId.toUpperCase());
-            if(pageId === 'stock') loadStockStatus();
         }
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    }
+
+    function applyAdminUI() {
+        const user = appState.currentUser ? appState.users[appState.currentUser] : null;
+        const isAdmin = user && user.role === 'admin';
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = isAdmin ? 'inline-block' : 'none';
+        });
+        // Block non-admins from writing schedule/notice manually if UI fails
+    }
+
+    function renderProfile() {
+        const profileCard = document.getElementById('profileCard');
+        const authArea = document.getElementById('authArea');
         
-        function checkSession() {
-            fetch('/api/session').then(res => res.json()).then(user => {
-                currentUser = user; const area = document.getElementById('auth-area');
-                if (user) {
-                    area.innerHTML = `<span><strong>${user.nickname}</strong>님 (보유: <span style="color:var(--accent-color);font-weight:700;">${user.points}P</span>)</span> <button class="logout-btn" onclick="submitLogout()">로그아웃</button>`;
-                    if(user.role === 'ADMIN') { document.getElementById('w-NOTICE').style.display='block'; document.getElementById('w-CALENDAR').style.display='block'; }
-                } else {
-                    area.innerHTML = `<button class="login-btn" onclick="openModal('login-modal')">스푼 로그인</button>`;
-                }
-                loadOnlineMembers();
-            });
+        if (!appState.currentUser) {
+            profileCard.innerHTML = `
+                <h3 style="margin-top:0;">구름 커뮤니티</h3>
+                <p style="font-size: 14px; color: #666;">로그인하고 흔과 소통하세요!</p>
+                <button class="btn btn-primary" style="width:100%" onclick="login()">스푼 닉네임으로 시작하기</button>`;
+            authArea.innerHTML = `<button class="btn btn-primary" onclick="login()">로그인</button>`;
+            return;
         }
-        function submitLogin() {
-            const spoon_id = document.getElementById('s-id').value; const nickname = document.getElementById('s-nick').value;
-            fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ spoon_id, nickname }) }).then(res => res.json()).then(() => { closeModal('login-modal'); checkSession(); });
-        }
-        function submitLogout() { fetch('/api/logout', {method: 'POST'}).then(() => checkSession()); }
+
+        const user = appState.users[appState.currentUser];
+        const info = getLevelInfo(user);
         
-        function submitAttendance() {
-            fetch('/api/attendance', {method: 'POST'}).then(res => {
-                if(res.ok) { res.json().then(d => alert(d.message)); checkSession(); }
-                else res.text().then(t => alert(t));
+        authArea.innerHTML = `<span style="font-weight:bold; margin-right:15px;">${info.icon} ${appState.currentUser}님</span> <button class="btn btn-outline" onclick="logout()">로그아웃</button>`;
+        
+        if (info.isAdmin) {
+            profileCard.innerHTML = `
+                <div class="level-badge" style="background:${info.color}; color:${info.textCol};">
+                    ${info.icon} ${info.name}
+                </div>
+                <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
+                <p style="font-size:12px; color:#888; margin:0; margin-bottom:15px;">플랫폼 통합 관리자</p>
+                <button class="btn btn-admin" style="width:100%; margin-top:10px;" onclick="grantAdmin()">+ 관리자 권한 부여</button>
+            `;
+        } else {
+            const progressPercent = (user.points % 10) * 10;
+            profileCard.innerHTML = `
+                <div class="level-badge" style="background:${info.color}; color:${info.textCol};">
+                    ${info.icon} ${info.name} (Lv.${info.level})
+                </div>
+                <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
+                <p style="font-size:12px; color:#888; margin:0;">총 누적 포인트: ${user.points} P</p>
+                
+                <div class="progress-container" title="다음 레벨까지 ${10 - (user.points%10)}점 남음">
+                    <div class="progress-bar" style="width: ${progressPercent}%;"></div>
+                </div>
+                
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="checkAttendance()">오늘 출석체크 하기</button>
+            `;
+        }
+    }
+
+    // --- Broadcast Data ---
+    function addBroadcastData() {
+        const date = document.getElementById('dDate').value;
+        const count = document.getElementById('dCount').value;
+        const time = document.getElementById('dTime').value;
+        const spoon = document.getElementById('dSpoon').value;
+        const like = document.getElementById('dLike').value;
+        const listen = document.getElementById('dListen').value;
+
+        if(!date) return alert('날짜를 입력하세요.');
+
+        appState.bData.unshift({ id: Date.now(), date, count, time, spoon, like, listen });
+        saveState();
+        renderDataTable();
+        
+        // Clear
+        document.querySelectorAll('#view-data input').forEach(el => el.value = '');
+    }
+
+    function renderDataTable() {
+        const tbody = document.getElementById('dataTableBody');
+        tbody.innerHTML = appState.bData.map(d => `
+            <tr>
+                <td>${d.date}</td>
+                <td>${d.count || '-'}</td>
+                <td>${d.time || '-'}</td>
+                <td>${d.spoon || '-'}</td>
+                <td>${d.like || '-'}</td>
+                <td>${d.listen || '-'}</td>
+            </tr>
+        `).join('') || '<tr><td colspan="6" style="color:#999; padding:20px;">기록된 데이터가 없습니다.</td></tr>';
+    }
+
+    // --- Spoons ---
+    function addSpoon() {
+        const name = document.getElementById('spoonName').value;
+        const emoji = document.getElementById('spoonEmoji').value;
+        const fileInput = document.getElementById('spoonImage');
+        
+        if(!name) return alert('후원자 닉네임을 입력해주세요.');
+        
+        const newItem = { id: Date.now(), name, image: null, emoji: emoji || '🥄' };
+        
+        if(fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                newItem.image = e.target.result;
+                appState.spoons.unshift(newItem);
+                saveState(); renderSpoons();
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            appState.spoons.unshift(newItem);
+            saveState(); renderSpoons();
+        }
+        
+        document.getElementById('spoonName').value = '';
+        document.getElementById('spoonEmoji').value = '';
+        fileInput.value = '';
+    }
+
+    function resetSpoons() {
+        if(confirm('모든 스푼 졸업 현황을 초기화하시겠습니까?')) {
+            appState.spoons = [];
+            saveState(); renderSpoons();
+        }
+    }
+
+    function renderSpoons() {
+        const grid = document.getElementById('spoonGrid');
+        grid.innerHTML = appState.spoons.map(s => `
+            <div class="grad-item">
+                <div class="grad-label">이 스푼을 후원한 사람</div>
+                <div class="grad-img-wrap">
+                    ${s.image ? `<img src="${s.image}">` : s.emoji}
+                </div>
+                <div class="grad-name">${s.name}</div>
+            </div>
+        `).join('') || '<div style="grid-column:1/-1; text-align:center; color:#999; font-size:14px; padding:20px;">등록된 후원자가 없습니다.</div>';
+    }
+
+    // --- Board & Posting System ---
+    function isPopular(post) {
+        return post.views >= 30 && (post.likes ? post.likes.length : 0) >= 5;
+    }
+
+    function openWriteModal(type) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const isAdmin = appState.users[appState.currentUser].role === 'admin';
+        
+        if((type === 'schedule' || type === 'notice' || type === 'letter') && !isAdmin) {
+            return alert('관리자만 작성할 수 있습니다.');
+        }
+
+        const modal = document.getElementById('mainModal');
+        const mBody = document.getElementById('modalBody');
+        
+        let categorySelect = '';
+        if(type === 'board') {
+            categorySelect = `
+                <select id="postCat" class="input-text">
+                    <option value="review">오늘 방송 후기</option>
+                    <option value="photo">사진 올리기</option>
+                    ${isAdmin ? `<option value="letter">흔이 쓰는 박제편지</option>` : ''}
+                </select>
+            `;
+        }
+
+        mBody.innerHTML = `
+            ${categorySelect}
+            <input type="text" id="postTitle" class="input-text" placeholder="제목을 입력하세요">
+            <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
+            <div id="photoInputWrap" style="display:none; margin-bottom:15px;">
+                <label style="font-size:13px; font-weight:bold;">사진/편지 첨부: </label>
+                <input type="file" id="postPhoto" accept="image/*">
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="submitPost('${type}')">등록하기</button>
+        `;
+
+        document.getElementById('modalTitle').innerText = '글쓰기';
+
+        if(type === 'board') {
+            const catSel = document.getElementById('postCat');
+            // Trigger check initially
+            if(catSel.value === 'photo' || catSel.value === 'letter') {
+                document.getElementById('photoInputWrap').style.display = 'block';
+            }
+            catSel.addEventListener('change', (e) => {
+                document.getElementById('photoInputWrap').style.display = (e.target.value === 'photo' || e.target.value === 'letter') ? 'block' : 'none';
             });
         }
-        function playRPS(choice) {
-            fetch('/api/game/rps', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ userChoice: choice }) }).then(res => {
-                if(!res.ok) return res.text().then(t => alert(t));
-                res.json().then(d => {
-                    const map = {rock:'✊ 바위', paper:'🖐️ 보', scissors:'✌️ 가위'};
-                    document.getElementById('game-result').innerText = `결과: ${d.result === 'win' ? '🎉 이겼습니다! (+100P)' : d.result === 'lose' ? '😭 졌습니다... (-100P)' : '🤝 비겼습니다.'} (상대: ${map[d.botChoice]})`;
-                    checkSession();
-                });
-            });
+        
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('mainModal').style.display = 'none';
+    }
+
+    function submitPost(formType) {
+        const title = document.getElementById('postTitle').value;
+        const content = document.getElementById('postContent').value;
+        if(!title || !content) return alert('제목과 내용을 입력해주세요.');
+        
+        let cat = formType;
+        if(formType === 'board') cat = document.getElementById('postCat').value;
+
+        const newPost = {
+            id: Date.now(),
+            category: cat,
+            title, content,
+            author: appState.currentUser,
+            date: new Date().toLocaleString(),
+            views: 0,
+            likes: [],
+            dislikes: [],
+            image: null
+        };
+
+        const fileInput = document.getElementById('postPhoto');
+        if(fileInput && fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                newPost.image = e.target.result;
+                finalizePost(newPost, cat);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            finalizePost(newPost, cat);
         }
-        function loadStockStatus() {
-            fetch('/api/stock/status').then(res => res.json()).then(d => {
-                document.getElementById('stock-market-price').innerText = `종목: 구름반도체(GURM) | 현재가: ${d.market.current_price} 포인트`;
-                document.getElementById('my-stock-shares').innerText = `내 보유 주식: ${d.wallet.shares} 주`;
-                document.getElementById('my-stock-avg').innerText = `내 평단가: ${d.wallet.avg_price} 포인트`;
-            });
+    }
+
+    function finalizePost(post, cat) {
+        appState.posts.unshift(post);
+        saveState();
+        closeModal();
+        
+        // Add Points
+        addPoints(1);
+
+        init();
+        alert('등록 완료! (+1점 적립)');
+    }
+
+    function renderHomeBoard(filterStr) {
+        // Tab UI styling
+        const tabs = document.querySelectorAll('#view-home .tab-btn');
+        tabs.forEach(t => t.classList.remove('active'));
+        event?.currentTarget?.classList?.add('active');
+
+        const list = document.getElementById('homeBoardList');
+        let boardPosts = appState.posts.filter(p => ['review', 'photo', 'letter'].includes(p.category));
+        
+        let filtered = boardPosts;
+        if(filterStr === 'popular') {
+            filtered = boardPosts.filter(p => isPopular(p));
+        } else if (filterStr === 'general') {
+            filtered = boardPosts.filter(p => !isPopular(p));
         }
-        function tradeStock(action) {
-            const amount = parseInt(document.getElementById('stock-amount').value);
-            fetch('/api/stock/trade', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action, amount }) }).then(res => {
-                if(res.ok) { loadStockStatus(); checkSession(); alert('거래 완료!'); }
-                else res.text().then(t => alert(t));
-            });
+
+        list.innerHTML = filtered.slice(0, 6).map(p => {
+            let badge = isPopular(p) ? '<span class="badge popular">인기</span>' : '<span class="badge normal">일반</span>';
+            return `
+            <div class="list-item" onclick="viewPost(${p.id})">
+                <div style="flex:1;">${badge} ${p.title}</div>
+                <div style="color:#999; font-size:12px;">👁️ ${p.views} | ❤️ ${p.likes ? p.likes.length : 0}</div>
+            </div>`;
+        }).join('') || '<p style="text-align:center; color:#999; padding:20px;">게시글이 없습니다.</p>';
+    }
+
+    function renderBoard(filterCat, btnElem) {
+        if(btnElem) {
+            const tabs = document.querySelectorAll('#view-board .tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            btnElem.classList.add('active');
         }
-        function loadOnlineMembers() {
-            fetch('/api/online-members').then(res => res.json()).then(list => {
-                const box = document.getElementById('online-users-box');
-                if(list.length === 0) { box.innerHTML = "현재 접속 중인 멤버가 없습니다."; return; }
-                box.innerHTML = list.map(m => `<span style="margin-right:15px;"><span class="online-dot"></span>${m}</span>`).join('');
-            });
+
+        const list = document.getElementById('fullBoardList');
+        let boardPosts = appState.posts.filter(p => ['review', 'photo', 'letter'].includes(p.category));
+        
+        let filtered = boardPosts;
+        if(filterCat !== 'all') filtered = boardPosts.filter(p => p.category === filterCat);
+        
+        list.innerHTML = filtered.map(p => {
+            let catName = { review:'후기', photo:'사진', letter:'박제편지' }[p.category];
+            let popBadge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '';
+            return `
+                <div class="list-item" onclick="viewPost(${p.id})">
+                    <div><span class="badge normal">${catName}</span> ${popBadge} ${p.title}</div>
+                    <div style="color:#999; font-size:12px; display:flex; gap:12px;">
+                        <span>👤 ${p.author}</span>
+                        <span>👁️ ${p.views}</span>
+                        <span>❤️ ${p.likes ? p.likes.length : 0}</span>
+                    </div>
+                </div>
+            `;
+        }).join('') || '<p style="text-align:center; color:#999; padding:40px 0;">게시글이 없습니다.</p>';
+    }
+
+    // View Post and Analytics (Views/Likes)
+    function viewPost(id) {
+        const post = appState.posts.find(p => p.id === id);
+        if(!post) return;
+        
+        // Increase view count
+        post.views = (post.views || 0) + 1;
+        saveState();
+        
+        // Refresh underlying lists so view count updates visually behind modal
+        renderHomeBoard('all'); 
+        renderBoard('all', null);
+
+        updatePostModalContent(post);
+        document.getElementById('mainModal').style.display = 'flex';
+    }
+
+    function updatePostModalContent(post) {
+        const mBody = document.getElementById('modalBody');
+        document.getElementById('modalTitle').innerText = '게시글 보기';
+        
+        if(!post.likes) post.likes = [];
+        if(!post.dislikes) post.dislikes = [];
+
+        const currUser = appState.currentUser;
+        const hasLiked = currUser && post.likes.includes(currUser);
+        const hasDisliked = currUser && post.dislikes.includes(currUser);
+
+        mBody.innerHTML = `
+            <h4 style="margin:0 0 10px 0; font-size:20px;">${post.title}</h4>
+            <div style="font-size:13px; color:#888; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #eee; display:flex; gap:15px;">
+                <span>작성자: ${post.author}</span>
+                <span>작성일: ${post.date}</span>
+                <span>조회수: ${post.views}</span>
+            </div>
+            
+            <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px;">${post.content}</div>
+            ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : ''}
+            
+            <div style="text-align:center; padding: 20px 0; border-top:1px dashed #ddd; margin-top:20px;">
+                <button class="reaction-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction(${post.id}, 'like')">
+                    👍 좋아요 ${post.likes.length}
+                </button>
+                <button class="reaction-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction(${post.id}, 'dislike')">
+                    👎 싫어요 ${post.dislikes.length}
+                </button>
+                
+                <div style="display:flex; justify-content:center; gap:30px;">
+                    <div class="reaction-list-text">
+                        <strong>좋아요 누른 사람:</strong><br>
+                        ${post.likes.length > 0 ? post.likes.join(', ') : '없음'}
+                    </div>
+                    <div class="reaction-list-text">
+                        <strong>싫어요 누른 사람:</strong><br>
+                        ${post.dislikes.length > 0 ? post.dislikes.join(', ') : '없음'}
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal()">목록으로 닫기</button>
+        `;
+    }
+
+    function toggleReaction(postId, type) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const post = appState.posts.find(p => p.id === postId);
+        const user = appState.currentUser;
+        
+        if(!post.likes) post.likes = [];
+        if(!post.dislikes) post.dislikes = [];
+
+        if(type === 'like') {
+            if(post.likes.includes(user)) {
+                post.likes = post.likes.filter(u => u !== user); // Cancel like
+            } else {
+                post.likes.push(user); // Add like
+                post.dislikes = post.dislikes.filter(u => u !== user); // Remove dislike if exists
+            }
+        } else {
+            if(post.dislikes.includes(user)) {
+                post.dislikes = post.dislikes.filter(u => u !== user); // Cancel dislike
+            } else {
+                post.dislikes.push(user); // Add dislike
+                post.likes = post.likes.filter(u => u !== user); // Remove like if exists
+            }
         }
-        function openWriteForm(t) { if(!currentUser) return alert('로그인 필요'); document.getElementById('w-type').value=t; openModal('write-modal'); }
-        function submitPost() {
-            const type = document.getElementById('w-type').value;
-            fetch(`/api/posts/${type}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ title: document.getElementById('w-title').value, content: document.getElementById('w-content').value }) }).then(() => { closeModal('write-modal'); loadPosts(type); });
+        
+        saveState();
+        updatePostModalContent(post); // Refresh modal content directly
+        
+        // Refresh background lists in case popularity changed
+        renderHomeBoard('all'); 
+        renderBoard('all', null);
+    }
+
+    function renderSchedule() {
+        const sch = appState.posts.filter(p => p.category === 'schedule');
+        const cont = document.getElementById('scheduleList');
+        cont.innerHTML = sch.map(p => `
+            <div class="list-item" onclick="viewPost(${p.id})">
+                <div style="font-weight:bold;">🕒 ${p.title}</div>
+                <div style="color:#888; font-size:13px;">${p.date.split(' ')[0]}</div>
+            </div>
+        `).join('') || '<p style="color:#999; padding:20px;">등록된 일정이 없습니다.</p>';
+    }
+
+    function renderNotice() {
+        const noti = appState.posts.filter(p => p.category === 'notice')[0]; // Show latest
+        const cont = document.getElementById('noticeList');
+        if(noti) {
+            cont.innerHTML = `
+                <div style="font-weight:bold; margin-bottom:8px; cursor:pointer; color:#d63031;" onclick="viewPost(${noti.id})">🚨 ${noti.title}</div>
+                <div style="color:#555; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${noti.content}</div>
+                <div style="font-size:11px; color:#aaa; margin-top:8px;">${noti.date}</div>
+            `;
+        } else {
+            cont.innerHTML = '등록된 공지가 없습니다.';
         }
-        function loadPosts(type) {
-            fetch(`/api/posts/${type}`).then(res => res.json()).then(data => {
-                const tbody = document.getElementById(`list-${type}`); tbody.innerHTML = '';
-                data.forEach(p => {
-                    let del = currentUser && (currentUser.role === 'ADMIN' || currentUser.nickname === p.writer) ? `<button class="delete-btn" onclick="deletePost(${p.id},'${type}')">❌</button>` : '';
-                    tbody.innerHTML += `<tr><td><strong>${p.title}</strong><br><small style="color:var(--text-muted)">${p.content} (${p.writer})</small></td><td>${p.date}</td><td>${del}</td></tr>`;
-                });
-            });
-        }
-        function deletePost(id, type) { if(confirm('삭제하시겠습니까?')) fetch(`/api/posts/${id}`, {method:'DELETE'}).then(() => loadPosts(type)); }
-        setInterval(loadOnlineMembers, 10000); // 10초마다 접속자 리스트 갱신
-        window.onload = checkSession;
-    </script>
+    }
+
+    // --- Ranking & Online ---
+    function renderRanking() {
+        // Exclude admin from ranking array completely
+        const arr = Object.entries(appState.users)
+            .filter(([nick, data]) => data.role !== 'admin')
+            .map(([nick, data]) => ({ nick, ...data }));
+            
+        arr.sort((a, b) => b.points - a.points); // Sort by points desc
+        
+        const cont = document.getElementById('rankingList');
+        cont.innerHTML = arr.map((u, i) => {
+            const info = getLevelInfo(u);
+            return `
+            <div style="display:flex; align-items:center; padding: 15px 0; border-bottom: 1px solid #f0f0f0;">
+                <div style="font-size: 20px; font-weight: bold; width: 40px; color: ${i<3 ? '#e74c3c' : '#999'};">${i+1}</div>
+                <div style="flex:1;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">
+                        <span style="font-size:12px; background:${info.color}; color:${info.textCol}; padding:2px 8px; border-radius:12px; margin-right:8px;">${info.icon} Lv.${info.level}</span>
+                        ${u.nick}
+                    </div>
+                    <div style="background:#eee; height:6px; border-radius:3px; width:100%; overflow:hidden;">
+                        <div style="background:var(--primary); height:100%; width:${(u.points%10)*10}%;"></div>
+                    </div>
+                </div>
+                <div style="font-weight:bold; color:var(--primary); width: 60px; text-align:right;">${u.points} P</div>
+            </div>`;
+        }).join('') || '<p style="padding:20px; color:#999;">랭킹에 등록된 유저가 없습니다.</p>';
+    }
+
+    function renderOnlineUsers() {
+        const cont = document.getElementById('onlineUsers');
+        let onlineHtml = '';
+        
+        // Get users marked as online
+        const onlineUsers = Object.keys(appState.users).filter(k => appState.users[k].isOnline);
+        
+        onlineUsers.forEach(nick => {
+            const info = getLevelInfo(appState.users[nick]);
+            const isMe = nick === appState.currentUser ? '(나)' : '';
+            onlineHtml += `
+                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+                    <div style="width:10px; height:10px; background:#2ecc71; border-radius:50%; box-shadow:0 0 5px #2ecc71;"></div> 
+                    <span>${info.icon} ${nick} <span style="color:#999; font-size:12px; font-weight:normal;">${isMe}</span></span>
+                </div>
+            `;
+        });
+        
+        cont.innerHTML = onlineHtml || '<div style="color:#999;">현재 접속 중인 구름이가 없습니다.</div>';
+    }
+
+    // Init App
+    init();
+</script>
+
 </body>
 </html>
