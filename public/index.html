@@ -130,7 +130,6 @@
         <!-- ================= HOME VIEW ================= -->
         <div id="view-home" class="view-section active">
             
-            <!-- 1. 이 스푼을 후원한 사람 (요청하신 대로 위로 배치) -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">🎓 이 스푼을 후원한 사람</div>
@@ -145,7 +144,6 @@
                 <div class="grad-grid" id="spoonGrid"></div>
             </div>
 
-            <!-- 2. 흔과 흔둥이의 이야기 (위치 아래로 변경, 탭 이름 변경) -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">💬 흔과 흔둥이의 이야기</div>
@@ -248,7 +246,7 @@
             <!-- Injected by JS -->
         </div>
 
-        <!-- Channel Link (Updated URL) -->
+        <!-- Channel Link -->
         <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="margin-bottom: 25px;">
             🎧 스푼 | DJ 🏮 흔 💭 🍶 ☾⋆⁺<br>
             <span style="font-size: 14px; font-weight: normal; opacity: 0.9;">방송국 바로가기</span>
@@ -263,7 +261,7 @@
             <div id="noticeList" style="font-size: 14px; line-height: 1.5;">등록된 공지가 없습니다.</div>
         </div>
 
-        <!-- Online Clouds (Real-time Simulation) -->
+        <!-- Online Clouds -->
         <div class="card">
             <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
                 <div class="card-title">🟢 현재 이용중인 구름이들</div>
@@ -291,9 +289,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, set, get, onValue, push, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // ======================================================================================
-    // ⚠️ [매우 중요] 여기에 직접 만든 파이어베이스 설정 코드를 덮어쓰기 하세요!
-    // ======================================================================================
+    // ⚠️ 파이어베이스 설정 정보 
     const firebaseConfig = {
         apiKey: "AIzaSyBgW_037A_jGXpGTwfGTP-XAo0Y6aXOyAk",
         authDomain: "heun-ddf64.firebaseapp.com",
@@ -306,15 +302,13 @@
     };
 
     let app, db;
-    // 파이어베이스가 연결되지 않았을 때 로컬 모드로 작동하게 하는 안전장치
     let isLocalMode = false;
 
     try {
-        if(firebaseConfig.apiKey === "YOUR_API_KEY") throw new Error("Firebase Config Empty");
         app = initializeApp(firebaseConfig);
         db = getDatabase(app);
     } catch(e) {
-        console.warn("⚠️ 파이어베이스가 아직 연결되지 않아 개인 브라우저(Local) 모드로 작동합니다. 진짜 실시간 공유를 하려면 코드를 수정해 주세요!");
+        console.warn("Firebase 연결 실패, 로컬 모드로 작동합니다.");
         isLocalMode = true;
     }
 
@@ -346,23 +340,15 @@
 
     function setupFirebaseListeners() {
         if(isLocalMode) {
-            // Local Mode Fallback
-            appState.users = JSON.parse(localStorage.getItem('h_users')) || {};
-            appState.spoons = JSON.parse(localStorage.getItem('h_spoons')) || [];
-            appState.posts = JSON.parse(localStorage.getItem('h_posts')) || [];
-            appState.bData = JSON.parse(localStorage.getItem('h_bdata')) || [];
             document.getElementById('loadingOverlay').style.display = 'none';
-            initUI();
             return;
         }
 
-        // Real DB Listener
         const dbRef = ref(db, '/');
         onValue(dbRef, (snapshot) => {
             const data = snapshot.val() || {};
             appState.users = data.users || {};
             
-            // 객체 형태의 데이터를 배열로 변환하고 최신순(timestamp 기준) 정렬
             appState.posts = data.posts ? Object.values(data.posts).sort((a,b) => b.timestamp - a.timestamp) : [];
             appState.spoons = data.spoons ? Object.values(data.spoons).sort((a,b) => b.timestamp - a.timestamp) : [];
             appState.bData = data.bData ? Object.values(data.bData).sort((a,b) => b.timestamp - a.timestamp) : [];
@@ -386,27 +372,12 @@
         });
     }
 
-    // 데이터 쓰기 헬퍼
     function dbUpdate(path, data) {
-        if(isLocalMode) {
-            if(path === 'users') appState.users = {...appState.users, ...data};
-            localStorage.setItem('h_users', JSON.stringify(appState.users));
-            localStorage.setItem('h_spoons', JSON.stringify(appState.spoons));
-            localStorage.setItem('h_posts', JSON.stringify(appState.posts));
-            localStorage.setItem('h_bdata', JSON.stringify(appState.bData));
-            initUI();
-        } else {
-            update(ref(db, path), data);
-        }
+        if(!isLocalMode) update(ref(db, path), data);
     }
 
     function dbPush(path, data) {
-        if(isLocalMode) {
-            if(path === 'posts') appState.posts.unshift(data);
-            if(path === 'spoons') appState.spoons.unshift(data);
-            if(path === 'bData') appState.bData.unshift(data);
-            dbUpdate('dummy', {}); // trigger save
-        } else {
+        if(!isLocalMode) {
             const newRef = push(ref(db, path));
             data.id = newRef.key;
             set(newRef, data);
@@ -414,17 +385,15 @@
     }
 
     function dbSet(path, data) {
-        if(isLocalMode) dbUpdate('dummy', {});
-        else set(ref(db, path), data);
+        if(!isLocalMode) set(ref(db, path), data);
     }
 
     function login() {
         const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
         if(!nick || nick.trim() === '') return;
         
-        // Check if DB is empty to assign first admin
         const isFirst = Object.keys(appState.users).length === 0;
-        const isMaster = (nick === '흔'); // '흔' 닉네임은 무조건 관리자 보장
+        const isMaster = (nick === '흔'); 
         
         if (!appState.users[nick]) {
             const newUser = { 
@@ -433,14 +402,13 @@
                 lastAttend: null,
                 isOnline: true
             };
-            appState.users[nick] = newUser; // undefined 방지를 위해 화면에 즉시 임시 반영
+            appState.users[nick] = newUser; 
             dbUpdate(`users/${nick}`, newUser);
         } else {
-            // 기존 유저의 데이터가 누락되었을 경우를 대비한 안전장치
             appState.users[nick].isOnline = true;
             if(appState.users[nick].points === undefined) appState.users[nick].points = 0;
             
-            // 만약 '흔'으로 접속했는데 권한이 꼬였다면 강제 복구
+            // "흔" 닉네임일 경우 무조건 권한을 관리자로 덮어씌움 (롤백 방지)
             if(isMaster && appState.users[nick].role !== 'admin') {
                 appState.users[nick].role = 'admin';
             } else if(!appState.users[nick].role) {
@@ -449,14 +417,14 @@
             
             dbUpdate(`users/${nick}`, { 
                 isOnline: true,
-                role: appState.users[nick].role
+                role: appState.users[nick].role,
+                points: appState.users[nick].points
             });
         }
         
         appState.currentUser = nick;
         localStorage.setItem('heun_currentUser', nick);
         
-        // Re-trigger presence manually on login
         if(!isLocalMode) {
             const userOnlineRef = ref(db, `users/${nick}/isOnline`);
             onDisconnect(userOnlineRef).set(false);
@@ -477,9 +445,9 @@
     function addPoints(amount) {
         if(!appState.currentUser) return;
         const user = appState.users[appState.currentUser];
-        if (user.role === 'admin') return; // Admin gets no points
+        if (user.role === 'admin') return; 
         
-        const currentPoints = user.points || 0; // 안전장치
+        const currentPoints = user.points || 0;
         dbUpdate(`users/${appState.currentUser}`, { points: currentPoints + amount });
     }
 
@@ -509,13 +477,16 @@
         }
     }
 
+    // 완전히 정리된 레벨 정보 계산 로직
     function getLevelInfo(user) {
         if (!user) return null;
         
         const role = user.role || 'user';
-        const points = user.points || 0; // 안전장치
+        const points = user.points || 0;
         
-        if (role === 'admin') return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
+        if (role === 'admin') {
+            return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
+        }
         
         let lvl = Math.floor(points / 10) + 1;
         if(lvl > 100) lvl = 100;
@@ -530,8 +501,9 @@
             { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' },
             { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },
             { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },
-    function getLevelInfo(user) {
-// ... existing code ... //
+            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }
+        ];
+        
         const tierIdx = Math.min(Math.floor((lvl - 1) / 10), 9);
         return { level: lvl, ...tiers[tierIdx], isAdmin: false };
     }
@@ -582,7 +554,7 @@
 
         const user = appState.users[appState.currentUser];
         const info = getLevelInfo(user);
-        const points = user.points || 0; // 안전장치
+        const points = user.points || 0; 
         
         authArea.innerHTML = `<span style="font-weight:bold; margin-right:15px;">${info.icon} ${appState.currentUser}님</span> <button class="btn btn-outline" onclick="logout()">로그아웃</button>`;
         
@@ -657,7 +629,7 @@
         if(fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                newItem.image = e.target.result; // Base64 saving (fine for prototyping)
+                newItem.image = e.target.result; 
                 dbPush('spoons', newItem);
             };
             reader.readAsDataURL(fileInput.files[0]);
@@ -672,7 +644,7 @@
 
     function resetSpoons() {
         if(confirm('모든 스푼 후원 현황을 초기화하시겠습니까?')) {
-            dbSet('spoons', {}); // clear all
+            dbSet('spoons', {}); 
         }
     }
 
@@ -757,7 +729,7 @@
             author: appState.currentUser,
             date: new Date().toLocaleString(),
             views: 0,
-            likes: {}, // Object for Firebase compatibility
+            likes: {}, 
             dislikes: {},
             image: null
         };
@@ -839,13 +811,9 @@
         const post = appState.posts.find(p => p.id === id || p.id == id);
         if(!post) return;
         
-        // Increase view count in Firebase directly
         const newViews = (post.views || 0) + 1;
         if(!isLocalMode) {
             update(ref(db, `posts/${post.id}`), { views: newViews });
-        } else {
-            post.views = newViews; // Local fallback
-            dbUpdate('dummy',{});
         }
         
         updatePostModalContent(post, newViews);
@@ -917,10 +885,6 @@
         
         if(!isLocalMode) {
             update(ref(db, `posts/${post.id}`), { likes, dislikes });
-        } else {
-            post.likes = likes; post.dislikes = dislikes;
-            dbUpdate('dummy',{});
-            updatePostModalContent(post);
         }
     }
 
@@ -950,10 +914,9 @@
     }
 
     function renderRanking() {
-        // Admin gets filtered entirely out of the ranking calculation
         const arr = Object.entries(appState.users)
             .filter(([nick, data]) => data.role !== 'admin')
-            .map(([nick, data]) => ({ nick, points: data.points || 0, ...data })); // undefined 방지
+            .map(([nick, data]) => ({ nick, points: data.points || 0, ...data })); 
             
         arr.sort((a, b) => b.points - a.points); 
         
