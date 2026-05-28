@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spoon Radio x 흔과 흔둥이 커뮤니티</title>
     <style>
-        /* Base & Reset */
         :root {
             --primary: #ffab00;
             --primary-dark: #e69a00;
@@ -21,7 +20,6 @@
         ul { list-style: none; padding: 0; margin: 0; }
         button { cursor: pointer; font-family: inherit; }
         
-        /* Layout */
         .header { background: var(--card-bg); border-bottom: 1px solid #e1e5e8; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 10px;}
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; }
@@ -37,12 +35,10 @@
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cards */
         .card { background: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
         .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         
-        /* Buttons & Inputs */
         .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); }
@@ -51,13 +47,11 @@
         .btn-admin { background: var(--admin-color); color: white; }
         .input-text { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
         
-        /* Profile & Level Bar */
         .profile-area { text-align: center; }
         .level-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
         .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; position: relative; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #ffab00, #ff8c00); transition: width 0.5s; }
         
-        /* Spoons Area */
         .grad-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
         .grad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
         .grad-item { text-align: center; background:#f9f9f9; padding:15px 10px; border-radius:12px; border:1px solid #eee;}
@@ -66,7 +60,6 @@
         .grad-name { font-size: 13px; font-weight: 600; color: #333; }
         .grad-label { font-size: 11px; color: #888; margin-bottom: 5px; }
 
-        /* Board & Lists */
         .board-tabs { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px;}
         .tab-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; background: white; font-size: 14px; cursor: pointer; }
         .tab-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
@@ -75,17 +68,15 @@
         .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px; }
         .badge.popular { background: #ff4757; color: white; }
         .badge.normal { background: #f1f2f6; color: #57606f; }
+        .badge.cat { background: #eccc68; color: #2f3542; } /* Category Badge for Home */
 
-        /* Links & Banner */
         .channel-link { display: block; background: linear-gradient(135deg, #1e90ff, #70a1ff); color: white; text-align: center; padding: 20px; border-radius: 16px; font-weight: bold; font-size: 18px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(30,144,255,0.3); }
         .channel-link:hover { transform: translateY(-3px); }
 
-        /* Modals */
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
         .modal-content textarea { width: 100%; height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: none; font-family: inherit;}
         
-        /* Data Table */
         .data-table-wrap { overflow-x: auto; }
         .data-table { width: 100%; border-collapse: collapse; text-align: center; min-width: 500px; }
         .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid #eee; }
@@ -93,18 +84,29 @@
 
         .admin-only { display: none; }
         
-        /* Reaction Buttons */
         .reaction-btn { padding: 8px 15px; border-radius: 20px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;}
         .reaction-btn.active-like { background: #ffeaa7; border-color: #fdcb6e; color: #d63031; }
         .reaction-btn.active-dislike { background: #dfe6e9; border-color: #b2bec3; color: #2d3436; }
         
         .reaction-list-text { font-size: 12px; color: #888; margin-top: 10px; line-height: 1.4; background: #f9f9f9; padding: 10px; border-radius: 8px;}
         
-        /* Loading Overlay */
         #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--primary); font-size: 20px; }
+        
+        /* Site Password Lock Screen */
+        #siteLockOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: #2d3436; display: flex; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; }
+        .lock-box { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
     </style>
 </head>
 <body>
+
+<div id="siteLockOverlay">
+    <div class="lock-box">
+        <h2 style="margin-top:0; color:#333;">🔒 입장하기</h2>
+        <p style="color:#666; font-size:14px; margin-bottom:20px;">흔과 흔둥이들만의 아지트입니다.<br>비밀번호를 입력해주세요.</p>
+        <input type="password" id="sitePw" class="input-text" placeholder="비밀번호 4자리" style="text-align:center; font-size:18px; letter-spacing:3px;">
+        <button class="btn btn-primary" style="width:100%; padding:12px; font-size:16px;" onclick="checkSitePw()">확인</button>
+    </div>
+</div>
 
 <div id="loadingOverlay">서버 데이터 동기화 중...</div>
 
@@ -124,7 +126,6 @@
 </header>
 
 <div class="container">
-    <!-- LEFT CONTENT AREA -->
     <div style="width: 100%; overflow: hidden;">
         
         <!-- ================= HOME VIEW ================= -->
@@ -202,7 +203,6 @@
                             </tr>
                         </thead>
                         <tbody id="dataTableBody">
-                            <!-- Data injected here -->
                         </tbody>
                     </table>
                 </div>
@@ -214,7 +214,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">🏆 구름 랭킹 & 명예의 전당</div>
-                    <div style="font-size: 13px; color: #888;">활동(글, 사진, 출석) 시 1점! (10점당 1레벨업, 만렙 100)</div>
+                    <div style="font-size: 13px; color: #888;">활동(글+1, 사진+2, 출석+1) 시 포인트 적립! (고레벨일수록 요구치 증가)</div>
                 </div>
                 <div id="rankingList"></div>
             </div>
@@ -242,12 +242,9 @@
 
     </div>
 
-    <!-- RIGHT SIDEBAR -->
     <div class="sidebar">
         <!-- Profile / Login -->
-        <div class="card profile-area" id="profileCard">
-            <!-- Injected by JS -->
-        </div>
+        <div class="card profile-area" id="profileCard"></div>
 
         <!-- Channel Link -->
         <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="margin-bottom: 25px;">
@@ -274,25 +271,21 @@
     </div>
 </div>
 
-<!-- Write / Read Modal -->
 <div class="modal-overlay" id="mainModal">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
             <h3 id="modalTitle" style="margin:0;">글쓰기</h3>
             <button onclick="closeModal()" style="border:none; background:none; font-size:24px; color:#555;">&times;</button>
         </div>
-        <div id="modalBody">
-            <!-- Injected by JS -->
-        </div>
+        <div id="modalBody"></div>
     </div>
 </div>
 
-<!-- FIREBASE SDK (Modular) -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, set, get, onValue, push, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // ⚠️ 파이어베이스 설정 정보 (정확하게 반영됨)
+    // ⚠️ 사용자 맞춤 파이어베이스 설정
     const firebaseConfig = {
         apiKey: "AIzaSyBgW_037A_jGXpGTwfGTP-XAo0Y6aXOyAk",
         authDomain: "heun-ddf64.firebaseapp.com",
@@ -324,7 +317,6 @@
         currentUser: localStorage.getItem('heun_currentUser') || null
     };
 
-    // UI에서 사용하기 위해 함수들을 window 전역 객체에 등록
     window.switchView = switchView;
     window.login = login;
     window.logout = logout;
@@ -340,6 +332,28 @@
     window.viewPost = viewPost;
     window.toggleReaction = toggleReaction;
     window.addBroadcastData = addBroadcastData;
+    window.checkSitePw = checkSitePw;
+    window.submitComment = submitComment;
+    window.deleteComment = deleteComment;
+    window.deletePost = deletePost;
+    window.editPostMode = editPostMode;
+    window.saveEditPost = saveEditPost;
+
+    function checkSitePw() {
+        if(document.getElementById('sitePw').value === '0717') {
+            sessionStorage.setItem('siteUnlocked', 'true');
+            document.getElementById('siteLockOverlay').style.display = 'none';
+        } else {
+            alert('비밀번호가 틀렸습니다. 다시 시도해주세요.');
+        }
+    }
+
+    // On Load check password
+    window.addEventListener('DOMContentLoaded', () => {
+        if(sessionStorage.getItem('siteUnlocked') === 'true') {
+            document.getElementById('siteLockOverlay').style.display = 'none';
+        }
+    });
 
     function setupFirebaseListeners() {
         if(isLocalMode) {
@@ -358,12 +372,8 @@
             
             document.getElementById('loadingOverlay').style.display = 'none';
             initUI();
-        }, (error) => {
-            console.error("Firebase read error:", error);
-            alert("데이터베이스 권한 오류! 파이어베이스 규칙을 확인하세요.");
         });
 
-        // Online Presence Logic
         const connectedRef = ref(db, '.info/connected');
         onValue(connectedRef, (snap) => {
             if (snap.val() === true && appState.currentUser) {
@@ -375,10 +385,7 @@
         });
     }
 
-    function dbUpdate(path, data) {
-        if(!isLocalMode) update(ref(db, path), data);
-    }
-
+    function dbUpdate(path, data) { if(!isLocalMode) update(ref(db, path), data); }
     function dbPush(path, data) {
         if(!isLocalMode) {
             const newRef = push(ref(db, path));
@@ -386,21 +393,17 @@
             set(newRef, data);
         }
     }
-
-    function dbSet(path, data) {
-        if(!isLocalMode) set(ref(db, path), data);
-    }
+    function dbSet(path, data) { if(!isLocalMode) set(ref(db, path), data); }
 
     function login() {
         const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
         if(!nick || nick.trim() === '') return;
         
-        const isFirst = Object.keys(appState.users).length === 0;
         const isMaster = (nick === '흔'); 
         
         if (!appState.users[nick]) {
             const newUser = { 
-                role: (isFirst || isMaster) ? 'admin' : 'user', 
+                role: isMaster ? 'admin' : 'user', 
                 points: 0, 
                 lastAttend: null,
                 isOnline: true
@@ -411,12 +414,8 @@
             appState.users[nick].isOnline = true;
             if(appState.users[nick].points === undefined) appState.users[nick].points = 0;
             
-            // "흔" 닉네임일 경우 무조건 권한을 관리자로 덮어씌움 (롤백 방지)
-            if(isMaster && appState.users[nick].role !== 'admin') {
-                appState.users[nick].role = 'admin';
-            } else if(!appState.users[nick].role) {
-                appState.users[nick].role = 'user';
-            }
+            if(isMaster) { appState.users[nick].role = 'admin'; } 
+            else if(!appState.users[nick].role) { appState.users[nick].role = 'user'; }
             
             dbUpdate(`users/${nick}`, { 
                 isOnline: true,
@@ -437,21 +436,61 @@
     }
 
     function logout() {
-        if(appState.currentUser) {
-            dbUpdate(`users/${appState.currentUser}`, { isOnline: false });
-        }
+        if(appState.currentUser) { dbUpdate(`users/${appState.currentUser}`, { isOnline: false }); }
         appState.currentUser = null;
         localStorage.removeItem('heun_currentUser');
         initUI();
+    }
+
+    function getLevelInfo(user) {
+        if (!user) return null;
+        if (user.role === 'admin') {
+            return { level: 'MAX', name: '보랏빛 번개 구름', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true, progressPercent: 100 };
+        }
+        
+        let points = user.points || 0;
+        let level = 1;
+        let required = 10; // 점진적으로 증가할 요구 경험치
+        let current = points;
+        
+        // 레벨업 계산 로직: 레벨이 오를수록 다음 레벨 요구치가 5~10%씩 복리로 증가
+        while(current >= required && level < 100) {
+            current -= required;
+            level++;
+            required = Math.floor(required * 1.05 + 5); 
+        }
+        
+        let progressPercent = level >= 100 ? 100 : (current / required) * 100;
+        
+        const tiers = [
+            { icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff' },
+            { icon: '☁️', name: '옅은 구름', color: '#bdc3c7', textCol: '#000' },
+            { icon: '⛅', name: '맑은 구름', color: '#3498db', textCol: '#fff' },
+            { icon: '🌥️', name: '뭉게구름', color: '#2980b9', textCol: '#fff' },
+            { icon: '🌦️', name: '여우비 구름', color: '#1abc9c', textCol: '#fff' },
+            { icon: '🌈', name: '무지개 구름', color: '#f1c40f', textCol: '#000' },
+            { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' },
+            { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },
+            { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },
+            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }
+        ];
+        
+        const tierIdx = Math.min(Math.floor((level - 1) / 10), 9);
+        return { 
+            level: level, 
+            remaining: current, 
+            nextRequired: required, 
+            progressPercent: progressPercent, 
+            ...tiers[tierIdx], 
+            isAdmin: false 
+        };
     }
 
     function addPoints(amount) {
         if(!appState.currentUser) return;
         const user = appState.users[appState.currentUser];
         if (user.role === 'admin') return; 
-        
-        const currentPoints = user.points || 0;
-        dbUpdate(`users/${appState.currentUser}`, { points: currentPoints + amount });
+        dbUpdate(`users/${appState.currentUser}`, { points: (user.points || 0) + amount });
     }
 
     function checkAttendance() {
@@ -460,7 +499,6 @@
         if(user.role === 'admin') return alert('관리자는 출석체크가 필요하지 않습니다.');
 
         const today = new Date().toISOString().split('T')[0];
-        
         if(user.lastAttend === today) {
             alert('오늘은 이미 출석체크 하셨습니다!');
         } else {
@@ -478,36 +516,6 @@
         } else {
             alert('존재하지 않는 유저입니다.');
         }
-    }
-
-    function getLevelInfo(user) {
-        if (!user) return null;
-        
-        const role = user.role || 'user';
-        const points = user.points || 0;
-        
-        if (role === 'admin') {
-            return { level: 'MAX', name: '관리자', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true };
-        }
-        
-        let lvl = Math.floor(points / 10) + 1;
-        if(lvl > 100) lvl = 100;
-        
-        const tiers = [
-            { icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff' },
-            { icon: '☁️', name: '옅은 구름', color: '#bdc3c7', textCol: '#000' },
-            { icon: '⛅', name: '맑은 구름', color: '#3498db', textCol: '#fff' },
-            { icon: '🌥️', name: '뭉게구름', color: '#2980b9', textCol: '#fff' },
-            { icon: '🌦️', name: '여우비 구름', color: '#1abc9c', textCol: '#fff' },
-            { icon: '🌈', name: '무지개 구름', color: '#f1c40f', textCol: '#000' },
-            { icon: '🍡', name: '솜사탕 구름', color: '#ff9ff3', textCol: '#000' },
-            { icon: '🌟', name: '반짝 구름', color: '#f39c12', textCol: '#fff' },
-            { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },
-            { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }
-        ];
-        
-        const tierIdx = Math.min(Math.floor((lvl - 1) / 10), 9);
-        return { level: lvl, ...tiers[tierIdx], isAdmin: false };
     }
 
     function initUI() {
@@ -528,17 +536,13 @@
         document.getElementById('view-' + viewId).classList.add('active');
         
         document.querySelectorAll('.menu-links li').forEach(el => el.classList.remove('active'));
-        if(event && event.currentTarget.tagName === 'LI') {
-            event.currentTarget.classList.add('active');
-        }
+        if(event && event.currentTarget.tagName === 'LI') event.currentTarget.classList.add('active');
     }
 
     function applyAdminUI() {
         const user = appState.currentUser ? appState.users[appState.currentUser] : null;
         const isAdmin = user && user.role === 'admin';
-        document.querySelectorAll('.admin-only').forEach(el => {
-            el.style.display = isAdmin ? 'inline-block' : 'none';
-        });
+        document.querySelectorAll('.admin-only').forEach(el => { el.style.display = isAdmin ? 'inline-block' : 'none'; });
     }
 
     function renderProfile() {
@@ -556,7 +560,6 @@
 
         const user = appState.users[appState.currentUser];
         const info = getLevelInfo(user);
-        const points = user.points || 0; 
         
         authArea.innerHTML = `<span style="font-weight:bold; margin-right:15px;">${info.icon} ${appState.currentUser}님</span> <button class="btn btn-outline" onclick="logout()">로그아웃</button>`;
         
@@ -570,16 +573,15 @@
                 <button class="btn btn-admin" style="width:100%; margin-top:10px;" onclick="grantAdmin()">+ 관리자 권한 부여</button>
             `;
         } else {
-            const progressPercent = (points % 10) * 10;
             profileCard.innerHTML = `
                 <div class="level-badge" style="background:${info.color}; color:${info.textCol};">
                     ${info.icon} ${info.name} (Lv.${info.level})
                 </div>
                 <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
-                <p style="font-size:12px; color:#888; margin:0;">총 누적 포인트: ${points} P</p>
+                <p style="font-size:12px; color:#888; margin:0;">총 누적: ${user.points || 0} P</p>
                 
-                <div class="progress-container" title="다음 레벨까지 ${10 - (points%10)}점 남음">
-                    <div class="progress-bar" style="width: ${progressPercent}%;"></div>
+                <div class="progress-container" title="다음 레벨까지 ${info.nextRequired - info.remaining}점 남음">
+                    <div class="progress-bar" style="width: ${info.progressPercent}%;"></div>
                 </div>
                 
                 <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="checkAttendance()">오늘 출석체크 하기</button>
@@ -596,12 +598,7 @@
         const listen = document.getElementById('dListen').value;
 
         if(!date) return alert('날짜를 입력하세요.');
-
-        dbPush('bData', {
-            timestamp: Date.now(),
-            date, count, time, spoon, like, listen
-        });
-        
+        dbPush('bData', { timestamp: Date.now(), date, count, time, spoon, like, listen });
         document.querySelectorAll('#view-data input').forEach(el => el.value = '');
     }
 
@@ -609,12 +606,8 @@
         const tbody = document.getElementById('dataTableBody');
         tbody.innerHTML = appState.bData.map(d => `
             <tr>
-                <td>${d.date}</td>
-                <td>${d.count || '-'}</td>
-                <td>${d.time || '-'}</td>
-                <td>${d.spoon || '-'}</td>
-                <td>${d.like || '-'}</td>
-                <td>${d.listen || '-'}</td>
+                <td>${d.date}</td><td>${d.count || '-'}</td><td>${d.time || '-'}</td>
+                <td>${d.spoon || '-'}</td><td>${d.like || '-'}</td><td>${d.listen || '-'}</td>
             </tr>
         `).join('') || '<tr><td colspan="6" style="color:#999; padding:20px;">기록된 데이터가 없습니다.</td></tr>';
     }
@@ -623,11 +616,9 @@
         const name = document.getElementById('spoonName').value;
         const emoji = document.getElementById('spoonEmoji').value;
         const fileInput = document.getElementById('spoonImage');
-        
         if(!name) return alert('후원자 닉네임을 입력해주세요.');
         
         const newItem = { timestamp: Date.now(), name, image: null, emoji: emoji || '🥄' };
-        
         if(fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -635,29 +626,21 @@
                 dbPush('spoons', newItem);
             };
             reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            dbPush('spoons', newItem);
-        }
+        } else { dbPush('spoons', newItem); }
         
         document.getElementById('spoonName').value = '';
         document.getElementById('spoonEmoji').value = '';
         fileInput.value = '';
     }
 
-    function resetSpoons() {
-        if(confirm('모든 스푼 후원 현황을 초기화하시겠습니까?')) {
-            dbSet('spoons', {}); 
-        }
-    }
+    function resetSpoons() { if(confirm('모든 스푼 후원 현황을 초기화하시겠습니까?')) dbSet('spoons', {}); }
 
     function renderSpoons() {
         const grid = document.getElementById('spoonGrid');
         grid.innerHTML = appState.spoons.map(s => `
             <div class="grad-item">
                 <div class="grad-label">이 스푼을 후원한 사람</div>
-                <div class="grad-img-wrap">
-                    ${s.image ? `<img src="${s.image}">` : s.emoji}
-                </div>
+                <div class="grad-img-wrap">${s.image ? `<img src="${s.image}">` : s.emoji}</div>
                 <div class="grad-name">${s.name}</div>
             </div>
         `).join('') || '<div style="grid-column:1/-1; text-align:center; color:#999; font-size:14px; padding:20px;">등록된 후원자가 없습니다.</div>';
@@ -671,10 +654,7 @@
     function openWriteModal(type) {
         if(!appState.currentUser) return alert('로그인이 필요합니다.');
         const isAdmin = appState.users[appState.currentUser].role === 'admin';
-        
-        if((type === 'schedule' || type === 'notice' || type === 'letter') && !isAdmin) {
-            return alert('관리자만 작성할 수 있습니다.');
-        }
+        if((type === 'schedule' || type === 'notice' || type === 'letter') && !isAdmin) return alert('관리자만 작성할 수 있습니다.');
 
         const modal = document.getElementById('mainModal');
         const mBody = document.getElementById('modalBody');
@@ -703,12 +683,10 @@
             </div>
             <button class="btn btn-primary" style="width:100%" onclick="submitPost('${type}')">등록하기</button>
         `;
-
         document.getElementById('modalTitle').innerText = '글쓰기';
 
         if(type === 'board') {
-            const catSel = document.getElementById('postCat');
-            catSel.addEventListener('change', (e) => {
+            document.getElementById('postCat').addEventListener('change', (e) => {
                 const val = e.target.value;
                 document.getElementById('photoInputWrap').style.display = 
                     (val === 'photo' || val === 'letter' || val === 'food' || val === 'scenery') ? 'block' : 'none';
@@ -717,9 +695,7 @@
         modal.style.display = 'flex';
     }
 
-    function closeModal() {
-        document.getElementById('mainModal').style.display = 'none';
-    }
+    function closeModal() { document.getElementById('mainModal').style.display = 'none'; }
 
     function submitPost(formType) {
         const title = document.getElementById('postTitle').value;
@@ -729,32 +705,20 @@
         let cat = formType;
         if(formType === 'board') cat = document.getElementById('postCat').value;
 
-        const newPost = {
-            timestamp: Date.now(),
-            category: cat,
-            title, content,
-            author: appState.currentUser,
-            date: new Date().toLocaleString(),
-            views: 0,
-            likes: {}, 
-            dislikes: {},
-            image: null
-        };
-
+        const newPost = { timestamp: Date.now(), category: cat, title, content, author: appState.currentUser, date: new Date().toLocaleString(), views: 0, likes: {}, dislikes: {}, comments: {}, image: null };
         const fileInput = document.getElementById('postPhoto');
+        
         if(fileInput && fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 newPost.image = e.target.result;
                 dbPush('posts', newPost);
-                closeModal();
-                addPoints(1); // 글작성 보상
+                closeModal(); addPoints(2); // 사진은 2점
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
             dbPush('posts', newPost);
-            closeModal();
-            addPoints(1); // 글작성 보상
+            closeModal(); addPoints(1); // 일반 1점
         }
     }
 
@@ -767,18 +731,18 @@
         let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'letter'].includes(p.category));
         
         let filtered = boardPosts;
-        if(filterStr === 'popular') {
-            filtered = boardPosts.filter(p => isPopular(p));
-        } else if (filterStr === 'general') {
-            filtered = boardPosts.filter(p => !isPopular(p));
-        }
+        if(filterStr === 'popular') filtered = boardPosts.filter(p => isPopular(p));
+        else if (filterStr === 'general') filtered = boardPosts.filter(p => !isPopular(p));
 
         list.innerHTML = filtered.slice(0, 5).map(p => {
-            let badge = isPopular(p) ? '<span class="badge popular">인기</span>' : '<span class="badge normal">일반</span>';
+            let badge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '<span class="badge normal">일반</span>';
+            let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', letter:'박제편지' }[p.category];
+            let catBadge = `<span class="badge cat">${catName}</span>`;
+            
             const likesCount = p.likes ? Object.keys(p.likes).length : 0;
             return `
             <div class="list-item" onclick="viewPost('${p.id}')">
-                <div style="flex:1;">${badge} ${p.title}</div>
+                <div style="flex:1;">${badge} ${catBadge} ${p.title}</div>
                 <div style="color:#999; font-size:12px;">👁️ ${p.views || 0} | ❤️ ${likesCount}</div>
             </div>`;
         }).join('') || '<p style="text-align:center; color:#999; padding:20px;">게시글이 없습니다.</p>';
@@ -790,7 +754,6 @@
             tabs.forEach(t => t.classList.remove('active'));
             btnElem.classList.add('active');
         }
-
         const list = document.getElementById('fullBoardList');
         let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'letter'].includes(p.category));
         
@@ -805,9 +768,7 @@
                 <div class="list-item" onclick="viewPost('${p.id}')">
                     <div style="flex:1;"><span class="badge normal">${catName}</span> ${popBadge} ${p.title}</div>
                     <div style="color:#999; font-size:12px; display:flex; gap:12px;">
-                        <span>👤 ${p.author}</span>
-                        <span>👁️ ${p.views || 0}</span>
-                        <span>❤️ ${likesCount}</span>
+                        <span>👤 ${p.author}</span><span>👁️ ${p.views || 0}</span><span>❤️ ${likesCount}</span>
                     </div>
                 </div>
             `;
@@ -819,9 +780,7 @@
         if(!post) return;
         
         const newViews = (post.views || 0) + 1;
-        if(!isLocalMode) {
-            update(ref(db, `posts/${post.id}`), { views: newViews });
-        }
+        if(!isLocalMode) update(ref(db, `posts/${post.id}`), { views: newViews });
         
         updatePostModalContent(post, newViews);
         document.getElementById('mainModal').style.display = 'flex';
@@ -831,47 +790,124 @@
         const mBody = document.getElementById('modalBody');
         document.getElementById('modalTitle').innerText = '게시글 보기';
         
+        const currUser = appState.currentUser;
+        const isAdmin = currUser && appState.users[currUser] && appState.users[currUser].role === 'admin';
+        const isAuthor = currUser === post.author;
+        
         const likesArr = post.likes ? Object.keys(post.likes) : [];
         const dislikesArr = post.dislikes ? Object.keys(post.dislikes) : [];
-
-        const currUser = appState.currentUser;
         const hasLiked = currUser && likesArr.includes(currUser);
         const hasDisliked = currUser && dislikesArr.includes(currUser);
         const viewCount = overrideViews !== undefined ? overrideViews : (post.views || 0);
 
+        // Comments Generation
+        const commentsObj = post.comments || {};
+        const commentsHtml = Object.keys(commentsObj).map(k => {
+            const c = commentsObj[k];
+            const canDeleteComment = (currUser === c.author || isAdmin);
+            return `
+                <div style="padding: 10px; border-bottom: 1px solid #eee; font-size:13px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <strong>${c.author}</strong>
+                        ${canDeleteComment ? `<button onclick="deleteComment('${post.id}', '${k}')" style="background:none;border:none;color:red;cursor:pointer;font-size:11px;padding:0;">삭제</button>` : ''}
+                    </div>
+                    <div>${c.content}</div>
+                </div>
+            `;
+        }).join('');
+
         mBody.innerHTML = `
-            <h4 style="margin:0 0 10px 0; font-size:20px;">${post.title}</h4>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                <h4 style="margin:0; font-size:20px;">${post.title}</h4>
+                ${(isAuthor || isAdmin) ? `
+                <div style="display:flex; gap:8px;">
+                    <button class="btn" style="padding:4px 8px; font-size:12px; background:#eee;" onclick="editPostMode('${post.id}')">수정</button>
+                    <button class="btn" style="padding:4px 8px; font-size:12px; background:#ff7675; color:white;" onclick="deletePost('${post.id}')">삭제</button>
+                </div>` : ''}
+            </div>
+            
             <div style="font-size:13px; color:#888; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #eee; display:flex; gap:15px; flex-wrap:wrap;">
-                <span>작성자: ${post.author}</span>
-                <span>작성일: ${post.date}</span>
-                <span>조회수: ${viewCount}</span>
+                <span>작성자: ${post.author}</span><span>작성일: ${post.date}</span><span>조회수: ${viewCount}</span>
             </div>
             
             <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px; word-break: break-all;">${post.content}</div>
             ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : ''}
             
             <div style="text-align:center; padding: 20px 0; border-top:1px dashed #ddd; margin-top:20px;">
-                <button class="reaction-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction('${post.id}', 'like')">
-                    👍 좋아요 ${likesArr.length}
-                </button>
-                <button class="reaction-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction('${post.id}', 'dislike')">
-                    👎 싫어요 ${dislikesArr.length}
-                </button>
+                <button class="reaction-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction('${post.id}', 'like')">👍 좋아요 ${likesArr.length}</button>
+                <button class="reaction-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction('${post.id}', 'dislike')">👎 싫어요 ${dislikesArr.length}</button>
                 
                 <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:15px;">
-                    <div class="reaction-list-text" style="flex:1; min-width:120px;">
-                        <strong>좋아요 누른 사람:</strong><br>
-                        ${likesArr.length > 0 ? likesArr.join(', ') : '없음'}
-                    </div>
-                    <div class="reaction-list-text" style="flex:1; min-width:120px;">
-                        <strong>싫어요 누른 사람:</strong><br>
-                        ${dislikesArr.length > 0 ? dislikesArr.join(', ') : '없음'}
-                    </div>
+                    <div class="reaction-list-text" style="flex:1; min-width:120px;"><strong>좋아요 누른 사람:</strong><br>${likesArr.length > 0 ? likesArr.join(', ') : '없음'}</div>
+                    <div class="reaction-list-text" style="flex:1; min-width:120px;"><strong>싫어요 누른 사람:</strong><br>${dislikesArr.length > 0 ? dislikesArr.join(', ') : '없음'}</div>
                 </div>
             </div>
             
-            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal()">목록으로 닫기</button>
+            <!-- Comment Section -->
+            <div style="margin-top:10px; border-top: 2px solid #eee; padding-top:20px;">
+                <h5 style="margin:0 0 10px 0;">댓글</h5>
+                <div style="max-height: 150px; overflow-y: auto; margin-bottom:15px; background:#f9f9f9; border-radius:8px;">
+                    ${commentsHtml || '<div style="padding:15px; color:#999; text-align:center; font-size:13px;">첫 댓글을 남겨보세요!</div>'}
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="commentInput" class="input-text" style="margin:0; flex:1;" placeholder="댓글 입력">
+                    <button class="btn btn-primary" onclick="submitComment('${post.id}')">등록</button>
+                </div>
+            </div>
         `;
+    }
+
+    function editPostMode(postId) {
+        const post = appState.posts.find(p => p.id === postId || p.id == postId);
+        const mBody = document.getElementById('modalBody');
+        document.getElementById('modalTitle').innerText = '게시글 수정';
+        mBody.innerHTML = `
+            <input type="text" id="editTitle" class="input-text" value="${post.title}">
+            <textarea id="editContent">${post.content}</textarea>
+            <button class="btn btn-primary" style="width:100%" onclick="saveEditPost('${postId}')">수정 완료</button>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="viewPost('${postId}')">취소</button>
+        `;
+    }
+
+    function saveEditPost(postId) {
+        const title = document.getElementById('editTitle').value;
+        const content = document.getElementById('editContent').value;
+        if(!isLocalMode) {
+            update(ref(db, `posts/${postId}`), { title, content }).then(() => {
+                setTimeout(() => viewPost(postId), 200); // 딜레이 후 새로고침
+            });
+        }
+    }
+
+    function deletePost(postId) {
+        if(confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+            if(!isLocalMode) {
+                remove(ref(db, `posts/${postId}`)).then(() => closeModal());
+            }
+        }
+    }
+
+    function submitComment(postId) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const text = document.getElementById('commentInput').value;
+        if(!text.trim()) return;
+
+        if(!isLocalMode) {
+            const newRef = push(ref(db, `posts/${postId}/comments`));
+            set(newRef, { author: appState.currentUser, content: text, timestamp: Date.now() }).then(() => {
+                setTimeout(() => viewPost(postId), 200);
+            });
+        }
+    }
+
+    function deleteComment(postId, commentId) {
+        if(confirm('이 댓글을 삭제할까요?')) {
+            if(!isLocalMode) {
+                remove(ref(db, `posts/${postId}/comments/${commentId}`)).then(() => {
+                    setTimeout(() => viewPost(postId), 200);
+                });
+            }
+        }
     }
 
     function toggleReaction(postId, type) {
@@ -890,9 +926,7 @@
             else { dislikes[user] = true; delete likes[user]; }
         }
         
-        if(!isLocalMode) {
-            update(ref(db, `posts/${post.id}`), { likes, dislikes });
-        }
+        if(!isLocalMode) update(ref(db, `posts/${post.id}`), { likes, dislikes });
     }
 
     function renderSchedule() {
@@ -915,16 +949,11 @@
                 <div style="color:#555; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${noti.content}</div>
                 <div style="font-size:11px; color:#aaa; margin-top:8px;">${noti.date}</div>
             `;
-        } else {
-            cont.innerHTML = '등록된 공지가 없습니다.';
-        }
+        } else { cont.innerHTML = '등록된 공지가 없습니다.'; }
     }
 
     function renderRanking() {
-        const arr = Object.entries(appState.users)
-            .filter(([nick, data]) => data.role !== 'admin')
-            .map(([nick, data]) => ({ nick, points: data.points || 0, ...data })); 
-            
+        const arr = Object.entries(appState.users).filter(([nick, data]) => data.role !== 'admin').map(([nick, data]) => ({ nick, points: data.points || 0, ...data })); 
         arr.sort((a, b) => b.points - a.points); 
         
         const cont = document.getElementById('rankingList');
@@ -939,7 +968,7 @@
                         ${u.nick}
                     </div>
                     <div style="background:#eee; height:6px; border-radius:3px; width:100%; overflow:hidden;">
-                        <div style="background:var(--primary); height:100%; width:${(u.points%10)*10}%;"></div>
+                        <div style="background:var(--primary); height:100%; width:${info.progressPercent}%;"></div>
                     </div>
                 </div>
                 <div style="font-weight:bold; color:var(--primary); width: 60px; text-align:right;">${u.points} P</div>
@@ -950,9 +979,7 @@
     function renderOnlineUsers() {
         const cont = document.getElementById('onlineUsers');
         let onlineHtml = '';
-        
         const onlineUsers = Object.keys(appState.users).filter(k => appState.users[k].isOnline);
-        
         onlineUsers.forEach(nick => {
             const info = getLevelInfo(appState.users[nick]);
             const isMe = nick === appState.currentUser ? '(나)' : '';
@@ -963,7 +990,6 @@
                 </div>
             `;
         });
-        
         cont.innerHTML = onlineHtml || '<div style="color:#999;">현재 접속 중인 구름이가 없습니다.</div>';
     }
 
