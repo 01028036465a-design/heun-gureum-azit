@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spoon Radio x 흔과 흔둥이 커뮤니티</title>
+    <title>흔둥이 커뮤니티</title>
     <style>
         :root {
-            --primary: #ffab00;
-            --primary-dark: #e69a00;
-            --bg-color: #f4f6f8;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
+            /* 파스텔 하늘색 테마 적용 */
+            --primary: #9bb7d4; 
+            --primary-dark: #7a9cb9;
+            --bg-color: #f4f7f8;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
             --card-bg: #ffffff;
-            --admin-color: #9b59b6;
+            --admin-color: #a29bfe; /* 관리자 전용 파스텔 보라색 */
         }
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: var(--bg-color); color: var(--text-main); }
@@ -20,23 +21,31 @@
         ul { list-style: none; padding: 0; margin: 0; }
         button { cursor: pointer; font-family: inherit; }
         
+        #pwOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 9999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        #pwOverlay h2 { margin-bottom: 20px; color: var(--primary); }
+        #pwOverlay input { padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; text-align: center; margin-bottom: 15px; }
+        #pwOverlay button { padding: 12px 30px; font-size: 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; }
+
         .header { background: var(--card-bg); border-bottom: 1px solid #e1e5e8; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 10px;}
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; }
         .logo span { color: #333; }
-        .menu-links { display: flex; gap: 20px; font-weight: 600; font-size: 15px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px;}
+        
+        .menu-links { display: flex; gap: 20px; font-weight: 600; font-size: 15px; }
         .menu-links li { cursor: pointer; padding: 5px 0; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .menu-links li:hover, .menu-links li.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
         
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 8fr 4fr; gap: 30px; }
-        @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
-        
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card { background: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
         .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         
         .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; transition: 0.2s; }
@@ -50,72 +59,53 @@
         .profile-area { text-align: center; }
         .level-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
         .progress-container { width: 100%; background: #eee; border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; position: relative; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #ffab00, #ff8c00); transition: width 0.5s; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #a1c4fd, #c2e9fb); transition: width 0.5s; } /* 파스텔 블루 그라데이션 */
         
-        .grad-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-        .grad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
-        .grad-item { text-align: center; background:#f9f9f9; padding:15px 10px; border-radius:12px; border:1px solid #eee;}
-        .grad-img-wrap { width: 60px; height: 60px; background: #fff8e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; overflow: hidden; border: 1px solid #ffe082;}
+        .grad-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .grad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
+        .grad-item { text-align: center; }
+        .grad-img-wrap { width: 80px; height: 80px; background: #f8fbff; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 30px; overflow: hidden; border: 1px solid #d6e4f0;}
         .grad-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .grad-name { font-size: 13px; font-weight: 600; color: #333; }
-        .grad-label { font-size: 11px; color: #888; margin-bottom: 5px; }
+        .grad-name { font-size: 12px; font-weight: 600; color: #555; }
 
-        .board-tabs { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px;}
+        .board-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .tab-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; background: white; font-size: 14px; cursor: pointer; }
         .tab-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .list-item:hover { background: #fdfdfd; }
+        
         .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px; }
-        .badge.popular { background: #ff4757; color: white; }
+        .badge.popular { background: #ffa502; color: white; }
         .badge.normal { background: #f1f2f6; color: #57606f; }
-        .badge.cat { background: #eccc68; color: #2f3542; } /* Category Badge for Home */
+        .badge.cat { border: 1px solid #ddd; color: #333; background: #fff; }
 
-        .channel-link { display: block; background: linear-gradient(135deg, #1e90ff, #70a1ff); color: white; text-align: center; padding: 20px; border-radius: 16px; font-weight: bold; font-size: 18px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(30,144,255,0.3); }
+        .channel-link { display: block; color: white; text-align: center; padding: 20px; border-radius: 16px; font-weight: bold; font-size: 18px; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px; }
         .channel-link:hover { transform: translateY(-3px); }
-
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
-        .modal-content textarea { width: 100%; height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: none; font-family: inherit;}
         
-        .data-table-wrap { overflow-x: auto; }
-        .data-table { width: 100%; border-collapse: collapse; text-align: center; min-width: 500px; }
-        .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid #eee; }
-        .data-table th { background: #f8f9fa; font-weight: bold; color: #555; }
-
         .admin-only { display: none; }
-        
-        .reaction-btn { padding: 8px 15px; border-radius: 20px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;}
-        .reaction-btn.active-like { background: #ffeaa7; border-color: #fdcb6e; color: #d63031; }
-        .reaction-btn.active-dislike { background: #dfe6e9; border-color: #b2bec3; color: #2d3436; }
-        
-        .reaction-list-text { font-size: 12px; color: #888; margin-top: 10px; line-height: 1.4; background: #f9f9f9; padding: 10px; border-radius: 8px;}
-        
-        #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999; font-weight: bold; color: var(--primary); font-size: 20px; }
-        
-        /* Site Password Lock Screen */
-        #siteLockOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: #2d3436; display: flex; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; }
-        .lock-box { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
+
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+        .modal-content textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: none; font-family: inherit;}
     </style>
 </head>
 <body>
 
-<div id="siteLockOverlay">
-    <div class="lock-box">
-        <h2 style="margin-top:0; color:#333;">🔒 입장하기</h2>
-        <p style="color:#666; font-size:14px; margin-bottom:20px;">흔과 흔둥이들만의 아지트입니다.<br>비밀번호를 입력해주세요.</p>
-        <input type="password" id="sitePw" class="input-text" placeholder="비밀번호 4자리" style="text-align:center; font-size:18px; letter-spacing:3px;">
-        <button class="btn btn-primary" style="width:100%; padding:12px; font-size:16px;" onclick="checkSitePw()">확인</button>
-    </div>
+<div id="pwOverlay">
+    <h2>🔒 흔둥이 커뮤니티 입장</h2>
+    <p style="color: #666; margin-bottom: 20px;">비밀번호를 입력해주세요.</p>
+    <input type="password" id="sitePw" placeholder="비밀번호 4자리" onkeypress="if(event.key==='Enter') checkSitePw()">
+    <button onclick="checkSitePw()">입장하기</button>
 </div>
-
-<div id="loadingOverlay">서버 데이터 동기화 중...</div>
 
 <header class="header">
     <div class="nav-container">
-        <div class="logo" onclick="switchView('home')">Spoon <span>x 흔과 흔둥이</span></div>
+        <!-- 이름 흔둥이 커뮤니티로 변경 -->
+        <div class="logo" onclick="switchView('home')">흔둥이 <span>커뮤니티</span></div>
         <ul class="menu-links">
-            <li onclick="switchView('schedule')">📻 방송 일정</li>
-            <li onclick="switchView('data')">📊 흔 방송 데이터</li>
+            <!-- 흔 방송 데이터와 최근 방송일정을 나란히 배치 -->
+            <li onclick="switchView('broadcast_data')">📊 흔 방송 데이터</li>
+            <li onclick="switchView('schedule')">📅 최근 방송일정</li>
             <li onclick="switchView('ranking')">🏆 명예의 전당</li>
             <li onclick="switchView('board')">📰 소통 게시판</li>
         </ul>
@@ -126,36 +116,58 @@
 </header>
 
 <div class="container">
-    <div style="width: 100%; overflow: hidden;">
+    <div style="width: 100%;">
         
-        <!-- ================= HOME VIEW ================= -->
         <div id="view-home" class="view-section active">
-            
+            <!-- 1. Sponsor Spoons -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">🎓 이 스푼을 후원한 사람</div>
                     <button class="btn btn-outline admin-only" onclick="resetSpoons()" style="font-size:12px;">전체 리셋</button>
                 </div>
                 <div class="grad-controls admin-only">
-                    <input type="text" id="spoonName" class="input-text" placeholder="후원자 닉네임" style="margin:0; width:auto; flex:1;">
+                    <input type="text" id="spoonName" class="input-text" placeholder="후원자 닉네임 / 기념품" style="margin:0;">
                     <input type="file" id="spoonImage" accept="image/*" style="width:180px;">
-                    <input type="text" id="spoonEmoji" class="input-text" placeholder="또는 이모지" style="width:100px; margin:0;">
+                    <input type="text" id="spoonEmoji" class="input-text" placeholder="이모지" style="width:80px; margin:0;">
                     <button class="btn btn-admin" onclick="addSpoon()">추가</button>
                 </div>
                 <div class="grad-grid" id="spoonGrid"></div>
             </div>
 
+            <!-- 2. Home Board (Story) -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">💬 흔과 흔둥이의 이야기</div>
                     <span style="font-size: 13px; color: #888; cursor: pointer;" onclick="switchView('board')">더보기 +</span>
                 </div>
                 <div class="board-tabs">
-                    <button class="tab-btn active" onclick="renderHomeBoard('all')">전체</button>
-                    <button class="tab-btn" onclick="renderHomeBoard('general')">일반글</button>
-                    <button class="tab-btn" onclick="renderHomeBoard('popular')">🔥 인기글</button>
+                    <button class="tab-btn active" onclick="renderHomeBoard('all', 1, this)">전체</button>
+                    <button class="tab-btn" onclick="renderHomeBoard('general', 1, this)">일반글</button>
+                    <button class="tab-btn" onclick="renderHomeBoard('popular', 1, this)">🔥 인기글</button>
                 </div>
                 <div id="homeBoardList"></div>
+                <div id="homeBoardPagination" style="display:flex; justify-content:center; gap:5px; margin-top:15px;"></div>
+            </div>
+
+            <!-- 3. Home Schedule (흔과 흔둥이 이야기 밑에 배치 완료) -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📅 최근 방송일정</div>
+                    <span style="font-size: 13px; color: #888; cursor: pointer;" onclick="switchView('schedule')">더보기 +</span>
+                </div>
+                <div id="homeScheduleList"></div>
+            </div>
+        </div>
+
+        <!-- ================= BROADCAST DATA VIEW ================= -->
+        <div id="view-broadcast_data" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📊 흔 방송 데이터</div>
+                    <button class="btn btn-admin admin-only" onclick="openWriteModal('broadcast_data')">데이터 기록하기</button>
+                </div>
+                <div style="font-size:13px; color:#666; margin-bottom:15px;">※ 방송횟수 / 방송시간 / 받은스푼 / 좋아요 / 누적청취자 기록</div>
+                <div id="broadcastDataList"></div>
             </div>
         </div>
 
@@ -163,49 +175,10 @@
         <div id="view-schedule" class="view-section">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">📻 방송 일정</div>
+                    <div class="card-title">📅 최근 방송일정</div>
                     <button class="btn btn-admin admin-only" onclick="openWriteModal('schedule')">일정 쓰기</button>
                 </div>
                 <div id="scheduleList"></div>
-            </div>
-        </div>
-
-        <!-- ================= DATA VIEW (흔 방송 데이터) ================= -->
-        <div id="view-data" class="view-section">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">📊 흔 방송 데이터</div>
-                    <span style="font-size: 12px; color: #888;">매일의 방송 기록을 확인하세요.</span>
-                </div>
-                
-                <div class="admin-only" style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px;">
-                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:10px;">
-                        <input type="date" id="dDate" class="input-text" style="margin:0;">
-                        <input type="number" id="dCount" class="input-text" placeholder="방송횟수(예:2)" style="margin:0;">
-                        <input type="text" id="dTime" class="input-text" placeholder="시간(예:4.5)" style="margin:0;">
-                        <input type="number" id="dSpoon" class="input-text" placeholder="받은스푼" style="margin:0;">
-                        <input type="number" id="dLike" class="input-text" placeholder="좋아요" style="margin:0;">
-                        <input type="number" id="dListen" class="input-text" placeholder="누적 청취자" style="margin:0;">
-                    </div>
-                    <button class="btn btn-admin" style="width:100%;" onclick="addBroadcastData()">데이터 기록하기</button>
-                </div>
-
-                <div class="data-table-wrap">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>날짜</th>
-                                <th>방송횟수</th>
-                                <th>방송시간</th>
-                                <th>받은스푼</th>
-                                <th>좋아요</th>
-                                <th>누적 청취자</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTableBody">
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
 
@@ -213,8 +186,8 @@
         <div id="view-ranking" class="view-section">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">🏆 구름 랭킹 & 명예의 전당</div>
-                    <div style="font-size: 13px; color: #888;">활동(글+1, 사진+2, 출석+1) 시 포인트 적립! (고레벨일수록 요구치 증가)</div>
+                    <div class="card-title">🏆 명예의 전당</div>
+                    <div style="font-size: 13px; color: #888;">활동(글, 사진, 출석) 시 포인트 획득! 레벨이 오를수록 다음 레벨업이 어려워집니다.</div>
                 </div>
                 <div id="rankingList"></div>
             </div>
@@ -229,7 +202,7 @@
                 </div>
                 <div class="board-tabs">
                     <button class="tab-btn active" onclick="renderBoard('all', this)">전체</button>
-                    <button class="tab-btn" onclick="renderBoard('free', this)">자유게시판</button>
+                    <button class="tab-btn" onclick="renderBoard('free', this)">자유</button>
                     <button class="tab-btn" onclick="renderBoard('review', this)">오늘 방송 후기</button>
                     <button class="tab-btn" onclick="renderBoard('food', this)">음식자랑</button>
                     <button class="tab-btn" onclick="renderBoard('scenery', this)">풍경자랑</button>
@@ -244,12 +217,22 @@
 
     <div class="sidebar">
         <!-- Profile / Login -->
-        <div class="card profile-area" id="profileCard"></div>
+        <div class="card profile-area" id="profileCard">
+            <h3 style="margin-top:0;">구름 커뮤니티</h3>
+            <p style="font-size: 14px; color: #666;">로그인하고 흔과 소통하세요!</p>
+            <button class="btn btn-primary" style="width:100%" onclick="login()">스푼 닉네임으로 시작하기</button>
+        </div>
 
-        <!-- Channel Link -->
-        <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="margin-bottom: 25px;">
+        <!-- Sidebar Links (Spoon, Discord, Instagram) -->
+        <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="margin-bottom: 10px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #333;">
             🎧 스푼 | DJ 🏮 흔 💭 🍶 ☾⋆⁺<br>
             <span style="font-size: 14px; font-weight: normal; opacity: 0.9;">방송국 바로가기</span>
+        </a>
+        <a href="https://discord.gg/HFhUksfjgq" target="_blank" class="channel-link" style="margin-bottom: 10px; background: linear-gradient(135deg, #5865F2, #7289DA); box-shadow: 0 5px 15px rgba(88,101,242,0.3);">
+            👾 흔둥이 디스코드 바로가기
+        </a>
+        <a href="https://www.instagram.com/hii0717?igsh=Mjk3MjY4emp5NG1h&utm_source=qr" target="_blank" class="channel-link" style="margin-bottom: 25px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); box-shadow: 0 5px 15px rgba(220,39,67,0.3);">
+            📸 흔 인스타 바로가기
         </a>
 
         <!-- Notice -->
@@ -275,9 +258,11 @@
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
             <h3 id="modalTitle" style="margin:0;">글쓰기</h3>
-            <button onclick="closeModal()" style="border:none; background:none; font-size:24px; color:#555;">&times;</button>
+            <button onclick="closeModal()" style="border:none; background:none; font-size:24px; font-weight:bold;">&times;</button>
         </div>
-        <div id="modalBody"></div>
+        <div id="modalBody">
+            <!-- Injected by JS -->
+        </div>
     </div>
 </div>
 
@@ -285,7 +270,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, set, get, onValue, push, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // ⚠️ 사용자 맞춤 파이어베이스 설정
+    // ⚠️ Firebase Configuration (그대로 유지)
     const firebaseConfig = {
         apiKey: "AIzaSyBgW_037A_jGXpGTwfGTP-XAo0Y6aXOyAk",
         authDomain: "heun-ddf64.firebaseapp.com",
@@ -297,171 +282,98 @@
         measurementId: "G-VVB3D25SD0"
     };
 
-    let app, db;
-    let isLocalMode = false;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    try {
-        app = initializeApp(firebaseConfig);
-        db = getDatabase(app);
-    } catch(e) {
-        console.warn("Firebase 연결 실패, 로컬 모드로 작동합니다.");
-        isLocalMode = true;
-    }
-
-    // --- State Management ---
-    window.appState = {
-        users: {},
-        spoons: [],
-        posts: [],
-        bData: [],
-        currentUser: localStorage.getItem('heun_currentUser') || null
+    let appState = {
+        users: {}, spoons: [], posts: [], currentUser: localStorage.getItem('h_currentUser') || null
     };
+
+    let currentHomeFilter = 'all';
+
+    onValue(ref(db, '/'), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            appState.users = data.users || {};
+            appState.spoons = data.spoons ? Object.values(data.spoons) : [];
+            appState.posts = data.posts ? Object.keys(data.posts).map(k => ({ id: k, ...data.posts[k] })).reverse() : [];
+            
+            if(appState.currentUser && !appState.users[appState.currentUser]) {
+                appState.users[appState.currentUser] = { role: appState.currentUser === '흔' ? 'admin' : 'user', points: 0 };
+            }
+            if(appState.currentUser && typeof appState.users[appState.currentUser].points === 'undefined') {
+                 appState.users[appState.currentUser].points = 0;
+            }
+
+            renderApp();
+            updateOnlineStatus();
+        } else {
+            renderApp();
+        }
+    });
 
     window.switchView = switchView;
     window.login = login;
     window.logout = logout;
     window.checkAttendance = checkAttendance;
-    window.grantAdmin = grantAdmin;
     window.addSpoon = addSpoon;
     window.resetSpoons = resetSpoons;
     window.openWriteModal = openWriteModal;
     window.closeModal = closeModal;
     window.submitPost = submitPost;
-    window.renderHomeBoard = renderHomeBoard;
     window.renderBoard = renderBoard;
+    window.renderHomeBoard = renderHomeBoard;
     window.viewPost = viewPost;
-    window.toggleReaction = toggleReaction;
-    window.addBroadcastData = addBroadcastData;
+    window.grantAdmin = grantAdmin;
     window.checkSitePw = checkSitePw;
-    window.submitComment = submitComment;
-    window.deleteComment = deleteComment;
     window.deletePost = deletePost;
     window.editPostMode = editPostMode;
     window.saveEditPost = saveEditPost;
+    window.toggleLike = toggleLike;
+    window.toggleDislike = toggleDislike;
+    window.submitComment = submitComment;
+    window.deleteComment = deleteComment;
+    window.showReplyInput = showReplyInput;
+    window.submitReply = submitReply;
+    window.deleteReply = deleteReply;
+    window.toggleCommentLike = toggleCommentLike;
 
     function checkSitePw() {
-        if(document.getElementById('sitePw').value === '0717') {
-            sessionStorage.setItem('siteUnlocked', 'true');
-            document.getElementById('siteLockOverlay').style.display = 'none';
+        const input = document.getElementById('sitePw').value;
+        if(input === '0717' || localStorage.getItem('site_auth') === '0717') {
+            localStorage.setItem('site_auth', '0717');
+            document.getElementById('pwOverlay').style.display = 'none';
         } else {
-            alert('비밀번호가 틀렸습니다. 다시 시도해주세요.');
+            alert('비밀번호가 틀렸습니다.');
         }
     }
-
-    // On Load check password
-    window.addEventListener('DOMContentLoaded', () => {
-        if(sessionStorage.getItem('siteUnlocked') === 'true') {
-            document.getElementById('siteLockOverlay').style.display = 'none';
-        }
-    });
-
-    function setupFirebaseListeners() {
-        if(isLocalMode) {
-            document.getElementById('loadingOverlay').style.display = 'none';
-            return;
-        }
-
-        const dbRef = ref(db, '/');
-        onValue(dbRef, (snapshot) => {
-            const data = snapshot.val() || {};
-            appState.users = data.users || {};
-            
-            appState.posts = data.posts ? Object.values(data.posts).sort((a,b) => b.timestamp - a.timestamp) : [];
-            appState.spoons = data.spoons ? Object.values(data.spoons).sort((a,b) => b.timestamp - a.timestamp) : [];
-            appState.bData = data.bData ? Object.values(data.bData).sort((a,b) => b.timestamp - a.timestamp) : [];
-            
-            document.getElementById('loadingOverlay').style.display = 'none';
-            initUI();
-        });
-
-        const connectedRef = ref(db, '.info/connected');
-        onValue(connectedRef, (snap) => {
-            if (snap.val() === true && appState.currentUser) {
-                const userOnlineRef = ref(db, `users/${appState.currentUser}/isOnline`);
-                onDisconnect(userOnlineRef).set(false).then(() => {
-                    set(userOnlineRef, true);
-                });
-            }
-        });
-    }
-
-    function dbUpdate(path, data) { if(!isLocalMode) update(ref(db, path), data); }
-    function dbPush(path, data) {
-        if(!isLocalMode) {
-            const newRef = push(ref(db, path));
-            data.id = newRef.key;
-            set(newRef, data);
-        }
-    }
-    function dbSet(path, data) { if(!isLocalMode) set(ref(db, path), data); }
-
-    function login() {
-        const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
-        if(!nick || nick.trim() === '') return;
-        
-        const isMaster = (nick === '흔'); 
-        
-        if (!appState.users[nick]) {
-            const newUser = { 
-                role: isMaster ? 'admin' : 'user', 
-                points: 0, 
-                lastAttend: null,
-                isOnline: true
-            };
-            appState.users[nick] = newUser; 
-            dbUpdate(`users/${nick}`, newUser);
-        } else {
-            appState.users[nick].isOnline = true;
-            if(appState.users[nick].points === undefined) appState.users[nick].points = 0;
-            
-            if(isMaster) { appState.users[nick].role = 'admin'; } 
-            else if(!appState.users[nick].role) { appState.users[nick].role = 'user'; }
-            
-            dbUpdate(`users/${nick}`, { 
-                isOnline: true,
-                role: appState.users[nick].role,
-                points: appState.users[nick].points
-            });
-        }
-        
-        appState.currentUser = nick;
-        localStorage.setItem('heun_currentUser', nick);
-        
-        if(!isLocalMode) {
-            const userOnlineRef = ref(db, `users/${nick}/isOnline`);
-            onDisconnect(userOnlineRef).set(false);
-            set(userOnlineRef, true);
-        }
-        initUI();
-    }
-
-    function logout() {
-        if(appState.currentUser) { dbUpdate(`users/${appState.currentUser}`, { isOnline: false }); }
-        appState.currentUser = null;
-        localStorage.removeItem('heun_currentUser');
-        initUI();
+    if(localStorage.getItem('site_auth') === '0717') {
+        document.getElementById('pwOverlay').style.display = 'none';
     }
 
     function getLevelInfo(user) {
-        if (!user) return null;
-        if (user.role === 'admin') {
-            return { level: 'MAX', name: '보랏빛 번개 구름', icon: '⚡', color: '#9b59b6', textCol: '#fff', isAdmin: true, progressPercent: 100 };
-        }
+        if (!user) return { level: 1, icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff', progress: 0, nextReq: 10 };
+        if (user.role === 'admin') return { level: 999, name: '보랏빛 번개 구름', icon: '⚡', color: '#a29bfe', textCol: '#fff', progress: 100, nextReq: 0 };
         
-        let points = user.points || 0;
+        let pts = user.points || 0;
         let level = 1;
-        let required = 10; // 점진적으로 증가할 요구 경험치
-        let current = points;
-        
-        // 레벨업 계산 로직: 레벨이 오를수록 다음 레벨 요구치가 5~10%씩 복리로 증가
-        while(current >= required && level < 100) {
-            current -= required;
-            level++;
-            required = Math.floor(required * 1.05 + 5); 
+        let reqPointsForNext = 10;
+        let cumulativePoints = 0;
+
+        while(level < 100) {
+            if(pts >= cumulativePoints + reqPointsForNext) {
+                cumulativePoints += reqPointsForNext;
+                level++;
+                reqPointsForNext = Math.floor(reqPointsForNext * 1.2); 
+            } else {
+                break;
+            }
         }
         
-        let progressPercent = level >= 100 ? 100 : (current / required) * 100;
-        
+        const ptsInCurrentLevel = pts - cumulativePoints;
+        const progressPercent = (ptsInCurrentLevel / reqPointsForNext) * 100;
+        const remaining = reqPointsForNext - ptsInCurrentLevel;
+
         const tiers = [
             { icon: '⛈️', name: '먹구름', color: '#7f8c8d', textCol: '#fff' },
             { icon: '☁️', name: '옅은 구름', color: '#bdc3c7', textCol: '#000' },
@@ -474,82 +386,139 @@
             { icon: '🌙', name: '달빛 구름', color: '#f368e0', textCol: '#fff' },
             { icon: '👑', name: '황금 구름', color: '#e67e22', textCol: '#fff' }
         ];
-        
         const tierIdx = Math.min(Math.floor((level - 1) / 10), 9);
-        return { 
-            level: level, 
-            remaining: current, 
-            nextRequired: required, 
-            progressPercent: progressPercent, 
-            ...tiers[tierIdx], 
-            isAdmin: false 
-        };
+        
+        return { level: level, progress: progressPercent, nextReq: remaining, ...tiers[tierIdx] };
     }
 
     function addPoints(amount) {
-        if(!appState.currentUser) return;
-        const user = appState.users[appState.currentUser];
-        if (user.role === 'admin') return; 
-        dbUpdate(`users/${appState.currentUser}`, { points: (user.points || 0) + amount });
+        if(!appState.currentUser || appState.currentUser === '흔') return;
+        const userRef = ref(db, `users/${appState.currentUser}/points`);
+        get(userRef).then((snap) => {
+            let current = snap.val() || 0;
+            set(userRef, current + amount);
+        });
+    }
+
+    function login() {
+        const nick = prompt("접속할 스푼 닉네임을 입력하세요:");
+        if(!nick || nick.trim() === '') return;
+        
+        let role = nick === '흔' ? 'admin' : 'user';
+        
+        update(ref(db, `users/${nick}`), { 
+            role: role,
+            lastLogin: Date.now()
+        }).then(() => {
+            get(ref(db, `users/${nick}/points`)).then(snap => {
+                if(!snap.exists()) set(ref(db, `users/${nick}/points`), 0);
+            });
+        });
+        
+        appState.currentUser = nick;
+        localStorage.setItem('h_currentUser', nick);
+    }
+
+    function logout() {
+        if(appState.currentUser) remove(ref(db, `online/${appState.currentUser}`));
+        appState.currentUser = null;
+        localStorage.removeItem('h_currentUser');
+        renderApp();
+    }
+
+    function updateOnlineStatus() {
+        if(appState.currentUser) {
+            const onlineRef = ref(db, `online/${appState.currentUser}`);
+            set(onlineRef, true);
+            onDisconnect(onlineRef).remove();
+        }
+        
+        get(ref(db, 'online')).then(snap => {
+            const onlines = snap.val() || {};
+            const cont = document.getElementById('onlineUsers');
+            let html = '';
+            Object.keys(onlines).forEach(user => {
+                if(appState.users[user]) {
+                    const info = getLevelInfo(appState.users[user]);
+                    const isMe = user === appState.currentUser ? '(나)' : '';
+                    html += `<div style="display:flex; align-items:center; gap:8px;"><div style="width:8px; height:8px; background:#2ecc71; border-radius:50%; box-shadow:0 0 5px #2ecc71;"></div> <span>${info.icon} ${user} ${isMe}</span></div>`;
+                }
+            });
+            cont.innerHTML = html || '<div style="color:#999;">접속 중인 구름이가 없습니다.</div>';
+        });
     }
 
     function checkAttendance() {
-        if(!appState.currentUser) return;
-        const user = appState.users[appState.currentUser];
-        if(user.role === 'admin') return alert('관리자는 출석체크가 필요하지 않습니다.');
-
+        if(!appState.currentUser) return alert('로그인 해주세요.');
         const today = new Date().toISOString().split('T')[0];
-        if(user.lastAttend === today) {
-            alert('오늘은 이미 출석체크 하셨습니다!');
-        } else {
-            dbUpdate(`users/${appState.currentUser}`, { lastAttend: today });
-            alert('출석체크 완료! +1점 적립');
-            addPoints(1);
-        }
+        const userRef = ref(db, `users/${appState.currentUser}`);
+        
+        get(userRef).then(snap => {
+            const u = snap.val();
+            if(u.lastAttend === today) {
+                alert('오늘은 이미 출석체크 하셨습니다!');
+            } else {
+                update(userRef, { lastAttend: today }).then(() => {
+                    alert('출석체크 완료! (+1점 획득)');
+                    addPoints(1);
+                });
+            }
+        });
     }
 
     function grantAdmin() {
-        const target = prompt("관리자 권한을 줄 유저 닉네임을 입력하세요:");
-        if(target && appState.users[target]) {
-            dbUpdate(`users/${target}`, { role: 'admin' });
-            alert(target + '님에게 관리자 권한을 부여했습니다.');
-        } else {
-            alert('존재하지 않는 유저입니다.');
+        const target = prompt("관리자 권한을 부여할 유저 닉네임을 입력하세요:");
+        if (target && target.trim() !== '') {
+            const userRef = ref(db, `users/${target}`);
+            get(userRef).then(snap => {
+                if (snap.exists()) {
+                    update(userRef, { role: 'admin' }).then(() => {
+                        alert(target + '님에게 관리자 권한을 부여했습니다.');
+                    });
+                } else {
+                    alert('해당 닉네임의 유저가 존재하지 않습니다. 상대방이 1회 이상 커뮤니티에 로그인해야 합니다.');
+                }
+            });
         }
     }
 
-    function initUI() {
+    function renderApp() {
         renderProfile();
         applyAdminUI();
         renderSpoons();
-        renderHomeBoard('all');
-        renderBoard('all', null);
+        
+        if(typeof currentHomeFilter !== 'undefined') renderHomeBoard(currentHomeFilter, 1);
+        else renderHomeBoard('all', 1);
+        
+        renderHomeSchedule();
+        renderBroadcastData();
         renderSchedule();
         renderNotice();
-        renderOnlineUsers();
         renderRanking();
-        renderDataTable();
+        
+        const activeTab = document.querySelector('#view-board .tab-btn.active');
+        if(activeTab) {
+            let filterMap = {'전체':'all', '자유':'free', '오늘 방송 후기':'review', '음식자랑':'food', '풍경자랑':'scenery', '사진':'photo', '흔이 쓰는 박제편지':'letter'};
+            renderBoard(filterMap[activeTab.innerText] || 'all');
+        }
     }
 
     function switchView(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById('view-' + viewId).classList.add('active');
-        
-        document.querySelectorAll('.menu-links li').forEach(el => el.classList.remove('active'));
-        if(event && event.currentTarget.tagName === 'LI') event.currentTarget.classList.add('active');
     }
 
     function applyAdminUI() {
         const user = appState.currentUser ? appState.users[appState.currentUser] : null;
         const isAdmin = user && user.role === 'admin';
-        document.querySelectorAll('.admin-only').forEach(el => { el.style.display = isAdmin ? 'inline-block' : 'none'; });
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'inline-block' : 'none');
     }
 
     function renderProfile() {
         const profileCard = document.getElementById('profileCard');
         const authArea = document.getElementById('authArea');
         
-        if (!appState.currentUser || !appState.users[appState.currentUser]) {
+        if (!appState.currentUser) {
             profileCard.innerHTML = `
                 <h3 style="margin-top:0;">구름 커뮤니티</h3>
                 <p style="font-size: 14px; color: #666;">로그인하고 흔과 소통하세요!</p>
@@ -563,192 +532,169 @@
         
         authArea.innerHTML = `<span style="font-weight:bold; margin-right:15px;">${info.icon} ${appState.currentUser}님</span> <button class="btn btn-outline" onclick="logout()">로그아웃</button>`;
         
-        if (info.isAdmin) {
-            profileCard.innerHTML = `
-                <div class="level-badge" style="background:${info.color}; color:${info.textCol};">
-                    ${info.icon} ${info.name}
-                </div>
-                <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
-                <p style="font-size:12px; color:#888; margin:0; margin-bottom:15px;">플랫폼 통합 관리자</p>
-                <button class="btn btn-admin" style="width:100%; margin-top:10px;" onclick="grantAdmin()">+ 관리자 권한 부여</button>
-            `;
-        } else {
-            profileCard.innerHTML = `
-                <div class="level-badge" style="background:${info.color}; color:${info.textCol};">
-                    ${info.icon} ${info.name} (Lv.${info.level})
-                </div>
-                <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
-                <p style="font-size:12px; color:#888; margin:0;">총 누적: ${user.points || 0} P</p>
-                
-                <div class="progress-container" title="다음 레벨까지 ${info.nextRequired - info.remaining}점 남음">
-                    <div class="progress-bar" style="width: ${info.progressPercent}%;"></div>
-                </div>
-                
-                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="checkAttendance()">오늘 출석체크 하기</button>
-            `;
-        }
-    }
-
-    function addBroadcastData() {
-        const date = document.getElementById('dDate').value;
-        const count = document.getElementById('dCount').value;
-        const time = document.getElementById('dTime').value;
-        const spoon = document.getElementById('dSpoon').value;
-        const like = document.getElementById('dLike').value;
-        const listen = document.getElementById('dListen').value;
-
-        if(!date) return alert('날짜를 입력하세요.');
-        dbPush('bData', { timestamp: Date.now(), date, count, time, spoon, like, listen });
-        document.querySelectorAll('#view-data input').forEach(el => el.value = '');
-    }
-
-    function renderDataTable() {
-        const tbody = document.getElementById('dataTableBody');
-        tbody.innerHTML = appState.bData.map(d => `
-            <tr>
-                <td>${d.date}</td><td>${d.count || '-'}</td><td>${d.time || '-'}</td>
-                <td>${d.spoon || '-'}</td><td>${d.like || '-'}</td><td>${d.listen || '-'}</td>
-            </tr>
-        `).join('') || '<tr><td colspan="6" style="color:#999; padding:20px;">기록된 데이터가 없습니다.</td></tr>';
+        profileCard.innerHTML = `
+            <div class="level-badge" style="background:${info.color}; color:${info.textCol}; box-shadow:0 3px 6px rgba(0,0,0,0.1);">
+                ${info.icon} ${info.name} (Lv.${info.level})
+            </div>
+            <h3 style="margin: 5px 0;">${appState.currentUser}</h3>
+            <p style="font-size:12px; color:#888; margin:0;">총 획득 포인트: ${user.points || 0} P</p>
+            
+            <div class="progress-container" title="다음 레벨까지 ${info.nextReq}점 남음">
+                <div class="progress-bar" style="width: ${info.progress}%;"></div>
+            </div>
+            <p style="font-size:11px; color:#aaa; margin-top:-10px; margin-bottom:15px; text-align:right;">다음 레벨까지 ${info.nextReq}P</p>
+            
+            <button class="btn btn-primary" style="width:100%;" onclick="checkAttendance()">오늘 출석체크 하기</button>
+        `;
     }
 
     function addSpoon() {
         const name = document.getElementById('spoonName').value;
         const emoji = document.getElementById('spoonEmoji').value;
         const fileInput = document.getElementById('spoonImage');
-        if(!name) return alert('후원자 닉네임을 입력해주세요.');
         
-        const newItem = { timestamp: Date.now(), name, image: null, emoji: emoji || '🥄' };
+        if(!name) return alert('이름을 입력해주세요.');
+        const newItem = { name, emoji: emoji || '🥄' };
+        
         if(fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                newItem.image = e.target.result; 
-                dbPush('spoons', newItem);
+                newItem.image = e.target.result;
+                push(ref(db, 'spoons'), newItem);
             };
             reader.readAsDataURL(fileInput.files[0]);
-        } else { dbPush('spoons', newItem); }
+        } else {
+            push(ref(db, 'spoons'), newItem);
+        }
         
         document.getElementById('spoonName').value = '';
         document.getElementById('spoonEmoji').value = '';
         fileInput.value = '';
     }
 
-    function resetSpoons() { if(confirm('모든 스푼 후원 현황을 초기화하시겠습니까?')) dbSet('spoons', {}); }
+    function resetSpoons() {
+        if(confirm('모든 스푼 졸업 현황을 초기화하시겠습니까?')) remove(ref(db, 'spoons'));
+    }
 
     function renderSpoons() {
         const grid = document.getElementById('spoonGrid');
-        grid.innerHTML = appState.spoons.map(s => `
+        grid.innerHTML = appState.spoons.reverse().map(s => `
             <div class="grad-item">
-                <div class="grad-label">이 스푼을 후원한 사람</div>
                 <div class="grad-img-wrap">${s.image ? `<img src="${s.image}">` : s.emoji}</div>
                 <div class="grad-name">${s.name}</div>
             </div>
-        `).join('') || '<div style="grid-column:1/-1; text-align:center; color:#999; font-size:14px; padding:20px;">등록된 후원자가 없습니다.</div>';
-    }
-
-    function isPopular(post) {
-        const likesCount = post.likes ? Object.keys(post.likes).length : 0;
-        return (post.views >= 30) && (likesCount >= 5);
+        `).join('') || '<div style="grid-column:1/-1; text-align:center; color:#999; font-size:14px;">등록된 후원 현황이 없습니다.</div>';
     }
 
     function openWriteModal(type) {
         if(!appState.currentUser) return alert('로그인이 필요합니다.');
         const isAdmin = appState.users[appState.currentUser].role === 'admin';
-        if((type === 'schedule' || type === 'notice' || type === 'letter') && !isAdmin) return alert('관리자만 작성할 수 있습니다.');
+        
+        // 데이터나 일정도 오직 관리자만 작성 가능
+        if((type === 'schedule' || type === 'notice' || type === 'letter' || type === 'broadcast_data') && !isAdmin) return alert('관리자 전용 기능입니다.');
 
         const modal = document.getElementById('mainModal');
         const mBody = document.getElementById('modalBody');
+        document.getElementById('modalTitle').innerText = '글쓰기';
         
         let categorySelect = '';
         if(type === 'board') {
             categorySelect = `
-                <select id="postCat" class="input-text">
+                <select id="postCat" class="input-text" style="margin-bottom:15px; font-weight:bold;">
                     <option value="free">자유게시판</option>
                     <option value="review">오늘 방송 후기</option>
-                    <option value="food">음식자랑 (사진)</option>
-                    <option value="scenery">풍경자랑 (사진)</option>
-                    <option value="photo">사진 올리기</option>
+                    <option value="food">음식 자랑</option>
+                    <option value="scenery">풍경 자랑</option>
+                    <option value="photo">사진 (기타)</option>
                     ${isAdmin ? `<option value="letter">흔이 쓰는 박제편지</option>` : ''}
                 </select>
             `;
         }
 
+        // 방송 데이터일 경우 기입할 칸(템플릿) 미리 채워주기
+        let prefillContent = "";
+        if (type === 'broadcast_data') {
+            prefillContent = "방송횟수 : \n방송시간 : \n받은스푼 : \n좋아요 : \n누적청취자 : ";
+        }
+
         mBody.innerHTML = `
             ${categorySelect}
             <input type="text" id="postTitle" class="input-text" placeholder="제목을 입력하세요">
-            <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
-            <div id="photoInputWrap" style="display:none; margin-bottom:15px;">
-                <label style="font-size:13px; font-weight:bold;">사진/편지 첨부: </label>
+            <textarea id="postContent" placeholder="내용을 입력하세요">${prefillContent}</textarea>
+            <div id="photoInputWrap" style="display:none; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
+                <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">📷 사진 첨부</label>
                 <input type="file" id="postPhoto" accept="image/*">
             </div>
-            <button class="btn btn-primary" style="width:100%" onclick="submitPost('${type}')">등록하기</button>
+            <button class="btn btn-primary" style="width:100%; padding:12px; font-size:16px;" onclick="submitPost('${type}')">등록하기</button>
         `;
-        document.getElementById('modalTitle').innerText = '글쓰기';
 
         if(type === 'board') {
-            document.getElementById('postCat').addEventListener('change', (e) => {
-                const val = e.target.value;
-                document.getElementById('photoInputWrap').style.display = 
-                    (val === 'photo' || val === 'letter' || val === 'food' || val === 'scenery') ? 'block' : 'none';
-            });
+            const catEl = document.getElementById('postCat');
+            const togglePhoto = () => {
+                const v = catEl.value;
+                document.getElementById('photoInputWrap').style.display = ['photo', 'letter', 'food', 'scenery'].includes(v) ? 'block' : 'none';
+            };
+            catEl.addEventListener('change', togglePhoto);
+            togglePhoto();
         }
+        
         modal.style.display = 'flex';
     }
 
     function closeModal() { document.getElementById('mainModal').style.display = 'none'; }
 
-    function submitPost(formType) {
-        const title = document.getElementById('postTitle').value;
-        const content = document.getElementById('postContent').value;
-        if(!title || !content) return alert('제목과 내용을 입력해주세요.');
-        
-        let cat = formType;
-        if(formType === 'board') cat = document.getElementById('postCat').value;
-
-        const newPost = { timestamp: Date.now(), category: cat, title, content, author: appState.currentUser, date: new Date().toLocaleString(), views: 0, likes: {}, dislikes: {}, comments: {}, image: null };
-        const fileInput = document.getElementById('postPhoto');
-        
-        if(fileInput && fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                newPost.image = e.target.result;
-                dbPush('posts', newPost);
-                closeModal(); addPoints(2); // 사진은 2점
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            dbPush('posts', newPost);
-            closeModal(); addPoints(1); // 일반 1점
-        }
+    function isPopular(post) {
+        const likeCount = post.likes ? Object.keys(post.likes).length : 0;
+        return (post.views || 0) >= 30 && likeCount >= 5;
     }
 
-    function renderHomeBoard(filterStr) {
-        const tabs = document.querySelectorAll('#view-home .tab-btn');
-        tabs.forEach(t => t.classList.remove('active'));
-        if(event && event.currentTarget) event.currentTarget.classList.add('active');
+    function renderHomeBoard(filterStr, page = 1, btnElem = null) {
+        if(btnElem) {
+            const tabs = document.querySelectorAll('#view-home .tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            btnElem.classList.add('active');
+        }
+        currentHomeFilter = filterStr;
 
         const list = document.getElementById('homeBoardList');
+        const pageCont = document.getElementById('homeBoardPagination');
         let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'letter'].includes(p.category));
         
         let filtered = boardPosts;
         if(filterStr === 'popular') filtered = boardPosts.filter(p => isPopular(p));
         else if (filterStr === 'general') filtered = boardPosts.filter(p => !isPopular(p));
 
-        list.innerHTML = filtered.slice(0, 5).map(p => {
+        const itemsPerPage = 5;
+        const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+        const startIndex = (page - 1) * itemsPerPage;
+        const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+        list.innerHTML = paginatedItems.map(p => {
             let badge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '<span class="badge normal">일반</span>';
             let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', letter:'박제편지' }[p.category];
             let catBadge = `<span class="badge cat">${catName}</span>`;
             
+            const isNew = (Date.now() - p.timestamp) < 24 * 60 * 60 * 1000;
+            const newBadge = isNew ? '<span class="badge" style="background:#2ecc71; color:white;">🆕NEW</span>' : '';
+            
             const likesCount = p.likes ? Object.keys(p.likes).length : 0;
+            const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+
             return `
             <div class="list-item" onclick="viewPost('${p.id}')">
-                <div style="flex:1;">${badge} ${catBadge} ${p.title}</div>
-                <div style="color:#999; font-size:12px;">👁️ ${p.views || 0} | ❤️ ${likesCount}</div>
+                <div style="flex:1;">${badge} ${catBadge} ${newBadge} ${p.title}</div>
+                <div style="color:#999; font-size:12px;">👁️ ${p.views || 0} | ❤️ ${likesCount} | 💬 ${commentsCount}</div>
             </div>`;
         }).join('') || '<p style="text-align:center; color:#999; padding:20px;">게시글이 없습니다.</p>';
+
+        let pageHtml = '';
+        for(let i=1; i<=totalPages; i++) {
+            pageHtml += `<button class="btn" style="padding:4px 10px; font-size:12px; margin: 0 2px; ${i===page ? 'background:var(--primary);color:white;' : 'background:#eee;color:#333;'}" onclick="renderHomeBoard('${filterStr}', ${i})">${i}</button>`;
+        }
+        if(pageCont) pageCont.innerHTML = pageHtml;
     }
 
-    function renderBoard(filterCat, btnElem) {
+    function renderBoard(filterCat, btnElem = null) {
         if(btnElem) {
             const tabs = document.querySelectorAll('#view-board .tab-btn');
             tabs.forEach(t => t.classList.remove('active'));
@@ -763,32 +709,41 @@
         list.innerHTML = filtered.map(p => {
             let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', letter:'박제편지' }[p.category];
             let popBadge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '';
+            
+            const isNew = (Date.now() - p.timestamp) < 24 * 60 * 60 * 1000;
+            const newBadge = isNew ? '<span class="badge" style="background:#2ecc71; color:white;">🆕NEW</span>' : '';
+            
             const likesCount = p.likes ? Object.keys(p.likes).length : 0;
+            const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+
             return `
                 <div class="list-item" onclick="viewPost('${p.id}')">
-                    <div style="flex:1;"><span class="badge normal">${catName}</span> ${popBadge} ${p.title}</div>
+                    <div style="flex:1;"><span class="badge normal">${catName}</span> ${popBadge} ${newBadge} ${p.title}</div>
                     <div style="color:#999; font-size:12px; display:flex; gap:12px;">
-                        <span>👤 ${p.author}</span><span>👁️ ${p.views || 0}</span><span>❤️ ${likesCount}</span>
+                        <span>👤 ${p.author}</span><span>👁️ ${p.views || 0}</span><span>❤️ ${likesCount}</span><span>💬 ${commentsCount}</span>
                     </div>
                 </div>
             `;
         }).join('') || '<p style="text-align:center; color:#999; padding:40px 0;">게시글이 없습니다.</p>';
     }
 
-    function viewPost(id) {
+    function viewPost(id, overrideViews = undefined) {
         const post = appState.posts.find(p => p.id === id || p.id == id);
         if(!post) return;
         
-        const newViews = (post.views || 0) + 1;
-        if(!isLocalMode) update(ref(db, `posts/${post.id}`), { views: newViews });
-        
-        updatePostModalContent(post, newViews);
-        document.getElementById('mainModal').style.display = 'flex';
-    }
+        if (overrideViews === undefined) {
+            const viewRef = ref(db, `posts/${post.id}/views`);
+            get(viewRef).then(snap => {
+                const currentViews = snap.val() || 0;
+                set(viewRef, currentViews + 1).then(() => {
+                    setTimeout(() => viewPost(post.id, currentViews + 1), 50);
+                });
+            });
+            return;
+        }
 
-    function updatePostModalContent(post, overrideViews) {
         const mBody = document.getElementById('modalBody');
-        document.getElementById('modalTitle').innerText = '게시글 보기';
+        document.getElementById('modalTitle').innerText = '게시글 읽기';
         
         const currUser = appState.currentUser;
         const isAdmin = currUser && appState.users[currUser] && appState.users[currUser].role === 'admin';
@@ -798,93 +753,120 @@
         const dislikesArr = post.dislikes ? Object.keys(post.dislikes) : [];
         const hasLiked = currUser && likesArr.includes(currUser);
         const hasDisliked = currUser && dislikesArr.includes(currUser);
+        
         const viewCount = overrideViews !== undefined ? overrideViews : (post.views || 0);
 
-        // Comments Generation
         const commentsObj = post.comments || {};
         const commentsHtml = Object.keys(commentsObj).map(k => {
             const c = commentsObj[k];
             const canDeleteComment = (currUser === c.author || isAdmin);
+            const cLikesArr = c.likes ? Object.keys(c.likes) : [];
+            const cHasLiked = currUser && cLikesArr.includes(currUser);
+            
+            const repliesObj = c.replies || {};
+            const repliesHtml = Object.keys(repliesObj).map(rk => {
+                const r = repliesObj[rk];
+                const canDeleteReply = (currUser === r.author || isAdmin);
+                return `
+                    <div style="margin-top: 8px; margin-left: 20px; padding: 8px; background:#f1f2f6; border-radius:8px; font-size:12px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                            <strong>↪ ${r.author}</strong>
+                            ${canDeleteReply ? `<button onclick="deleteReply('${post.id}', '${k}', '${rk}')" style="background:none;border:none;color:red;cursor:pointer;font-size:11px;padding:0;">삭제</button>` : ''}
+                        </div>
+                        <div>${r.content}</div>
+                    </div>
+                `;
+            }).join('');
+
             return `
                 <div style="padding: 10px; border-bottom: 1px solid #eee; font-size:13px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                         <strong>${c.author}</strong>
-                        ${canDeleteComment ? `<button onclick="deleteComment('${post.id}', '${k}')" style="background:none;border:none;color:red;cursor:pointer;font-size:11px;padding:0;">삭제</button>` : ''}
+                        <div style="display:flex; gap:8px;">
+                            <button onclick="toggleCommentLike('${post.id}', '${k}')" style="background:none;border:none;cursor:pointer;font-size:11px; font-weight:bold; color:${cHasLiked ? '#e74c3c' : '#888'};">❤️ ${cLikesArr.length}</button>
+                            <button onclick="showReplyInput('${post.id}', '${k}')" style="background:none;border:none;cursor:pointer;font-size:11px;color:#555;font-weight:bold;">💬 답글달기</button>
+                            ${canDeleteComment ? `<button onclick="deleteComment('${post.id}', '${k}')" style="background:none;border:none;color:red;cursor:pointer;font-size:11px;padding:0;font-weight:bold;">삭제</button>` : ''}
+                        </div>
                     </div>
                     <div>${c.content}</div>
+                    ${repliesHtml}
+                    <div id="replyInputWrap_${k}" style="display:none; margin-top:8px; display:flex; gap:5px;">
+                        <input type="text" id="replyInput_${k}" class="input-text" style="margin:0; flex:1; padding:6px; font-size:12px;" placeholder="답글 입력">
+                        <button class="btn btn-primary" style="padding:6px 10px; font-size:12px;" onclick="submitReply('${post.id}', '${k}')">등록</button>
+                    </div>
                 </div>
             `;
         }).join('');
 
+        // 관리자이거나 작성자일때 나타나는 수정/삭제 버튼. 방송데이터나 일정에서도 동일하게 작동합니다!
         mBody.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-                <h4 style="margin:0; font-size:20px;">${post.title}</h4>
+                <h4 style="margin:0; font-size:18px;">${post.title}</h4>
                 ${(isAuthor || isAdmin) ? `
-                <div style="display:flex; gap:8px;">
-                    <button class="btn" style="padding:4px 8px; font-size:12px; background:#eee;" onclick="editPostMode('${post.id}')">수정</button>
-                    <button class="btn" style="padding:4px 8px; font-size:12px; background:#ff7675; color:white;" onclick="deletePost('${post.id}')">삭제</button>
-                </div>` : ''}
+                    <div>
+                        <button onclick="editPostMode('${post.id}')" style="background:none; border:none; color:#3498db; font-weight:bold; cursor:pointer;">수정</button>
+                        <button onclick="deletePost('${post.id}')" style="background:none; border:none; color:#e74c3c; font-weight:bold; cursor:pointer;">삭제</button>
+                    </div>
+                ` : ''}
+            </div>
+            <div style="font-size:12px; color:#888; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #eee;">
+                작성자: ${post.author} | 작성일: ${post.date} | 조회수: ${viewCount}
+            </div>
+            <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px;">${post.content}</div>
+            ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">` : ''}
+            
+            <div style="display:flex; justify-content:center; gap:15px; margin: 30px 0;">
+                <button class="btn ${hasLiked ? 'btn-primary' : 'btn-outline'}" onclick="toggleLike('${post.id}')" style="border-radius:20px; padding:10px 25px;">👍 좋아요 ${likesArr.length}</button>
+                <button class="btn ${hasDisliked ? 'btn-primary' : 'btn-outline'}" style="background:${hasDisliked?'#e74c3c':''}; color:${hasDisliked?'white':''}; border-radius:20px; padding:10px 25px;" onclick="toggleDislike('${post.id}')">👎 싫어요 ${dislikesArr.length}</button>
             </div>
             
-            <div style="font-size:13px; color:#888; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #eee; display:flex; gap:15px; flex-wrap:wrap;">
-                <span>작성자: ${post.author}</span><span>작성일: ${post.date}</span><span>조회수: ${viewCount}</span>
+            <div style="font-size:11px; color:#aaa; text-align:center; margin-bottom:20px;">
+                ${likesArr.length > 0 ? '👍: ' + likesArr.join(', ') + '<br>' : ''}
+                ${dislikesArr.length > 0 ? '👎: ' + dislikesArr.join(', ') : ''}
             </div>
-            
-            <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px; word-break: break-all;">${post.content}</div>
-            ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : ''}
-            
-            <div style="text-align:center; padding: 20px 0; border-top:1px dashed #ddd; margin-top:20px;">
-                <button class="reaction-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction('${post.id}', 'like')">👍 좋아요 ${likesArr.length}</button>
-                <button class="reaction-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction('${post.id}', 'dislike')">👎 싫어요 ${dislikesArr.length}</button>
+
+            <!-- Comments Section -->
+            <div style="background:#f9f9f9; padding:15px; border-radius:12px; margin-top:20px;">
+                <h5 style="margin: 0 0 10px 0; border-bottom: 2px solid #ddd; padding-bottom: 5px;">댓글 (${Object.keys(commentsObj).length})</h5>
+                ${commentsHtml || '<div style="font-size:12px; color:#999; text-align:center; padding:10px;">첫 댓글을 남겨보세요.</div>'}
                 
-                <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:15px;">
-                    <div class="reaction-list-text" style="flex:1; min-width:120px;"><strong>좋아요 누른 사람:</strong><br>${likesArr.length > 0 ? likesArr.join(', ') : '없음'}</div>
-                    <div class="reaction-list-text" style="flex:1; min-width:120px;"><strong>싫어요 누른 사람:</strong><br>${dislikesArr.length > 0 ? dislikesArr.join(', ') : '없음'}</div>
-                </div>
-            </div>
-            
-            <!-- Comment Section -->
-            <div style="margin-top:10px; border-top: 2px solid #eee; padding-top:20px;">
-                <h5 style="margin:0 0 10px 0;">댓글</h5>
-                <div style="max-height: 150px; overflow-y: auto; margin-bottom:15px; background:#f9f9f9; border-radius:8px;">
-                    ${commentsHtml || '<div style="padding:15px; color:#999; text-align:center; font-size:13px;">첫 댓글을 남겨보세요!</div>'}
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <input type="text" id="commentInput" class="input-text" style="margin:0; flex:1;" placeholder="댓글 입력">
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <input type="text" id="commentInput" class="input-text" style="margin:0; flex:1;" placeholder="따뜻한 댓글을 남겨주세요">
                     <button class="btn btn-primary" onclick="submitComment('${post.id}')">등록</button>
                 </div>
             </div>
         `;
+        document.getElementById('mainModal').style.display = 'flex';
     }
 
-    function editPostMode(postId) {
+    function toggleLike(postId) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
         const post = appState.posts.find(p => p.id === postId || p.id == postId);
-        const mBody = document.getElementById('modalBody');
-        document.getElementById('modalTitle').innerText = '게시글 수정';
-        mBody.innerHTML = `
-            <input type="text" id="editTitle" class="input-text" value="${post.title}">
-            <textarea id="editContent">${post.content}</textarea>
-            <button class="btn btn-primary" style="width:100%" onclick="saveEditPost('${postId}')">수정 완료</button>
-            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="viewPost('${postId}')">취소</button>
-        `;
+        if(!post) return;
+        const user = appState.currentUser;
+        
+        let likes = post.likes ? {...post.likes} : {};
+        let dislikes = post.dislikes ? {...post.dislikes} : {};
+        
+        if(likes[user]) delete likes[user];
+        else { likes[user] = true; delete dislikes[user]; }
+        
+        update(ref(db, `posts/${postId}`), { likes, dislikes }).then(() => setTimeout(() => viewPost(postId), 200));
     }
 
-    function saveEditPost(postId) {
-        const title = document.getElementById('editTitle').value;
-        const content = document.getElementById('editContent').value;
-        if(!isLocalMode) {
-            update(ref(db, `posts/${postId}`), { title, content }).then(() => {
-                setTimeout(() => viewPost(postId), 200); // 딜레이 후 새로고침
-            });
-        }
-    }
-
-    function deletePost(postId) {
-        if(confirm('정말 이 게시글을 삭제하시겠습니까?')) {
-            if(!isLocalMode) {
-                remove(ref(db, `posts/${postId}`)).then(() => closeModal());
-            }
-        }
+    function toggleDislike(postId) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const post = appState.posts.find(p => p.id === postId || p.id == postId);
+        if(!post) return;
+        const user = appState.currentUser;
+        
+        let likes = post.likes ? {...post.likes} : {};
+        let dislikes = post.dislikes ? {...post.dislikes} : {};
+        
+        if(dislikes[user]) delete dislikes[user];
+        else { dislikes[user] = true; delete likes[user]; }
+        
+        update(ref(db, `posts/${postId}`), { likes, dislikes }).then(() => setTimeout(() => viewPost(postId), 200));
     }
 
     function submitComment(postId) {
@@ -892,110 +874,199 @@
         const text = document.getElementById('commentInput').value;
         if(!text.trim()) return;
 
-        if(!isLocalMode) {
-            const newRef = push(ref(db, `posts/${postId}/comments`));
-            set(newRef, { author: appState.currentUser, content: text, timestamp: Date.now() }).then(() => {
+        const newRef = push(ref(db, `posts/${postId}/comments`));
+        set(newRef, { author: appState.currentUser, content: text, timestamp: Date.now() }).then(() => {
+            setTimeout(() => viewPost(postId), 200);
+        });
+    }
+
+    function showReplyInput(postId, commentId) {
+        const wrap = document.getElementById(`replyInputWrap_${commentId}`);
+        if(wrap) wrap.style.display = wrap.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function submitReply(postId, commentId) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const text = document.getElementById(`replyInput_${commentId}`).value;
+        if(!text.trim()) return;
+
+        const newRef = push(ref(db, `posts/${postId}/comments/${commentId}/replies`));
+        set(newRef, { author: appState.currentUser, content: text, timestamp: Date.now() }).then(() => {
+            setTimeout(() => viewPost(postId), 200);
+        });
+    }
+
+    function deleteReply(postId, commentId, replyId) {
+        if(confirm('이 답글을 삭제할까요?')) {
+            remove(ref(db, `posts/${postId}/comments/${commentId}/replies/${replyId}`)).then(() => {
                 setTimeout(() => viewPost(postId), 200);
             });
         }
     }
 
+    function toggleCommentLike(postId, commentId) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const post = appState.posts.find(p => p.id === postId || p.id == postId);
+        if(!post || !post.comments || !post.comments[commentId]) return;
+        
+        const user = appState.currentUser;
+        let likes = post.comments[commentId].likes ? {...post.comments[commentId].likes} : {};
+        
+        if(likes[user]) delete likes[user];
+        else likes[user] = true;
+        
+        update(ref(db, `posts/${postId}/comments/${commentId}`), { likes }).then(()=>setTimeout(() => viewPost(postId), 200));
+    }
+
     function deleteComment(postId, commentId) {
-        if(confirm('이 댓글을 삭제할까요?')) {
-            if(!isLocalMode) {
-                remove(ref(db, `posts/${postId}/comments/${commentId}`)).then(() => {
-                    setTimeout(() => viewPost(postId), 200);
-                });
-            }
+        if(confirm('댓글을 삭제하시겠습니까?')) {
+            remove(ref(db, `posts/${postId}/comments/${commentId}`)).then(() => {
+                setTimeout(() => viewPost(postId), 200);
+            });
         }
     }
 
-    function toggleReaction(postId, type) {
-        if(!appState.currentUser) return alert('로그인이 필요합니다.');
-        const post = appState.posts.find(p => p.id === postId || p.id == postId);
-        const user = appState.currentUser;
+    function submitPost(formType) {
+        const title = document.getElementById('postTitle').value;
+        const content = document.getElementById('postContent').value;
+        if(!title || !content) return alert('제목과 내용을 입력해주세요.');
         
-        let likes = post.likes ? {...post.likes} : {};
-        let dislikes = post.dislikes ? {...post.dislikes} : {};
+        let cat = formType;
+        if(formType === 'board') cat = document.getElementById('postCat').value;
 
-        if(type === 'like') {
-            if(likes[user]) { delete likes[user]; } 
-            else { likes[user] = true; delete dislikes[user]; }
-        } else {
-            if(dislikes[user]) { delete dislikes[user]; } 
-            else { dislikes[user] = true; delete likes[user]; }
-        }
+        const newPost = { timestamp: Date.now(), category: cat, title, content, author: appState.currentUser, date: new Date().toLocaleString(), views: 0, image: null };
+        const fileInput = document.getElementById('postPhoto');
         
-        if(!isLocalMode) update(ref(db, `posts/${post.id}`), { likes, dislikes });
+        if(fileInput && fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                newPost.image = e.target.result;
+                push(ref(db, 'posts'), newPost);
+                closeModal(); addPoints(2);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            push(ref(db, 'posts'), newPost);
+            closeModal(); addPoints(1);
+        }
+    }
+
+    function deletePost(postId) {
+        if(confirm('게시글을 완전히 삭제하시겠습니까?')) {
+            remove(ref(db, `posts/${postId}`)).then(() => {
+                alert('삭제되었습니다.');
+                closeModal();
+            });
+        }
+    }
+
+    function editPostMode(postId) {
+        const post = appState.posts.find(p => p.id === postId || p.id == postId);
+        if(!post) return;
+        const mBody = document.getElementById('modalBody');
+        document.getElementById('modalTitle').innerText = '글 수정하기';
+        mBody.innerHTML = `
+            <input type="text" id="editTitle" class="input-text" value="${post.title}">
+            <textarea id="editContent">${post.content}</textarea>
+            <button class="btn btn-primary" style="width:100%; padding:12px;" onclick="saveEditPost('${post.id}')">수정 완료</button>
+        `;
+    }
+
+    function saveEditPost(postId) {
+        const t = document.getElementById('editTitle').value;
+        const c = document.getElementById('editContent').value;
+        if(!t || !c) return alert('내용을 입력하세요.');
+        update(ref(db, `posts/${postId}`), { title: t, content: c }).then(() => {
+            alert('수정되었습니다.');
+            setTimeout(() => viewPost(postId), 100);
+        });
+    }
+
+    function renderHomeSchedule() {
+        const sch = appState.posts.filter(p => p.category === 'schedule').slice(0, 3);
+        const cont = document.getElementById('homeScheduleList');
+        if(cont) {
+            cont.innerHTML = sch.map(p => {
+                const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+                return `
+                <div class="list-item" onclick="viewPost('${p.id}')">
+                    <div style="font-weight:bold;">📅 ${p.title}</div>
+                    <div style="color:#888; font-size:12px;">${p.date.split(' ')[0]} | 💬 ${commentsCount}</div>
+                </div>
+                `;
+            }).join('') || '<p style="text-align:center; color:#999; padding:10px;">등록된 일정이 없습니다.</p>';
+        }
+    }
+
+    function renderBroadcastData() {
+        const sch = appState.posts.filter(p => p.category === 'broadcast_data');
+        const cont = document.getElementById('broadcastDataList');
+        cont.innerHTML = sch.map(p => {
+            const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+            return `
+            <div class="list-item" onclick="viewPost('${p.id}')">
+                <div style="font-weight:bold;">📊 ${p.title}</div>
+                <div style="color:#888; font-size:13px;">${p.date.split(' ')[0]} | 💬 ${commentsCount}</div>
+            </div>
+            `
+        }).join('') || '<p style="color:#999; text-align:center; padding:20px;">등록된 데이터가 없습니다.</p>';
     }
 
     function renderSchedule() {
         const sch = appState.posts.filter(p => p.category === 'schedule');
         const cont = document.getElementById('scheduleList');
-        cont.innerHTML = sch.map(p => `
+        cont.innerHTML = sch.map(p => {
+            const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+            return `
             <div class="list-item" onclick="viewPost('${p.id}')">
-                <div style="font-weight:bold;">🕒 ${p.title}</div>
-                <div style="color:#888; font-size:13px;">${p.date.split(' ')[0]}</div>
+                <div style="font-weight:bold;">📅 ${p.title}</div>
+                <div style="color:#888; font-size:13px;">${p.date.split(' ')[0]} | 💬 ${commentsCount}</div>
             </div>
-        `).join('') || '<p style="color:#999; padding:20px;">등록된 일정이 없습니다.</p>';
+            `
+        }).join('') || '<p style="color:#999; text-align:center; padding:20px;">등록된 일정이 없습니다.</p>';
     }
 
     function renderNotice() {
-        const noti = appState.posts.filter(p => p.category === 'notice')[0]; 
+        const noti = appState.posts.filter(p => p.category === 'notice')[0];
         const cont = document.getElementById('noticeList');
         if(noti) {
             cont.innerHTML = `
-                <div style="font-weight:bold; margin-bottom:8px; cursor:pointer; color:#d63031;" onclick="viewPost('${noti.id}')">🚨 ${noti.title}</div>
-                <div style="color:#555; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${noti.content}</div>
-                <div style="font-size:11px; color:#aaa; margin-top:8px;">${noti.date}</div>
+                <div style="font-weight:bold; margin-bottom:5px; cursor:pointer;" onclick="viewPost('${noti.id}')">🚨 ${noti.title}</div>
+                <div style="color:#666; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${noti.content}</div>
             `;
-        } else { cont.innerHTML = '등록된 공지가 없습니다.'; }
+        } else {
+            cont.innerHTML = '등록된 공지가 없습니다.';
+        }
     }
 
     function renderRanking() {
-        const arr = Object.entries(appState.users).filter(([nick, data]) => data.role !== 'admin').map(([nick, data]) => ({ nick, points: data.points || 0, ...data })); 
-        arr.sort((a, b) => b.points - a.points); 
+        const arr = Object.entries(appState.users)
+                          .map(([nick, data]) => ({ nick, ...data }))
+                          .filter(u => u.role !== 'admin'); // 관리자 제외 필터 추가
+                          
+        arr.sort((a, b) => (b.points || 0) - (a.points || 0));
         
         const cont = document.getElementById('rankingList');
         cont.innerHTML = arr.map((u, i) => {
             const info = getLevelInfo(u);
+            const isAdm = u.role === 'admin';
             return `
             <div style="display:flex; align-items:center; padding: 15px 0; border-bottom: 1px solid #f0f0f0;">
-                <div style="font-size: 20px; font-weight: bold; width: 40px; color: ${i<3 ? '#e74c3c' : '#999'};">${i+1}</div>
+                <div style="font-size: 20px; font-weight: bold; width: 40px; color: ${i<3 ? '#e74c3c' : '#999'};">${isAdm ? '👑' : (i+1)}</div>
                 <div style="flex:1;">
                     <div style="font-weight: bold; margin-bottom: 5px;">
-                        <span style="font-size:12px; background:${info.color}; color:${info.textCol}; padding:2px 8px; border-radius:12px; margin-right:8px;">${info.icon} Lv.${info.level}</span>
-                        ${u.nick}
+                        <span style="font-size:12px; background:${info.color}; color:${info.textCol}; padding:2px 6px; border-radius:10px; margin-right:5px;">${info.icon} Lv.${info.level}</span>
+                        ${u.nick} ${isAdm ? '<span style="color:#a29bfe; font-size:12px;">(흔)</span>' : ''}
                     </div>
                     <div style="background:#eee; height:6px; border-radius:3px; width:100%; overflow:hidden;">
-                        <div style="background:var(--primary); height:100%; width:${info.progressPercent}%;"></div>
+                        <div style="background:var(--primary); height:100%; width:${info.progress}%;"></div>
                     </div>
                 </div>
-                <div style="font-weight:bold; color:var(--primary); width: 60px; text-align:right;">${u.points} P</div>
+                <div style="font-weight:bold; color:var(--primary); width: 60px; text-align:right;">${u.points || 0} P</div>
             </div>`;
-        }).join('') || '<p style="padding:20px; color:#999;">랭킹에 등록된 유저가 없습니다.</p>';
+        }).join('') || '<p>유저가 없습니다.</p>';
     }
 
-    function renderOnlineUsers() {
-        const cont = document.getElementById('onlineUsers');
-        let onlineHtml = '';
-        const onlineUsers = Object.keys(appState.users).filter(k => appState.users[k].isOnline);
-        onlineUsers.forEach(nick => {
-            const info = getLevelInfo(appState.users[nick]);
-            const isMe = nick === appState.currentUser ? '(나)' : '';
-            onlineHtml += `
-                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
-                    <div style="width:10px; height:10px; background:#2ecc71; border-radius:50%; box-shadow:0 0 5px #2ecc71;"></div> 
-                    <span>${info.icon} ${nick} <span style="color:#999; font-size:12px; font-weight:normal;">${isMe}</span></span>
-                </div>
-            `;
-        });
-        cont.innerHTML = onlineHtml || '<div style="color:#999;">현재 접속 중인 구름이가 없습니다.</div>';
-    }
-
-    // Start DB Connection
-    setupFirebaseListeners();
 </script>
-
 </body>
 </html>
