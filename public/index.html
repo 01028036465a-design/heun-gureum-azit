@@ -56,7 +56,7 @@
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 10px;}
         .logo { font-size: 24px; font-weight: 800; color: var(--primary-dark); cursor: pointer; display: flex; align-items: center; gap: 10px;}
         
-        .visitor-badge { font-size: 11px; background: var(--bg-color); padding: 4px 8px; border-radius: 12px; font-weight: normal; color: var(--text-muted); border: 1px solid var(--border-color); }
+        .visitor-badge { font-size: 11px; background: var(--bg-color); padding: 4px 8px; border-radius: 12px; font-weight: normal; color: var(--text-muted); border: 1px solid var(--border-color); white-space: nowrap; }
 
         .menu-links { display: flex; gap: 15px; font-weight: 600; font-size: 15px; flex-wrap: wrap; }
         .menu-links li { cursor: pointer; padding: 5px 0; border-bottom: 2px solid transparent; transition: all 0.2s; }
@@ -68,8 +68,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card { background: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); transition: background-color 0.3s; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
-        .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; gap: 10px; }
+        .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; word-break: keep-all; }
         
         .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
         .btn-primary { background: var(--primary); color: white; }
@@ -92,7 +92,7 @@
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; }
         .list-item:hover { background: var(--bg-color); }
         
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px; white-space: nowrap; }
         .badge.popular { background: #ffa502; color: white; }
         .badge.normal { background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border-color); }
         .badge.cat { border: 1px solid var(--border-color); color: var(--text-main); background: var(--card-bg); }
@@ -118,17 +118,33 @@
         @media (max-width: 800px) {
             .container { display: flex; flex-direction: column; padding: 15px; gap: 20px; margin: 10px auto; }
             .home-grid { display: flex; flex-direction: column; gap: 20px; }
-            .nav-container { flex-direction: column; gap: 10px; padding: 15px; }
+            .nav-container { flex-direction: column; gap: 15px; padding: 15px; }
             .logo { text-align: center; justify-content: center; }
             .menu-links { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 5px; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
             .menu-links::-webkit-scrollbar { display: none; }
             .menu-links li { white-space: nowrap; font-size: 14px; }
-            #authArea { width: 100%; justify-content: space-between; }
-            .board-tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+            
+            #authArea { width: 100%; display: flex; justify-content: space-between !important; align-items: center; }
+            #authContentArea { justify-content: flex-end; width: 100%; gap: 10px; }
+            
+            .board-tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 5px; gap: 8px; -webkit-overflow-scrolling: touch; }
             .board-tabs::-webkit-scrollbar { display: none; }
+            .tab-btn { white-space: nowrap; }
+            
             #heundungsList { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .modal-content { width: 95%; padding: 20px; }
             .card { padding: 15px; margin-bottom: 15px; }
+            
+            /* 리스트 아이템 모바일 최적화 (제목과 수치 줄바꿈 정렬) */
+            .list-item { flex-direction: column; align-items: flex-start; gap: 10px; padding: 15px 0; }
+            .list-item > div:first-child { width: 100%; line-height: 1.4; word-break: break-all; }
+            .list-item > div:last-child { width: 100%; justify-content: flex-start; gap: 15px; font-size: 11px; }
+
+            /* 교환소 내 내 포인트 박스 줄바꿈 방지 및 정렬 */
+            #exchangeSummary { flex-direction: column; align-items: flex-start !important; gap: 10px; }
+            
+            /* 가위바위보 버튼 모바일 정렬 */
+            #rpsPlayArea button { padding: 15px 20px !important; font-size: 30px !important; margin: 5px !important; flex: 1; }
         }
     </style>
 </head>
@@ -164,7 +180,7 @@
             <li onclick="switchView('event', this)">🎮 미니게임</li>
         </ul>
         <div id="authArea" style="position:relative; display:flex; gap:10px; align-items:center;">
-            <button id="darkModeBtn" class="btn btn-outline" style="padding:0; width:36px; height:36px; font-size:16px; border-radius:50%;" onclick="toggleDarkMode()" title="다크모드 전환">🌙</button>
+            <button id="darkModeBtn" class="btn btn-outline" style="padding:0; width:36px; height:36px; font-size:16px; border-radius:50%; flex-shrink:0;" onclick="toggleDarkMode()" title="다크모드 전환">🌙</button>
             <div id="authContentArea" style="display:flex; align-items:center;">
                 <button class="btn btn-primary" onclick="openAuthModal()">로그인 / 회원가입</button>
             </div>
@@ -186,11 +202,13 @@
                         <div id="noticeList" style="font-size: 14px; line-height: 1.5;">등록된 공지가 없습니다.</div>
                     </div>
 
-                    <div class="card" style="margin-bottom: 20px;">
-                        <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
-                            <div class="card-title">🟢 접속중인 💭</div>
+                    <div id="pcOnlineSlot">
+                        <div class="card" id="card-online" style="margin-bottom: 20px;">
+                            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                                <div class="card-title">🟢 접속중인 💭</div>
+                            </div>
+                            <div id="onlineUsers" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;"></div>
                         </div>
-                        <div id="onlineUsers" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;"></div>
                     </div>
 
                     <div class="card" style="margin-bottom: 20px;">
@@ -225,7 +243,7 @@
                     <div class="card" style="margin-bottom: 20px;">
                         <div class="card-header">
                             <div class="card-title">💬 흔과 흔둥이의 이야기</div>
-                            <span style="font-size: 13px; color: var(--text-muted); cursor: pointer;" onclick="switchView('board')">더보기 +</span>
+                            <span style="font-size: 13px; color: var(--text-muted); cursor: pointer; white-space: nowrap;" onclick="switchView('board')">더보기 +</span>
                         </div>
                         <div class="board-tabs">
                             <button class="tab-btn active" onclick="renderHomeBoard('all', 1, this)">전체</button>
@@ -322,7 +340,7 @@
                     <div class="card-title">🎁 포인트 교환소</div>
                     <button class="btn btn-admin admin-only" onclick="openExchangeItemModal()">아이템 관리</button>
                 </div>
-                <div style="background: var(--bg-color); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="exchangeSummary" style="background: var(--bg-color); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong>내 사용 가능 포인트:</strong> <span id="myUsablePoints" style="color:var(--primary-dark); font-weight:bold; font-size:18px;">0 P</span>
                         <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">(명예의 전당 누적 점수에는 영향을 주지 않습니다)</div>
@@ -351,8 +369,10 @@
     </div>
 
     <div class="sidebar">
-        <div class="card profile-area" id="profileCard">
-            </div>
+        <div id="pcProfileSlot">
+            <div class="card profile-area" id="profileCard" style="margin-bottom: 20px;">
+                </div>
+        </div>
 
         <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #333;">
             🎧 스푼 | DJ 🏮 흔 💭 🍶 ☾⋆⁺<br>
@@ -446,6 +466,25 @@
     let currentHomeFilter = 'all';
     let currentSearchFilter = '';
     let notiCurrentPage = 1;
+
+    // 모바일 환경에서 프로필과 온라인 유저 위치를 스위칭하는 함수
+    function applyMobileLayout() {
+        const isMobile = window.innerWidth <= 800;
+        const pCard = document.getElementById('profileCard');
+        const oCard = document.getElementById('card-online');
+        const pSlot = document.getElementById('pcProfileSlot');
+        const oSlot = document.getElementById('pcOnlineSlot');
+        
+        if (isMobile) {
+            if (oSlot && pCard && oSlot.children[0] !== pCard) oSlot.appendChild(pCard);
+            if (pSlot && oCard && pSlot.children[0] !== oCard) pSlot.appendChild(oCard);
+        } else {
+            if (pSlot && pCard && pSlot.children[0] !== pCard) pSlot.appendChild(pCard);
+            if (oSlot && oCard && oSlot.children[0] !== oCard) oSlot.appendChild(oCard);
+        }
+    }
+    window.addEventListener('resize', applyMobileLayout);
+    applyMobileLayout();
 
     // Password Protection
     window.checkSitePw = function() {
@@ -657,6 +696,7 @@
         }).then(() => {
             alert("프로필 정보가 업데이트 되었습니다.");
             closeModal('myPageModal');
+            renderApp();
         });
     };
 
@@ -739,7 +779,7 @@
                     html += `<div style="display:flex; align-items:center; gap:8px;"><div style="width:8px; height:8px; background:#2ecc71; border-radius:50%; box-shadow:0 0 5px #2ecc71;"></div> <img src="${pPic}" class="avatar" style="width:25px; height:25px;"> <span>${info.icon} ${dName} ${isMe}</span></div>`;
                 }
             });
-            cont.innerHTML = html || '<div style="color:var(--text-muted);">접속 중인 구름이가 없습니다.</div>';
+            if(cont) cont.innerHTML = html || '<div style="color:var(--text-muted);">접속 중인 구름이가 없습니다.</div>';
         });
     }
 
@@ -754,6 +794,7 @@
             update(ref(db, `users/${appState.currentUser}`), { lastAttend: today }).then(() => {
                 alert('출석체크 완료! (+1점 획득)');
                 addPoints(1);
+                renderApp();
             });
         }
     }
@@ -796,13 +837,14 @@
     function renderProfile() {
         const profileCard = document.getElementById('profileCard');
         const authContentArea = document.getElementById('authContentArea');
+        if(!profileCard || !authContentArea) return;
         
         if (!appState.currentUser) {
             profileCard.innerHTML = `
                 <h3 style="margin-top:0; width:100%; text-align:center;">흔둥이 커뮤니티</h3>
                 <p style="font-size: 14px; color: var(--text-muted); text-align:center; margin-bottom:15px; width:100%;">로그인하고 소통을 시작하세요!</p>
                 <button class="btn btn-primary" style="width:100%" onclick="openAuthModal()">로그인 / 회원가입</button>`;
-            authContentArea.innerHTML = `<button class="btn btn-primary" onclick="openAuthModal()">로그인</button>`;
+            authContentArea.innerHTML = `<button class="btn btn-primary" style="padding:6px 12px; font-size:14px;" onclick="openAuthModal()">로그인</button>`;
             return;
         }
 
@@ -1219,8 +1261,8 @@
 
             return `
             <div class="list-item" onclick="viewPost('${p.id}')">
-                <div style="flex:1;">${badge} ${catBadge} ${newBadge} ${p.title}</div>
-                <div style="color:var(--text-muted); font-size:12px;">👁️ ${p.views || 0} | ❤️ ${likesCount} | 💬 ${commentsCount}</div>
+                <div>${badge} ${catBadge} ${newBadge} ${p.title}</div>
+                <div>👁️ ${p.views || 0} | ❤️ ${likesCount} | 💬 ${commentsCount}</div>
             </div>`;
         }).join('') || '<p style="text-align:center; color:var(--text-muted); padding:20px;">게시글이 없습니다.</p>';
 
@@ -1264,8 +1306,8 @@
 
             return `
                 <div class="list-item" onclick="viewPost('${p.id}')">
-                    <div style="flex:1;"><span class="badge normal">${catName}</span> ${popBadge} ${newBadge} ${p.title}</div>
-                    <div style="color:var(--text-muted); font-size:12px; display:flex; gap:12px; align-items:center;">
+                    <div><span class="badge normal">${catName}</span> ${popBadge} ${newBadge} ${p.title}</div>
+                    <div style="display:flex; gap:12px; align-items:center;">
                         <span style="display:flex; align-items:center; gap:5px;"><img src="${pPic}" style="width:16px;height:16px;border-radius:50%;"> ${dName}</span>
                         <span>👁️ ${p.views || 0}</span><span>❤️ ${likesCount}</span><span>💬 ${commentsCount}</span>
                     </div>
@@ -1285,8 +1327,8 @@
             const { dName, pPic } = getUserDisplay(p.author);
             return `
                 <div class="list-item" onclick="viewPost('${p.id}')">
-                    <div style="flex:1;"><span class="badge cat">🎶 추천곡</span> ${p.title}</div>
-                    <div style="color:var(--text-muted); font-size:12px; display:flex; gap:12px; align-items:center;">
+                    <div><span class="badge cat">🎶 추천곡</span> ${p.title}</div>
+                    <div style="display:flex; gap:12px; align-items:center;">
                         <span style="display:flex; align-items:center; gap:5px;"><img src="${pPic}" style="width:16px;height:16px;border-radius:50%;"> ${dName}</span>
                         <span>❤️ ${likesCount}</span><span>💬 ${commentsCount}</span>
                     </div>
@@ -1398,7 +1440,7 @@
             <div style="line-height:1.6; white-space:pre-wrap; margin-bottom:20px; font-size:15px;">${post.content}</div>
             ${imagesHtml}
             
-            <div style="display:flex; justify-content:center; gap:15px; margin: 30px 0;">
+            <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:15px; margin: 30px 0;">
                 <button class="btn ${hasLiked ? 'btn-primary' : 'btn-outline'}" onclick="toggleLike('${post.id}')" style="border-radius:20px; padding:10px 25px;" title="${likeNames ? '좋아요 누른 사람: ' + likeNames : '가장 먼저 좋아요를 눌러보세요!'}">👍 좋아요 ${likesArr.length}</button>
                 <button class="btn ${hasDisliked ? 'btn-primary' : 'btn-outline'}" style="background:${hasDisliked?'#e74c3c':''}; color:${hasDisliked?'white':''}; border-radius:20px; padding:10px 25px;" onclick="toggleDislike('${post.id}')">👎 싫어요 ${dislikesArr.length}</button>
             </div>
@@ -1541,8 +1583,8 @@
                 <div style="flex:1;">
                     <div style="font-weight: bold; margin-bottom: 5px; display:flex; align-items:center; gap:5px;">
                         <img src="${pPic}" style="width:20px;height:20px;border-radius:50%;">
-                        <span style="font-size:12px; background:${info.color}; color:${info.textCol}; padding:2px 6px; border-radius:10px;">${info.icon} Lv.${info.level}</span>
-                        ${dName}
+                        <span style="font-size:12px; background:${info.color}; color:${info.textCol}; padding:2px 6px; border-radius:10px; white-space:nowrap;">${info.icon} Lv.${info.level}</span>
+                        <span style="word-break:keep-all;">${dName}</span>
                     </div>
                     <div style="background:var(--bg-color); height:6px; border-radius:3px; width:100%; overflow:hidden;">
                         <div style="background:var(--primary); height:100%; width:${info.progress}%;"></div>
