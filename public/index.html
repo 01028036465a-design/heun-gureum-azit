@@ -1266,6 +1266,40 @@
         }).join('') || '<p>유저가 없습니다.</p>';
     };
 
+    // --- PWA (웹 앱) 데이터 동적 생성 ---
+    const manifestData = {
+        "name": "흔둥이 커뮤니티",
+        "short_name": "흔둥이",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#f4f7f8",
+        "theme_color": "#a1c4fd",
+        "icons": [
+            { "src": "https://placehold.co/192x192/a1c4fd/ffffff?text=H", "sizes": "192x192", "type": "image/png" },
+            { "src": "https://placehold.co/512x512/a1c4fd/ffffff?text=H", "sizes": "512x512", "type": "image/png" }
+        ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+    
+    // HTML에 태그가 없으면 알아서 생성하도록 수정 (에러 방지 완벽 처리)
+    let manifestLink = document.getElementById('manifest-link');
+    if (!manifestLink) {
+        manifestLink = document.createElement('link');
+        manifestLink.id = 'manifest-link';
+        manifestLink.rel = 'manifest';
+        document.head.appendChild(manifestLink);
+    }
+    manifestLink.href = URL.createObjectURL(manifestBlob);
+
+    // 모바일 앱 아이콘 및 설정 자동 추가
+    if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
+        const meta1 = document.createElement('meta'); meta1.name = "apple-mobile-web-app-capable"; meta1.content = "yes"; document.head.appendChild(meta1);
+        const meta2 = document.createElement('meta'); meta2.name = "apple-mobile-web-app-status-bar-style"; meta2.content = "default"; document.head.appendChild(meta2);
+        const meta3 = document.createElement('meta'); meta3.name = "apple-mobile-web-app-title"; meta3.content = "흔둥이"; document.head.appendChild(meta3);
+        const linkIcon = document.createElement('link'); linkIcon.rel = "apple-touch-icon"; linkIcon.href = "https://placehold.co/512x512/a1c4fd/ffffff?text=H"; document.head.appendChild(linkIcon);
+        const meta4 = document.createElement('meta'); meta4.name = "theme-color"; meta4.content = "#f4f7f8"; document.head.appendChild(meta4);
+    }
+
 </script>
 </body>
 </html>
