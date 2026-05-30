@@ -150,11 +150,8 @@
     <div style="width: 100%;">
         
         <div id="view-home" class="view-section active">
-            <!-- 공지사항 및 접속 현황, 흔둥이들 레이아웃 분리 -->
             <div class="home-grid">
-                <!-- 왼쪽: 공지사항 & 접속중인 구름 -->
                 <div>
-                    <!-- Notice -->
                     <div class="card" style="margin-bottom: 20px;">
                         <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
                             <div class="card-title">📌 흔이 쓰는 공지</div>
@@ -163,7 +160,6 @@
                         <div id="noticeList" style="font-size: 14px; line-height: 1.5;">등록된 공지가 없습니다.</div>
                     </div>
 
-                    <!-- Online Clouds -->
                     <div class="card" style="margin-bottom: 20px;">
                         <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
                             <div class="card-title">🟢 접속중인 💭</div>
@@ -172,9 +168,7 @@
                     </div>
                 </div>
 
-                <!-- 오른쪽: 흔둥이들, 이야기, 일정 (크기 완벽 통일) -->
                 <div>
-                    <!-- 흔둥이들 💭 섹션 -->
                     <div class="card" style="margin-bottom: 20px;">
                         <div class="card-header">
                             <div class="card-title">💭 흔둥이들</div>
@@ -183,7 +177,6 @@
                         <div id="heundungsList"></div>
                     </div>
 
-                    <!-- Home Board (Story) -->
                     <div class="card" style="margin-bottom: 20px;">
                         <div class="card-header">
                             <div class="card-title">💬 흔과 흔둥이의 이야기</div>
@@ -198,7 +191,6 @@
                         <div id="homeBoardPagination" style="display:flex; justify-content:center; gap:5px; margin-top:15px;"></div>
                     </div>
 
-                    <!-- Home Schedule -->
                     <div class="card" style="margin-bottom: 0;">
                         <div class="card-header">
                             <div class="card-title">📅 최근 방송일정</div>
@@ -210,7 +202,6 @@
             </div>
         </div>
 
-        <!-- 이번주 뉴스 View -->
         <div id="view-news" class="view-section">
             <div class="card">
                 <div class="card-header">
@@ -273,14 +264,12 @@
     </div>
 
     <div class="sidebar">
-        <!-- Profile Area -->
         <div class="card profile-area" id="profileCard">
             <h3 style="margin-top:0;">흔둥이 커뮤니티</h3>
             <p style="font-size: 14px; color: #666;">로그인하고 소통을 시작하세요!</p>
             <button class="btn btn-primary" style="width:100%" onclick="openAuthModal()">로그인 / 회원가입</button>
         </div>
 
-        <!-- Channels -->
         <a href="https://www.spooncast.net/kr/channel/9090280/tab/home" target="_blank" class="channel-link" style="margin-bottom: 10px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #333;">
             🎧 스푼 | DJ 🏮 흔 💭 🍶 ☾⋆⁺<br>
             <span style="font-size: 14px; font-weight: normal; opacity: 0.9;">방송국 바로가기</span>
@@ -292,7 +281,6 @@
             📸 흔 인스타 바로가기
         </a>
 
-        <!-- Spoon Notice -->
         <div class="card">
             <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
                 <div class="card-title">📣 스푼 공식 공지사항</div>
@@ -303,7 +291,6 @@
     </div>
 </div>
 
-<!-- Main Read/Write Modal -->
 <div class="modal-overlay" id="mainModal">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
@@ -314,7 +301,6 @@
     </div>
 </div>
 
-<!-- Login / Signup Auth Modal -->
 <div class="modal-overlay" id="authModal">
     <div class="modal-content" style="max-width: 400px; text-align: center;">
         <h3 id="authTitle" style="margin-top:0; color:var(--primary-dark);">로그인</h3>
@@ -339,7 +325,6 @@
     </div>
 </div>
 
-<!-- My Page Modal -->
 <div class="modal-overlay" id="myPageModal">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
@@ -1110,7 +1095,6 @@
                 <button class="btn ${hasDisliked ? 'btn-primary' : 'btn-outline'}" style="background:${hasDisliked?'#e74c3c':''}; color:${hasDisliked?'white':''}; border-radius:20px; padding:10px 25px;" onclick="toggleDislike('${post.id}')">👎 싫어요 ${dislikesArr.length}</button>
             </div>
             
-            <!-- Comments Section -->
             <div style="background:#f9f9f9; padding:15px; border-radius:12px; margin-top:20px;">
                 <h5 style="margin: 0 0 10px 0; border-bottom: 2px solid #ddd; padding-bottom: 5px;">댓글 (${Object.keys(commentsObj).length})</h5>
                 ${commentsHtml || '<div style="font-size:12px; color:#999; text-align:center; padding:10px;">첫 댓글을 남겨보세요.</div>'}
@@ -1275,8 +1259,8 @@
         "background_color": "#f4f7f8",
         "theme_color": "#a1c4fd",
         "icons": [
-            { "src": "https://placehold.co/192x192/a1c4fd/ffffff?text=H", "sizes": "192x192", "type": "image/png" },
-            { "src": "https://placehold.co/512x512/a1c4fd/ffffff?text=H", "sizes": "512x512", "type": "image/png" }
+            { "src": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=192&h=192&fit=crop", "sizes": "192x192", "type": "image/jpeg" },
+            { "src": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=512&h=512&fit=crop", "sizes": "512x512", "type": "image/jpeg" }
         ]
     };
     const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
@@ -1296,7 +1280,7 @@
         const meta1 = document.createElement('meta'); meta1.name = "apple-mobile-web-app-capable"; meta1.content = "yes"; document.head.appendChild(meta1);
         const meta2 = document.createElement('meta'); meta2.name = "apple-mobile-web-app-status-bar-style"; meta2.content = "default"; document.head.appendChild(meta2);
         const meta3 = document.createElement('meta'); meta3.name = "apple-mobile-web-app-title"; meta3.content = "흔둥이"; document.head.appendChild(meta3);
-        const linkIcon = document.createElement('link'); linkIcon.rel = "apple-touch-icon"; linkIcon.href = "https://placehold.co/512x512/a1c4fd/ffffff?text=H"; document.head.appendChild(linkIcon);
+        const linkIcon = document.createElement('link'); linkIcon.rel = "apple-touch-icon"; linkIcon.href = "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=512&h=512&fit=crop"; document.head.appendChild(linkIcon);
         const meta4 = document.createElement('meta'); meta4.name = "theme-color"; meta4.content = "#f4f7f8"; document.head.appendChild(meta4);
     }
 
