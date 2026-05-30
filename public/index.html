@@ -99,7 +99,6 @@
     <button onclick="checkSitePw()">입장하기</button>
 </div>
 
-<!-- 실시간 라이브 배너 -->
 <div id="liveBanner" onclick="window.open('https://www.spooncast.net/kr/live/@r5w092a', '_blank')">
     🔴 DJ 흔 실시간 라이브 방송 중! (클릭해서 입장하기)
 </div>
@@ -108,11 +107,11 @@
     <div class="nav-container">
         <div class="logo" onclick="switchView('home')">흔둥이 <span>커뮤니티</span></div>
         <ul class="menu-links">
-            <li onclick="switchView('home')">📰 이번주 뉴스</li>
-            <li onclick="switchView('members')">☁️ 흔둥이 현황</li>
-            <li onclick="switchView('schedule')">📅 최근 방송일정</li>
-            <li onclick="switchView('ranking')">🏆 명예의 전당</li>
-            <li onclick="switchView('board')">📰 소통 게시판</li>
+            <li onclick="switchView('news', this)">📰 이번주 뉴스</li>
+            <li onclick="switchView('members', this)">☁️ 흔둥이 현황</li>
+            <li onclick="switchView('schedule', this)">📅 최근 방송일정</li>
+            <li onclick="switchView('ranking', this)">🏆 명예의 전당</li>
+            <li onclick="switchView('board', this)">📰 소통 게시판</li>
         </ul>
         <div id="authArea" style="position:relative;">
             <button class="btn btn-primary" onclick="openAuthModal()">로그인 / 회원가입</button>
@@ -124,13 +123,39 @@
     <div style="width: 100%;">
         
         <div id="view-home" class="view-section active">
-            <!-- 이번주 뉴스 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">📰 이번주 뉴스</div>
-                    <button class="btn btn-admin admin-only" onclick="openWriteModal('news')" style="font-size:12px;">뉴스 작성</button>
+            <!-- 공지사항 및 접속 현황, 흔둥이들 레이아웃 분리 -->
+            <div style="display: grid; grid-template-columns: 3.5fr 6.5fr; gap: 20px; align-items: start;">
+                <!-- 왼쪽: 공지사항 & 접속중인 구름 -->
+                <div>
+                    <!-- Notice -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                            <div class="card-title">📌 흔이 쓰는 공지</div>
+                            <button class="btn btn-admin admin-only" style="padding: 4px 8px; font-size:11px;" onclick="openWriteModal('notice')">작성</button>
+                        </div>
+                        <div id="noticeList" style="font-size: 14px; line-height: 1.5;">등록된 공지가 없습니다.</div>
+                    </div>
+
+                    <!-- Online Clouds -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                            <div class="card-title">🟢 접속중인 💭</div>
+                        </div>
+                        <div id="onlineUsers" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;"></div>
+                    </div>
                 </div>
-                <div id="weeklyNewsList"></div>
+
+                <!-- 오른쪽: 흔둥이들 대문 -->
+                <div>
+                    <!-- 흔둥이들 💭 섹션 -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-header">
+                            <div class="card-title">💭 흔둥이들</div>
+                            <button class="btn btn-admin admin-only" onclick="openWriteModal('heundungs')" style="font-size:12px;">사진 올리기</button>
+                        </div>
+                        <div id="heundungsList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:15px;"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Home Board (Story) -->
@@ -155,6 +180,17 @@
                     <span style="font-size: 13px; color: #888; cursor: pointer;" onclick="switchView('schedule')">더보기 +</span>
                 </div>
                 <div id="homeScheduleList"></div>
+            </div>
+        </div>
+
+        <!-- 이번주 뉴스 View -->
+        <div id="view-news" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📰 이번주 뉴스</div>
+                    <button class="btn btn-admin admin-only" onclick="openWriteModal('news')">뉴스 쓰기</button>
+                </div>
+                <div id="newsTabList"></div>
             </div>
         </div>
 
@@ -237,23 +273,6 @@
             <iframe src="https://www.spooncast.net/kr/notice" style="width:100%; height:250px; border:1px solid #eee; border-radius:8px;"></iframe>
             <a href="https://www.spooncast.net/kr/notice" target="_blank" class="btn btn-outline" style="display:block; text-align:center; margin-top:10px; font-size:12px;">새 창에서 열기</a>
         </div>
-
-        <!-- Notice -->
-        <div class="card">
-            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
-                <div class="card-title">📌 흔이 쓰는 공지</div>
-                <button class="btn btn-admin admin-only" style="padding: 4px 8px; font-size:11px;" onclick="openWriteModal('notice')">작성</button>
-            </div>
-            <div id="noticeList" style="font-size: 14px; line-height: 1.5;">등록된 공지가 없습니다.</div>
-        </div>
-
-        <!-- Online Clouds -->
-        <div class="card">
-            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
-                <div class="card-title">🟢 현재 이용중인 구름이들</div>
-            </div>
-            <div id="onlineUsers" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;"></div>
-        </div>
     </div>
 </div>
 
@@ -268,12 +287,11 @@
     </div>
 </div>
 
-<!-- Login / Signup Auth Modal Separated -->
+<!-- Login / Signup Auth Modal -->
 <div class="modal-overlay" id="authModal">
     <div class="modal-content" style="max-width: 400px; text-align: center;">
         <h3 id="authTitle" style="margin-top:0; color:var(--primary-dark);">로그인</h3>
         
-        <!-- Login Form -->
         <div id="loginForm">
             <input type="text" id="loginId" class="input-text" placeholder="아이디">
             <input type="password" id="loginPw" class="input-text" placeholder="비밀번호" onkeypress="if(event.key==='Enter') executeLogin()">
@@ -281,7 +299,6 @@
             <p style="font-size:13px; color:#666; margin-top:15px; cursor:pointer; text-decoration:underline;" onclick="toggleAuth('signup')">계정이 없으신가요? 회원가입 하기</p>
         </div>
 
-        <!-- Signup Form -->
         <div id="signupForm" style="display:none;">
             <p style="font-size:12px; color:#e74c3c; margin-bottom:15px; text-align:left;">* 닉네임은 활동에 표시될 이름입니다. ('흔' 입력 시 자동 관리자)</p>
             <input type="text" id="signupId" class="input-text" placeholder="사용할 아이디">
@@ -325,11 +342,12 @@
     const db = getDatabase(app);
 
     let appState = {
-        users: {}, posts: [], news: [], global: { isLive: false },
+        users: {}, posts: [], global: { isLive: false },
         currentUser: sessionStorage.getItem('h_currentUser') || null
     };
     let currentHomeFilter = 'all';
 
+    // Password Protection
     window.checkSitePw = function() {
         const input = document.getElementById('sitePw').value;
         if(input === '0717' || sessionStorage.getItem('site_auth') === '0717') {
@@ -341,15 +359,26 @@
     };
     if(sessionStorage.getItem('site_auth') === '0717') document.getElementById('pwOverlay').style.display = 'none';
 
+    // Firebase Data Listener
     onValue(ref(db, '/'), (snapshot) => {
         const data = snapshot.val();
         if (data) {
             appState.users = data.users || {};
             appState.posts = data.posts ? Object.keys(data.posts).map(k => ({ id: k, ...data.posts[k] })).reverse() : [];
-            appState.news = data.news ? Object.keys(data.news).map(k => ({ id: k, ...data.news[k] })).reverse() : [];
+            
+            // Legacy News migration: In case old news is present, map it into posts so it renders correctly
+            if (data.news) {
+                Object.keys(data.news).forEach(k => {
+                    let legacyNews = data.news[k];
+                    if(!appState.posts.find(p=> p.id === k)) {
+                        appState.posts.push({ id: k, category: 'news', ...legacyNews });
+                    }
+                });
+                appState.posts.sort((a,b) => b.timestamp - a.timestamp);
+            }
+
             appState.global = data.global || { isLive: false };
             
-            // Auto Admin Grant fallback for specific ID '흔' just in case
             if(appState.currentUser === '흔' && appState.users['흔'] && appState.users['흔'].role !== 'admin') {
                 update(ref(db, `users/흔`), { role: 'admin' });
             }
@@ -360,10 +389,15 @@
         }
     });
 
-    window.switchView = function(viewId) {
+    window.switchView = function(viewId, el) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        document.getElementById('view-' + viewId).classList.add('active');
+        const target = document.getElementById('view-' + viewId);
+        if(target) target.classList.add('active');
+        
+        document.querySelectorAll('.menu-links li').forEach(li => li.classList.remove('active'));
+        if(el) el.classList.add('active');
     };
+    
     window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; };
 
     window.openAuthModal = function() { 
@@ -385,7 +419,6 @@
         if(!id || !pw || !nick) return alert("아이디, 비밀번호, 닉네임을 모두 입력해주세요.");
         if(appState.users[id]) return alert("이미 존재하는 아이디입니다.");
         
-        // ✨ "흔" 닉네임으로 가입 시 자동 관리자 권한 부여
         const role = (nick === '흔') ? 'admin' : 'user';
         
         set(ref(db, `users/${id}`), {
@@ -616,7 +649,9 @@
         // Live Banner
         document.getElementById('liveBanner').style.display = appState.global.isLive ? 'block' : 'none';
         
-        renderNews();
+        renderNewsTab();
+        renderHeundungs();
+
         if(typeof currentHomeFilter !== 'undefined') renderHomeBoard(currentHomeFilter, 1);
         else renderHomeBoard('all', 1);
         
@@ -624,7 +659,7 @@
         renderSchedule();
         renderNotice();
         renderRanking();
-        renderMembers(); // ✨ 멤버 현황 렌더링 호출
+        renderMembers();
         
         const activeTab = document.querySelector('#view-board .tab-btn.active');
         if(activeTab) {
@@ -693,8 +728,6 @@
         const cont = document.getElementById('membersList');
         const members = Object.keys(appState.users).map(id => ({ id, ...appState.users[id] }));
         
-        // Exclude admin from regular member showcase if desired, but nice to show everyone.
-        // Let's sort by admin first, then by points.
         members.sort((a, b) => {
             if(a.role === 'admin') return -1;
             if(b.role === 'admin') return 1;
@@ -725,28 +758,19 @@
         }).join('') || '<p style="text-align:center; color:#999; grid-column:1/-1;">가입된 멤버가 없습니다.</p>';
     }
 
-    function renderNews() {
-        const cont = document.getElementById('weeklyNewsList');
-        cont.innerHTML = appState.news.map(n => {
-            return `
-            <div class="news-item">
-                <h4 style="margin: 0 0 10px 0; color:var(--primary-dark);">${n.title}</h4>
-                <div style="font-size:13px; line-height:1.6; white-space:pre-wrap;">${n.content}</div>
-                ${n.image ? `<img src="${n.image}" class="news-img">` : ''}
-            </div>
-            `;
-        }).join('') || '<p style="color:#999; text-align:center;">등록된 뉴스가 없습니다.</p>';
-    }
-
     window.openWriteModal = function(type) {
         if(!appState.currentUser) return alert('로그인이 필요합니다.');
         const isAdmin = appState.users[appState.currentUser].role === 'admin';
         
-        if((type === 'schedule' || type === 'notice' || type === 'letter' || type === 'news') && !isAdmin) return alert('관리자 전용 기능입니다.');
+        if((type === 'schedule' || type === 'notice' || type === 'letter' || type === 'news' || type === 'heundungs') && !isAdmin) return alert('관리자 전용 기능입니다.');
 
         const modal = document.getElementById('mainModal');
         const mBody = document.getElementById('modalBody');
-        document.getElementById('modalTitle').innerText = type === 'news' ? '뉴스 쓰기' : '글쓰기';
+        
+        let titleText = '글쓰기';
+        if(type === 'news') titleText = '뉴스 쓰기';
+        if(type === 'heundungs') titleText = '흔둥이 사진 올리기';
+        document.getElementById('modalTitle').innerText = titleText;
         
         let categorySelect = '';
         if(type === 'board') {
@@ -766,7 +790,7 @@
             ${categorySelect}
             <input type="text" id="postTitle" class="input-text" placeholder="제목을 입력하세요">
             <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
-            <div id="photoInputWrap" style="display:${type === 'news' ? 'block' : 'none'}; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
+            <div id="photoInputWrap" style="display:none; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
                 <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">📷 사진 첨부</label>
                 <input type="file" id="postPhoto" accept="image/*">
             </div>
@@ -781,6 +805,8 @@
             };
             catEl.addEventListener('change', togglePhoto);
             togglePhoto();
+        } else if (type === 'news' || type === 'heundungs') {
+            document.getElementById('photoInputWrap').style.display = 'block';
         }
         
         modal.style.display = 'flex';
@@ -798,12 +824,8 @@
         const fileInput = document.getElementById('postPhoto');
         
         const saveAction = (postObj) => {
-            if(formType === 'news') {
-                push(ref(db, 'news'), postObj);
-            } else {
-                push(ref(db, 'posts'), postObj);
-                addPoints(cat === 'photo' || cat === 'food' || cat === 'scenery' ? 2 : 1);
-            }
+            push(ref(db, 'posts'), postObj);
+            addPoints(['photo', 'food', 'scenery', 'heundungs'].includes(cat) ? 2 : 1);
             closeModal('mainModal');
         };
 
@@ -830,6 +852,38 @@
         const pPic = u && u.profilePic ? u.profilePic : 'https://placehold.co/30x30/e1e5e8/a29bfe?text=U';
         return { dName, pPic };
     }
+
+    window.renderNewsTab = function() {
+        const list = document.getElementById('newsTabList');
+        if(!list) return;
+        const newsPosts = appState.posts.filter(p => p.category === 'news');
+        list.innerHTML = newsPosts.map(p => {
+            const likesCount = p.likes ? Object.keys(p.likes).length : 0;
+            const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+            return `
+            <div class="list-item" onclick="viewPost('${p.id}')">
+                <div style="flex:1; font-weight:bold;"><span class="badge" style="background:#3498db; color:white;">뉴스</span> ${p.title}</div>
+                <div style="color:#999; font-size:12px;">👁️ ${p.views || 0} | ❤️ ${likesCount} | 💬 ${commentsCount}</div>
+            </div>`;
+        }).join('') || '<p style="text-align:center; color:#999; padding:20px;">등록된 뉴스가 없습니다.</p>';
+    };
+
+    window.renderHeundungs = function() {
+        const list = document.getElementById('heundungsList');
+        if(!list) return;
+        const hPosts = appState.posts.filter(p => p.category === 'heundungs');
+        list.innerHTML = hPosts.map(p => {
+            const likesCount = p.likes ? Object.keys(p.likes).length : 0;
+            const commentsCount = p.comments ? Object.keys(p.comments).length : 0;
+            const imgHtml = p.image ? `<img src="${p.image}" style="width:100%; height:160px; object-fit:cover; border-radius:12px; margin-bottom:10px;">` : `<div style="width:100%; height:160px; background:#eee; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:#999;">사진 없음</div>`;
+            return `
+            <div style="cursor:pointer; transition:transform 0.2s;" onclick="viewPost('${p.id}')" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                ${imgHtml}
+                <div style="font-weight:bold; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}</div>
+                <div style="color:#999; font-size:12px; margin-top:5px;">❤️ ${likesCount} | 💬 ${commentsCount}</div>
+            </div>`;
+        }).join('') || '<p style="grid-column:1/-1; text-align:center; color:#999; padding:20px;">등록된 사진이 없습니다.</p>';
+    };
 
     window.renderHomeBoard = function(filterStr, page = 1, btnElem = null) {
         if(btnElem) {
