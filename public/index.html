@@ -461,10 +461,15 @@
         const info = getLevelInfo(user);
         
         let notiHtml = '';
-        const notis = user.notifications ? Object.values(user.notifications).reverse() : [];
-        if(notis.length > 0) {
-            notiHtml = notis.map(n => `<div style="padding:8px; border-bottom:1px solid #eee; font-size:12px; ${!n.read ? 'background:#f0f7ff;' : ''}">${n.msg}</div>`).join('');
-            update(ref(db, `users/${appState.currentUser}`), { notifications: notis.map(n=>({...n, read:true})) });
+        const notisObj = user.notifications || [];
+        const notisArr = Array.isArray(notisObj) ? notisObj : Object.values(notisObj);
+        
+        if(notisArr.length > 0) {
+            const reversedNotis = [...notisArr].reverse();
+            notiHtml = reversedNotis.map(n => `<div style="padding:8px; border-bottom:1px solid #eee; font-size:12px; ${!n.read ? 'background:#f0f7ff;' : ''}">${n.msg}</div>`).join('');
+            
+            const updatedNotis = notisArr.map(n=>({...n, read:true}));
+            update(ref(db, `users/${appState.currentUser}`), { notifications: updatedNotis });
         } else {
             notiHtml = '<div style="font-size:12px; color:#999;">새로운 알림이 없습니다.</div>';
         }
@@ -552,8 +557,9 @@
 
     function sendNotification(targetUserId, msg) {
         if(!targetUserId || targetUserId === appState.currentUser) return; 
-        const notis = appState.users[targetUserId]?.notifications || [];
-        const newNotis = [...notis, { msg, time: Date.now(), read: false }];
+        const notisObj = appState.users[targetUserId]?.notifications || [];
+        const notisArr = Array.isArray(notisObj) ? notisObj : Object.values(notisObj);
+        const newNotis = [...notisArr, { msg, time: Date.now(), read: false }];
         update(ref(db, `users/${targetUserId}`), { notifications: newNotis });
     }
 
@@ -830,12 +836,39 @@
         };
 
         if(fileInput && fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
             const reader = new FileReader();
             reader.onload = function(e) {
-                newPost.image = e.target.result;
-                saveAction(newPost);
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // 해상도 최적화 (파이어베이스 용량 초과 방지)
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    newPost.image = canvas.toDataURL('image/jpeg', 0.8); // 80% 화질 압축
+                    saveAction(newPost);
+                };
+                img.src = e.target.result;
             };
-            reader.readAsDataURL(fileInput.files[0]);
+            reader.readAsDataURL(file);
         } else {
             saveAction(newPost);
         }
