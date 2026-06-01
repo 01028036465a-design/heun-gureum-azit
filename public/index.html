@@ -69,9 +69,9 @@
 
         .card { background: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); transition: background-color 0.3s; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; gap: 10px; }
-        .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; word-break: keep-all; }
+        .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; word-break: keep-all; flex: 1; }
         
-        .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; transition: 0.2s; display: flex; justify-content: center; align-items: center; white-space: nowrap; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); }
         .btn-outline { border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); }
@@ -111,6 +111,34 @@
         .search-bar { display: flex; gap: 10px; margin-bottom: 15px; }
         .search-bar select, .search-bar input { flex: 1; }
         
+        /* 일정 달력 CSS */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 15px; }
+        .calendar-day-header { text-align: center; font-weight: bold; padding: 10px 0; background: var(--bg-color); border-radius: 8px; font-size: 14px;}
+        .calendar-cell { min-height: 90px; border: 1px solid var(--border-color); border-radius: 8px; padding: 5px; cursor: pointer; transition: background-color 0.2s; background: var(--card-bg); display:flex; flex-direction:column; overflow:hidden;}
+        .calendar-cell:hover { background: var(--bg-color); }
+        .calendar-date { font-weight: bold; font-size: 13px; margin-bottom: 5px; text-align: left; }
+        .calendar-cell.other-month { opacity: 0.4; pointer-events: none; }
+        .schedule-item { background: var(--primary); color: white; padding: 3px 6px; border-radius: 4px; font-size: 11px; margin-bottom: 3px; word-break: break-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+        /* 미니게임 모션 애니메이션 */
+        @keyframes coinFlipAnim {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(1800deg) scale(1.5); }
+            100% { transform: rotateY(3600deg) scale(1); }
+        }
+        .coin-flip-active { animation: coinFlipAnim 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .coin-wrapper { width: 80px; height: 80px; margin: 0 auto 20px; perspective: 1000px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: #f1c40f; border-radius: 50%; border: 5px solid #f39c12; color: #fff; text-shadow: 0 2px 2px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        @keyframes rpsShakeAnim {
+            0% { transform: rotateZ(0deg) translateY(0); }
+            25% { transform: rotateZ(-20deg) translateY(-10px); }
+            50% { transform: rotateZ(0deg) translateY(0); }
+            75% { transform: rotateZ(20deg) translateY(-10px); }
+            100% { transform: rotateZ(0deg) translateY(0); }
+        }
+        .rps-shake-active { animation: rpsShakeAnim 0.3s ease-in-out infinite; }
+        .rps-arena { display:flex; justify-content:center; align-items:center; gap:30px; font-size:60px; margin-bottom:20px; }
+
         /* 모바일 및 레이아웃 최적화 CSS */
         .home-grid { display: grid; grid-template-columns: 3fr 7fr; gap: 20px; align-items: start; }
         #heundungsList { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
@@ -135,7 +163,7 @@
             .modal-content { width: 95%; padding: 20px; }
             .card { padding: 15px; margin-bottom: 15px; }
             
-            /* 리스트 아이템 모바일 최적화 (제목과 수치 줄바꿈 정렬) */
+            /* 리스트 아이템 모바일 최적화 */
             .list-item { flex-direction: column; align-items: flex-start; gap: 10px; padding: 15px 0; }
             .list-item > div:first-child { width: 100%; line-height: 1.4; word-break: break-all; }
             .list-item > div:last-child { width: 100%; justify-content: flex-start; gap: 15px; font-size: 11px; }
@@ -145,6 +173,12 @@
             
             /* 가위바위보 버튼 모바일 정렬 */
             #rpsPlayArea button { padding: 15px 20px !important; font-size: 30px !important; margin: 5px !important; flex: 1; }
+
+            /* 달력 모바일 최적화 */
+            .calendar-cell { min-height: 60px; padding: 3px; }
+            .calendar-day-header { font-size: 12px; padding: 5px 0;}
+            .calendar-date { font-size: 11px; }
+            .schedule-item { font-size: 9px; padding: 2px; margin-bottom: 2px;}
         }
     </style>
 </head>
@@ -171,6 +205,7 @@
             <span class="visitor-badge" id="globalVisitorDisplay">방문자: 0명</span>
         </div>
         <ul class="menu-links">
+            <li onclick="switchView('calendar', this)">📅 흔이 일정</li>
             <li onclick="switchView('news', this)">📰 이번주 뉴스</li>
             <li onclick="switchView('members', this)">☁️ 흔둥이 현황</li>
             <li onclick="switchView('ranking', this)">🏆 명예의 전당</li>
@@ -195,7 +230,7 @@
             <div class="home-grid">
                 <div>
                     <div class="card" style="margin-bottom: 20px;">
-                        <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                        <div class="card-header">
                             <div class="card-title">📌 흔이 쓰는 공지</div>
                             <button class="btn btn-admin admin-only" style="padding: 4px 8px; font-size:11px;" onclick="openWriteModal('notice')">작성</button>
                         </div>
@@ -204,7 +239,7 @@
 
                     <div id="pcOnlineSlot">
                         <div class="card" id="card-online" style="margin-bottom: 20px;">
-                            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                            <div class="card-header">
                                 <div class="card-title">🟢 접속중인 💭</div>
                             </div>
                             <div id="onlineUsers" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;"></div>
@@ -212,7 +247,7 @@
                     </div>
 
                     <div class="card" style="margin-bottom: 20px;">
-                        <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                        <div class="card-header">
                             <div class="card-title">🔔 내 알림 내역</div>
                         </div>
                         <div id="homeNotifications" style="font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
@@ -222,7 +257,7 @@
                     </div>
 
                     <div class="card" style="margin-bottom: 20px; border-color: #f368e0;">
-                        <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+                        <div class="card-header">
                             <div class="card-title" style="color: #f368e0;">🎂 다가오는 생일</div>
                         </div>
                         <div id="upcomingBirthdays" style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;">
@@ -262,6 +297,21 @@
                         <div id="homeScheduleList"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="view-calendar" class="view-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📅 흔이 일정</div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="btn btn-outline" style="padding: 4px 12px; font-size: 18px;" onclick="changeMonth(-1)">&lt;</button>
+                        <span id="calendarMonthDisplay" style="font-weight:bold; font-size:18px; min-width:100px; text-align:center;"></span>
+                        <button class="btn btn-outline" style="padding: 4px 12px; font-size: 18px;" onclick="changeMonth(1)">&gt;</button>
+                    </div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom:10px;">관리자 전용: 날짜를 클릭하여 일정을 추가하거나 관리할 수 있습니다.</div>
+                <div id="calendarGrid" class="calendar-grid"></div>
             </div>
         </div>
 
@@ -316,6 +366,7 @@
                     <button class="tab-btn" onclick="renderBoard('review', this)">오늘 방송 후기</button>
                     <button class="tab-btn" onclick="renderBoard('food', this)">음식자랑</button>
                     <button class="tab-btn" onclick="renderBoard('scenery', this)">풍경자랑</button>
+                    <button class="tab-btn" onclick="renderBoard('pet', this)">애완동물 자랑</button>
                     <button class="tab-btn" onclick="renderBoard('photo', this)">사진</button>
                     <button class="tab-btn admin-only" onclick="renderBoard('letter', this)">흔이 쓰는 박제편지</button>
                 </div>
@@ -343,7 +394,7 @@
                 <div id="exchangeSummary" style="background: var(--bg-color); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong>내 사용 가능 포인트:</strong> <span id="myUsablePoints" style="color:var(--primary-dark); font-weight:bold; font-size:18px;">0 P</span>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">(명예의 전당 누적 점수에는 영향을 주지 않습니다)</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">(이벤트 획득 및 교환 내역 반영 / 명예의 전당 누적 점수에는 영향을 주지 않습니다)</div>
                     </div>
                 </div>
                 <div id="exchangeItemsList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:15px; margin-bottom:30px;"></div>
@@ -354,15 +405,42 @@
         </div>
 
         <div id="view-event" class="view-section">
-            <div class="card" style="text-align: center; padding: 40px 20px;">
+            <div class="card" style="text-align: center; padding: 40px 20px; margin-bottom: 20px;">
                 <h2 style="color: var(--primary-dark); margin-bottom: 10px;">✌️✊🖐 흔이와 가위바위보!</h2>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">하루에 딱 한 번만 참여 가능합니다.<br>이기면 2P, 비기면 1P, 지면 0P 획득!</p>
+                
+                <div id="rpsArena" style="display:none;" class="rps-arena">
+                    <div id="rpsUserHand">✊</div>
+                    <div style="font-size:24px; font-weight:bold; color:var(--text-muted);">VS</div>
+                    <div id="rpsBotHand">✊</div>
+                </div>
+
                 <div id="rpsPlayArea" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;">
                     <button class="btn btn-outline" style="font-size: 40px; padding: 20px 30px;" onclick="playRPS('scissors')">✌️</button>
                     <button class="btn btn-outline" style="font-size: 40px; padding: 20px 30px;" onclick="playRPS('rock')">✊</button>
                     <button class="btn btn-outline" style="font-size: 40px; padding: 20px 30px;" onclick="playRPS('paper')">🖐</button>
                 </div>
                 <div id="rpsResultArea" style="display: none; font-size: 20px; font-weight: bold; margin-top: 20px;"></div>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 40px 20px; margin-bottom: 20px;">
+                <h2 style="color: var(--primary-dark); margin-bottom: 10px;">☁️ 구름 점프 게임</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">화면이나 캔버스를 터치(클릭)해서 점프! 다가오는 장애물을 피하세요!<br>1000점당 1P 추가 획득 (하루 한 판만 가능)</p>
+                <button id="trexStartBtn" class="btn btn-primary" style="margin:0 auto; padding:10px 20px;" onclick="initTRex()">게임 시작</button>
+                <canvas id="trexCanvas" width="300" height="150" style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:8px; cursor:pointer; display:none; margin:0 auto;" onclick="jumpTRex()"></canvas>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 40px 20px;">
+                <h2 style="color: var(--primary-dark); margin-bottom: 10px;">🪙 행운의 동전 던지기</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">하루에 한 번! 흔이가 던진 동전은 앞면일까 뒷면일까?<br>맞추면 2P 추가 획득! 틀리면 1P 차감!</p>
+                
+                <div id="coinGraphic" class="coin-wrapper" style="display:none;">?</div>
+
+                <div id="coinBtnArea" style="display: flex; justify-content: center; gap: 15px;">
+                    <button class="btn btn-outline" style="font-size: 20px; padding: 15px 30px;" onclick="playCoinToss('앞면')">앞면</button>
+                    <button class="btn btn-outline" style="font-size: 20px; padding: 15px 30px;" onclick="playCoinToss('뒷면')">뒷면</button>
+                </div>
+                <div id="coinResultArea" style="display: none; font-size: 16px; margin-top: 20px; color:var(--text-main); line-height:1.6;"></div>
             </div>
         </div>
 
@@ -386,7 +464,7 @@
         </a>
 
         <div class="card">
-            <div class="card-header" style="padding-bottom: 10px; margin-bottom: 10px;">
+            <div class="card-header">
                 <div class="card-title">📣 스푼 공식 공지사항</div>
             </div>
             <iframe src="https://www.spooncast.net/kr/notice" style="width:100%; height:250px; border:1px solid var(--border-color); border-radius:8px; background: white;"></iframe>
@@ -458,7 +536,7 @@
     const db = getDatabase(app);
 
     let appState = {
-        users: {}, posts: [], items: {}, visitors: {},
+        users: {}, posts: [], items: {}, visitors: {}, schedules: {},
         global: { isLive: false, totalVisitors: 0 },
         currentUser: localStorage.getItem('h_currentUser') || null
     };
@@ -466,6 +544,27 @@
     let currentHomeFilter = 'all';
     let currentSearchFilter = '';
     let notiCurrentPage = 1;
+
+    // 방문자 체크 로직 (로그인 무관, 브라우저 접속 기준)
+    function trackDailyVisitor() {
+        let visitorId = localStorage.getItem('h_visitor_id');
+        if (!visitorId) {
+            visitorId = 'v_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('h_visitor_id', visitorId);
+        }
+        const todayStr = new Date().toLocaleDateString('ko-KR', {timeZone: 'Asia/Seoul'}).split('.').map(s=>s.trim()).slice(0,3).join('-');
+        
+        get(ref(db, `visitors/${todayStr}/${visitorId}`)).then((snap) => {
+            if(!snap.exists()) {
+                set(ref(db, `visitors/${todayStr}/${visitorId}`), true);
+                get(ref(db, `global/totalVisitors`)).then((vSnap) => {
+                    const currentTotal = vSnap.val() || 0;
+                    update(ref(db, `global`), { totalVisitors: currentTotal + 1 });
+                });
+            }
+        });
+    }
+    trackDailyVisitor();
 
     // 모바일 환경에서 프로필과 온라인 유저 위치를 스위칭하는 함수
     function applyMobileLayout() {
@@ -520,6 +619,7 @@
             appState.items = data.items || {};
             appState.global = data.global || { isLive: false, totalVisitors: 0 };
             appState.visitors = data.visitors || {};
+            appState.schedules = data.schedules || {}; // 일정 데이터 연동
 
             if(appState.currentUser === '흔' && appState.users['흔'] && appState.users['흔'].role !== 'admin') {
                 update(ref(db, `users/흔`), { role: 'admin' });
@@ -542,6 +642,7 @@
         
         currentSearchFilter = '';
         if(viewId === 'board') renderBoard('all');
+        if(viewId === 'calendar') renderCalendar();
     };
     
     window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; };
@@ -568,7 +669,7 @@
         const role = (nick === '흔') ? 'admin' : 'user';
         
         set(ref(db, `users/${id}`), {
-            password: pw, role: role, points: 0, spentPoints: 0, displayName: nick, profilePic: "", notifications: []
+            password: pw, role: role, points: 0, eventPoints: 0, spentPoints: 0, displayName: nick, profilePic: "", notifications: []
         }).then(() => {
             alert("회원가입이 완료되었습니다! 로그인 해주세요.");
             toggleAuth('login');
@@ -591,7 +692,6 @@
         localStorage.setItem('h_currentUser', id);
         closeModal('authModal');
         updateOnlineStatus();
-        trackDailyVisitor();
         renderApp();
         document.getElementById('loginPw').value = '';
     };
@@ -602,18 +702,6 @@
         localStorage.removeItem('h_currentUser');
         renderApp();
     };
-
-    function trackDailyVisitor() {
-        if(!appState.currentUser) return;
-        const todayStr = new Date().toLocaleDateString('ko-KR', {timeZone: 'Asia/Seoul'}).split('.').map(s=>s.trim()).slice(0,3).join('-');
-        
-        const userVisitedToday = appState.visitors[todayStr] && appState.visitors[todayStr][appState.currentUser];
-        if(!userVisitedToday) {
-            set(ref(db, `visitors/${todayStr}/${appState.currentUser}`), true);
-            const currentTotal = appState.global.totalVisitors || 0;
-            update(ref(db, `global`), { totalVisitors: currentTotal + 1 });
-        }
-    }
 
     function renderVisitorCount() {
         const todayStr = new Date().toLocaleDateString('ko-KR', {timeZone: 'Asia/Seoul'}).split('.').map(s=>s.trim()).slice(0,3).join('-');
@@ -628,7 +716,8 @@
         const user = appState.users[appState.currentUser];
         const info = getLevelInfo(user);
         const isAdmin = user.role === 'admin';
-        const usableP = (user.points || 0) - (user.spentPoints || 0);
+        const usableP = (user.points || 0) + (user.eventPoints || 0) - (user.spentPoints || 0);
+        const levelDisplay = isAdmin ? '관리자' : info.name + ' (Lv.' + info.level + ')';
 
         document.getElementById('myPageBody').innerHTML = `
             <div style="text-align:center; margin-bottom:20px;">
@@ -660,7 +749,7 @@
             <textarea id="editBio" class="input-text" style="height:60px; resize:none; padding:10px; font-family:inherit;" placeholder="나를 표현하는 한 마디를 적어주세요!">${user.bio || ''}</textarea>
             
             <div style="background:var(--bg-color); padding:15px; border-radius:8px; margin-bottom:15px; font-size:13px; border:1px solid var(--border-color);">
-                <strong>내 상태:</strong> ${info.icon} ${info.name} (Lv.${info.level})<br>
+                <strong>내 상태:</strong> ${info.icon} ${levelDisplay}<br>
                 <strong>명예의 전당 (누적):</strong> ${user.points || 0} P<br>
                 <strong>사용 가능 포인트:</strong> ${usableP} P<br>
                 ${!isAdmin ? `<div style="color:#e74c3c; margin-top:5px;">다음 레벨까지 <strong>${info.nextReq}P</strong> 남았습니다.</div>` : ''}
@@ -820,12 +909,16 @@
         
         const activeTab = document.querySelector('#view-board .tab-btn.active');
         if(activeTab) {
-            let filterMap = {'전체':'all', '자유':'free', '오늘 방송 후기':'review', '음식자랑':'food', '풍경자랑':'scenery', '사진':'photo', '흔이 쓰는 박제편지':'letter'};
+            let filterMap = {'전체':'all', '자유':'free', '오늘 방송 후기':'review', '음식자랑':'food', '풍경자랑':'scenery', '애완동물 자랑':'pet', '사진':'photo', '흔이 쓰는 박제편지':'letter'};
             renderBoard(filterMap[activeTab.innerText] || 'all');
         }
 
         renderMusicBoard();
         renderExchangeItems();
+        
+        if(document.getElementById('view-calendar').classList.contains('active')){
+            renderCalendar();
+        }
     }
 
     function applyAdminUI() {
@@ -850,11 +943,13 @@
 
         const user = appState.users[appState.currentUser];
         const info = getLevelInfo(user);
+        const isAdmin = user.role === 'admin';
         const dName = user.displayName || appState.currentUser;
-        const usableP = (user.points || 0) - (user.spentPoints || 0);
+        const usableP = (user.points || 0) + (user.eventPoints || 0) - (user.spentPoints || 0);
         
         const unreadCount = user.notifications ? user.notifications.filter(n => !n.read).length : 0;
         const badgeHtml = unreadCount > 0 ? `<div id="notiBadge" style="display:block;">${unreadCount}</div>` : '';
+        const levelDisplay = isAdmin ? '관리자' : info.name + ' (Lv.' + info.level + ')';
         
         authContentArea.innerHTML = `
             <div style="display:flex; align-items:center; gap:8px;">
@@ -872,7 +967,7 @@
         profileCard.innerHTML = `
             <img src="${user.profilePic || 'https://placehold.co/80x80/e1e5e8/a29bfe?text=U'}" class="avatar-lg" style="margin-bottom: 15px;">
             <div class="level-badge" style="background:${info.color}; color:${info.textCol}; box-shadow:0 3px 6px rgba(0,0,0,0.1); margin-bottom: 10px;">
-                ${info.icon} ${info.name} (Lv.${info.level})
+                ${info.icon} ${levelDisplay}
             </div>
             <h3 style="margin: 0 0 5px 0; width: 100%; text-align: center;">${dName}</h3>
             <p style="font-size:12px; color:var(--text-muted); margin:0 0 15px 0; width: 100%; text-align: center;">보유 포인트: <strong>${usableP} P</strong></p>
@@ -928,10 +1023,10 @@
         });
 
         bdayList.sort((a,b) => a.days - b.days);
-        const top2 = bdayList.slice(0, 2);
+        const top3 = bdayList.slice(0, 3); // 3명 출력으로 수정
 
-        if(top2.length > 0) {
-            cont.innerHTML = top2.map(b => `
+        if(top3.length > 0) {
+            cont.innerHTML = top3.map(b => `
                 <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-color); padding:10px; border-radius:8px; border:1px solid var(--border-color);">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <img src="${b.pic}" style="width:30px; height:30px; border-radius:50%;">
@@ -951,6 +1046,114 @@
 
         if(banner) banner.style.display = hasBirthdayToday ? 'block' : 'none';
     }
+
+    // --- 달력 (흔이 일정) 로직 ---
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth(); // 0~11
+
+    window.changeMonth = function(dir) {
+        currentMonth += dir;
+        if(currentMonth < 0) { currentMonth = 11; currentYear--; }
+        if(currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+    };
+
+    window.renderCalendar = function() {
+        const disp = document.getElementById('calendarMonthDisplay');
+        const grid = document.getElementById('calendarGrid');
+        if(!disp || !grid) return;
+        
+        disp.innerText = `${currentYear}년 ${currentMonth + 1}월`;
+        
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const prevDays = new Date(currentYear, currentMonth, 0).getDate();
+        
+        let html = `
+            <div class="calendar-day-header" style="color:#e74c3c;">일</div>
+            <div class="calendar-day-header">월</div>
+            <div class="calendar-day-header">화</div>
+            <div class="calendar-day-header">수</div>
+            <div class="calendar-day-header">목</div>
+            <div class="calendar-day-header">금</div>
+            <div class="calendar-day-header" style="color:#3498db;">토</div>
+        `;
+        
+        // 이전 달 날짜 채우기
+        for(let i = firstDay - 1; i >= 0; i--) {
+            html += `<div class="calendar-cell other-month"><div class="calendar-date">${prevDays - i}</div></div>`;
+        }
+        
+        // 이번 달 날짜 채우기
+        for(let i = 1; i <= daysInMonth; i++) {
+            const mStr = String(currentMonth + 1).padStart(2, '0');
+            const dStr = String(i).padStart(2, '0');
+            const dateStr = `${currentYear}-${mStr}-${dStr}`;
+            
+            const schs = appState.schedules && appState.schedules[dateStr] ? appState.schedules[dateStr] : {};
+            let schHtml = '';
+            Object.keys(schs).forEach(k => {
+                schHtml += `<div class="schedule-item" onclick="openScheduleModal('${dateStr}', '${k}'); event.stopPropagation();">${schs[k].title}</div>`;
+            });
+            
+            html += `<div class="calendar-cell" onclick="openScheduleModal('${dateStr}')"><div class="calendar-date">${i}</div>${schHtml}</div>`;
+        }
+        
+        // 다음 달 날짜 채우기 (칸수 맞추기)
+        const totalCells = firstDay + daysInMonth;
+        const nextDays = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7);
+        for(let i = 1; i <= nextDays; i++) {
+            html += `<div class="calendar-cell other-month"><div class="calendar-date">${i}</div></div>`;
+        }
+        
+        grid.innerHTML = html;
+    };
+
+    window.openScheduleModal = function(dateStr, schId = null) {
+        if(!appState.currentUser) return alert('로그인이 필요합니다.');
+        const isAdmin = appState.users[appState.currentUser].role === 'admin';
+        
+        if(!isAdmin) {
+            // 일반 유저는 보기만 가능
+            if(schId) {
+                const sch = appState.schedules[dateStr][schId];
+                alert(`[${dateStr}]\n제목: ${sch.title}\n내용: ${sch.content || '없음'}`);
+            }
+            return; 
+        }
+        
+        // 관리자용 추가/수정 모달
+        const sch = schId ? appState.schedules[dateStr][schId] : {title:'', content:''};
+        document.getElementById('modalTitle').innerText = schId ? '일정 수정/삭제' : `새 일정 추가 (${dateStr})`;
+        document.getElementById('modalBody').innerHTML = `
+            <input type="text" id="schTitle" class="input-text" value="${sch.title}" placeholder="일정 제목 (필수)">
+            <textarea id="schContent" placeholder="상세 내용">${sch.content || ''}</textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-primary" style="flex:1; padding:12px;" onclick="saveSchedule('${dateStr}', '${schId || ''}')">저장하기</button>
+                ${schId ? `<button class="btn" style="flex:1; background:#e74c3c; color:white; padding:12px;" onclick="deleteSchedule('${dateStr}', '${schId}')">삭제하기</button>` : ''}
+            </div>
+        `;
+        document.getElementById('mainModal').style.display = 'flex';
+    };
+
+    window.saveSchedule = function(dateStr, schId) {
+        const title = document.getElementById('schTitle').value.trim();
+        const content = document.getElementById('schContent').value.trim();
+        if(!title) return alert('제목을 입력하세요.');
+        
+        if(schId) {
+            update(ref(db, `schedules/${dateStr}/${schId}`), { title, content }).then(()=> { closeModal('mainModal'); renderApp(); });
+        } else {
+            push(ref(db, `schedules/${dateStr}`), { title, content }).then(()=> { closeModal('mainModal'); renderApp(); });
+        }
+    };
+
+    window.deleteSchedule = function(dateStr, schId) {
+        if(confirm('이 일정을 삭제하시겠습니까?')) {
+            remove(ref(db, `schedules/${dateStr}/${schId}`)).then(()=> { closeModal('mainModal'); renderApp(); });
+        }
+    };
+    // ------------------------------------
 
     window.renderNotifications = function() {
         const notiCont = document.getElementById('homeNotifications');
@@ -1034,16 +1237,18 @@
 
         cont.innerHTML = members.map(m => {
             const info = getLevelInfo(m);
+            const isAdmin = m.role === 'admin';
             const dName = m.displayName || m.id;
             const pPic = m.profilePic || 'https://placehold.co/100x100/e1e5e8/a29bfe?text=U';
             const ageInfo = m.age ? `${m.age}` : '-';
             const birthInfo = m.birthday ? `${m.birthday}` : '-';
             const instaInfo = m.instagram ? `<a href="https://instagram.com/${m.instagram.replace('@','')}" target="_blank" style="color:var(--primary); font-weight:bold;">${m.instagram}</a>` : '-';
+            const levelDisplay = isAdmin ? '관리자' : info.name;
             
             return `
             <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; padding:20px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
                 <img src="${pPic}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border:2px solid ${info.color};">
-                <div style="font-size:12px; background:${info.color}; color:${info.textCol}; display:inline-block; padding:2px 8px; border-radius:12px; margin-bottom:5px;">${info.icon} ${info.name}</div>
+                <div style="font-size:12px; background:${info.color}; color:${info.textCol}; display:inline-block; padding:2px 8px; border-radius:12px; margin-bottom:5px;">${info.icon} ${levelDisplay}</div>
                 <h4 style="margin:5px 0;">${dName}</h4>
                 <p style="font-size:12px; color:var(--text-muted); font-style:italic; height:36px; overflow:hidden;">${m.bio || '등록된 소개가 없습니다.'}</p>
                 <div style="font-size:12px; color:var(--text-main); text-align:left; background:var(--bg-color); padding:10px; border-radius:8px; margin-top:10px; border:1px solid var(--border-color);">
@@ -1079,6 +1284,7 @@
                     <option value="review">오늘 방송 후기</option>
                     <option value="food">음식 자랑</option>
                     <option value="scenery">풍경 자랑</option>
+                    <option value="pet">애완동물 자랑</option>
                     <option value="photo">사진 (기타)</option>
                     ${isAdmin ? `<option value="letter">흔이 쓰는 박제편지</option>` : ''}
                 </select>
@@ -1097,15 +1303,7 @@
             <button class="btn btn-primary" style="width:100%; padding:12px; font-size:16px;" onclick="submitPost('${type}')">등록하기</button>
         `;
 
-        if(type === 'board') {
-            const catEl = document.getElementById('postCat');
-            const togglePhoto = () => {
-                const v = catEl.value;
-                document.getElementById('photoInputWrap').style.display = ['photo', 'letter', 'food', 'scenery'].includes(v) ? 'block' : 'none';
-            };
-            catEl.addEventListener('change', togglePhoto);
-            togglePhoto();
-        } else if (type === 'news' || type === 'heundungs') {
+        if(type === 'board' || type === 'news' || type === 'heundungs') {
             document.getElementById('photoInputWrap').style.display = 'block';
         }
         
@@ -1130,7 +1328,7 @@
         const fileInput = document.getElementById('postPhoto');
         const saveAction = (postObj) => {
             push(ref(db, 'posts'), postObj);
-            addPoints(['photo', 'food', 'scenery', 'heundungs', 'music'].includes(cat) ? 2 : 1);
+            addPoints(['photo', 'food', 'scenery', 'pet', 'heundungs', 'music'].includes(cat) ? 2 : 1);
             closeModal('mainModal');
         };
 
@@ -1239,7 +1437,7 @@
 
         const list = document.getElementById('homeBoardList');
         const pageCont = document.getElementById('homeBoardPagination');
-        let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'letter'].includes(p.category));
+        let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'pet', 'letter'].includes(p.category));
         
         let filtered = boardPosts;
         if(filterStr === 'popular') filtered = boardPosts.filter(p => isPopular(p));
@@ -1252,7 +1450,7 @@
 
         list.innerHTML = paginatedItems.map(p => {
             let badge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '<span class="badge normal">일반</span>';
-            let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', letter:'박제편지' }[p.category];
+            let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', pet:'애완동물', letter:'박제편지' }[p.category];
             let catBadge = `<span class="badge cat">${catName}</span>`;
             const isNew = (Date.now() - p.timestamp) < 24 * 60 * 60 * 1000;
             const newBadge = isNew ? '<span class="badge" style="background:#2ecc71; color:white;">🆕NEW</span>' : '';
@@ -1279,7 +1477,7 @@
             btnElem.classList.add('active');
         }
         const list = document.getElementById('fullBoardList');
-        let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'letter'].includes(p.category));
+        let boardPosts = appState.posts.filter(p => ['free', 'review', 'photo', 'food', 'scenery', 'pet', 'letter'].includes(p.category));
         
         let filtered = filterCat !== 'all' ? boardPosts.filter(p => p.category === filterCat) : boardPosts;
         
@@ -1296,7 +1494,7 @@
         }
 
         list.innerHTML = filtered.map(p => {
-            let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', letter:'박제편지' }[p.category];
+            let catName = { free:'자유', review:'후기', photo:'사진', food:'음식', scenery:'풍경', pet:'애완동물', letter:'박제편지' }[p.category];
             let popBadge = isPopular(p) ? '<span class="badge popular">🔥인기</span>' : '';
             const isNew = (Date.now() - p.timestamp) < 24 * 60 * 60 * 1000;
             const newBadge = isNew ? '<span class="badge" style="background:#2ecc71; color:white;">🆕NEW</span>' : '';
@@ -1667,7 +1865,7 @@
         }
 
         const user = appState.users[appState.currentUser];
-        const usableP = (user.points || 0) - (user.spentPoints || 0);
+        const usableP = (user.points || 0) + (user.eventPoints || 0) - (user.spentPoints || 0);
         myPointsText.innerText = `${usableP} P`;
 
         if(!appState.items || Object.keys(appState.items).length === 0) {
@@ -1707,7 +1905,7 @@
         if(!appState.currentUser) return;
         const user = appState.users[appState.currentUser];
         const item = appState.items[itemId];
-        const usableP = (user.points || 0) - (user.spentPoints || 0);
+        const usableP = (user.points || 0) + (user.eventPoints || 0) - (user.spentPoints || 0);
 
         if(usableP < item.price) return alert('포인트가 부족합니다.');
         if(!confirm(`[${item.name}] 아이템을 ${item.price}P로 교환하시겠습니까?`)) return;
@@ -1732,38 +1930,176 @@
             return alert('오늘은 이미 가위바위보에 참여했습니다! 내일 다시 도전해주세요.');
         }
 
-        const choices = ['scissors', 'rock', 'paper'];
-        const emojis = {'scissors':'✌️', 'rock':'✊', 'paper':'🖐'};
-        const botChoice = choices[Math.floor(Math.random() * 3)];
+        // 모션 시작
+        document.getElementById('rpsPlayArea').style.display = 'none';
+        const arena = document.getElementById('rpsArena');
+        arena.style.display = 'flex';
         
-        let resultMsg = '';
-        let earnedP = 0;
+        const uHand = document.getElementById('rpsUserHand');
+        const bHand = document.getElementById('rpsBotHand');
+        uHand.innerText = '✊'; bHand.innerText = '✊'; 
+        uHand.classList.add('rps-shake-active');
+        bHand.classList.add('rps-shake-active');
 
-        if(choice === botChoice) {
-            resultMsg = '무승부! 아쉽네요.'; earnedP = 1;
-        } else if (
-            (choice === 'scissors' && botChoice === 'paper') ||
-            (choice === 'rock' && botChoice === 'scissors') ||
-            (choice === 'paper' && botChoice === 'rock')
-        ) {
-            resultMsg = '승리!! 축하합니다.'; earnedP = 2;
-        } else {
-            resultMsg = '패배... 흔이가 이겼습니다!'; earnedP = 0;
+        setTimeout(() => {
+            uHand.classList.remove('rps-shake-active');
+            bHand.classList.remove('rps-shake-active');
+
+            const choices = ['scissors', 'rock', 'paper'];
+            const emojis = {'scissors':'✌️', 'rock':'✊', 'paper':'🖐'};
+            const botChoice = choices[Math.floor(Math.random() * 3)];
+            
+            uHand.innerText = emojis[choice];
+            bHand.innerText = emojis[botChoice];
+            
+            let resultMsg = '';
+            let earnedP = 0;
+
+            if(choice === botChoice) {
+                resultMsg = '무승부! 아쉽네요.'; earnedP = 1;
+            } else if (
+                (choice === 'scissors' && botChoice === 'paper') ||
+                (choice === 'rock' && botChoice === 'scissors') ||
+                (choice === 'paper' && botChoice === 'rock')
+            ) {
+                resultMsg = '승리!! 축하합니다.'; earnedP = 2;
+            } else {
+                resultMsg = '패배... 흔이가 이겼습니다!'; earnedP = 0;
+            }
+
+            update(ref(db, `users/${appState.currentUser}`), { 
+                lastRPS: todayStr,
+                eventPoints: (user.eventPoints || 0) + earnedP 
+            }).then(() => {
+                const resArea = document.getElementById('rpsResultArea');
+                resArea.style.display = 'block';
+                resArea.innerHTML = `
+                    <div style="color:var(--primary-dark); margin-top:10px;">${resultMsg} (+${earnedP}P)</div>
+                `;
+                renderApp();
+            });
+        }, 1500);
+    };
+
+    // --- 구름 티렉스 미니게임 ---
+    let trexCanvas, ctxTrex, trexY = 100, trexVy = 0, gravity = 0.6, isJumping = false, trexScore = 0;
+    let obstacles = [], gameTimer, gameActive = false;
+
+    window.initTRex = function() {
+        if(!appState.currentUser) return alert('로그인 후 이용해주세요.');
+        const user = appState.users[appState.currentUser];
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        if(user.lastTRex === todayStr) return alert('오늘은 이미 구름 점프 게임에 참여했습니다!');
+
+        document.getElementById('trexStartBtn').style.display = 'none';
+        trexCanvas = document.getElementById('trexCanvas');
+        trexCanvas.style.display = 'block';
+        ctxTrex = trexCanvas.getContext('2d');
+        trexY = 100; trexVy = 0; trexScore = 0; obstacles = [];
+        gameActive = true;
+
+        gameTimer = setInterval(updateTRex, 20); 
+    }
+
+    window.jumpTRex = function() {
+        if(!isJumping && gameActive) { trexVy = -10; isJumping = true; }
+    }
+
+    function updateTRex() {
+        ctxTrex.clearRect(0, 0, trexCanvas.width, trexCanvas.height);
+        
+        // 구름 (플레이어)
+        trexVy += gravity;
+        trexY += trexVy;
+        if(trexY > 100) { trexY = 100; isJumping = false; trexVy = 0; }
+        
+        ctxTrex.font = '24px Arial';
+        ctxTrex.fillText('☁️', 20, Math.floor(trexY) + 20);
+
+        // 장애물
+        if(Math.random() < 0.02 && (obstacles.length === 0 || obstacles[obstacles.length-1].x < 180)) {
+            obstacles.push({x: trexCanvas.width, y: 100, w: 15, h: 20});
         }
 
-        update(ref(db, `users/${appState.currentUser}`), { 
-            lastRPS: todayStr,
-            points: (user.points || 0) + earnedP 
+        ctxTrex.fillStyle = '#e74c3c';
+        for(let i=0; i<obstacles.length; i++) {
+            let obs = obstacles[i];
+            obs.x -= 4;
+            ctxTrex.fillRect(obs.x, obs.y, obs.w, obs.h);
+
+            // 충돌 감지 (구름 크기에 맞춰 판정 조절)
+            if(obs.x < 44 && obs.x + obs.w > 20 && trexY + 24 > obs.y) {
+                endTRex();
+            }
+        }
+        obstacles = obstacles.filter(o => o.x > -20);
+        
+        // 점수
+        trexScore++;
+        ctxTrex.fillStyle = '#2c3e50';
+        ctxTrex.font = 'bold 14px Arial';
+        ctxTrex.fillText("Score: " + trexScore, 200, 20);
+    }
+
+    function endTRex() {
+        gameActive = false;
+        clearInterval(gameTimer);
+        const earned = Math.floor(trexScore / 1000); // 1000점당 1포인트
+        ctxTrex.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctxTrex.fillRect(0,0,trexCanvas.width, trexCanvas.height);
+        ctxTrex.fillStyle = '#fff';
+        ctxTrex.font = 'bold 16px Arial';
+        ctxTrex.fillText("게임 오버!", 110, 60);
+        ctxTrex.fillText(earned + " 포인트 획득!", 90, 90);
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const user = appState.users[appState.currentUser];
+        update(ref(db, `users/${appState.currentUser}`), {
+            lastTRex: todayStr,
+            eventPoints: (user.eventPoints || 0) + earned
         }).then(() => {
-            const resArea = document.getElementById('rpsResultArea');
-            resArea.style.display = 'block';
-            resArea.innerHTML = `
-                나 ${emojis[choice]} vs ${emojis[botChoice]} 흔<br>
-                <div style="color:var(--primary-dark); margin-top:10px;">${resultMsg} (+${earnedP}P)</div>
-            `;
+            alert(`게임 종료! ${trexScore}점 달성하여 ${earned}P 획득!`);
             renderApp();
         });
-    };
+    }
+
+    // --- 동전 맞추기 미니게임 ---
+    window.playCoinToss = function(guess) {
+        if(!appState.currentUser) return alert('로그인 후 참여할 수 있습니다.');
+        const user = appState.users[appState.currentUser];
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        if(user.lastCoin === todayStr) return alert('오늘은 이미 동전 던지기에 참여했습니다!');
+
+        // 모션 시작
+        const btnArea = document.getElementById('coinBtnArea');
+        btnArea.style.display = 'none';
+        
+        const coinGraphic = document.getElementById('coinGraphic');
+        coinGraphic.style.display = 'flex';
+        coinGraphic.classList.add('coin-flip-active');
+        coinGraphic.innerText = ''; 
+
+        setTimeout(() => {
+            coinGraphic.classList.remove('coin-flip-active');
+            const result = Math.random() < 0.5 ? '앞면' : '뒷면';
+            coinGraphic.innerText = result === '앞면' ? '앞' : '뒤';
+
+            const isWin = guess === result;
+            const earnedP = isWin ? 2 : -1;
+            const msg = isWin ? '정답입니다! 2P 획득!' : '틀렸습니다! 아쉽게도 1P가 차감됩니다.';
+
+            update(ref(db, `users/${appState.currentUser}`), {
+                lastCoin: todayStr,
+                eventPoints: (user.eventPoints || 0) + earnedP
+            }).then(() => {
+                document.getElementById('coinResultArea').style.display = 'block';
+                document.getElementById('coinResultArea').innerHTML = `내가 선택한 면: <strong>${guess}</strong><br>흔이의 동전 결과: <strong>${result}</strong><br><br><span style="color:${isWin?'#2ecc71':'#e74c3c'}">${msg}</span>`;
+                renderApp();
+            });
+        }, 1500); 
+    }
 
     // --- PWA (웹 앱) 데이터 동적 생성 ---
     const manifestData = {
